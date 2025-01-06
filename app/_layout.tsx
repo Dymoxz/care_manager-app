@@ -13,10 +13,6 @@ export {
   ErrorBoundary,
 } from 'expo-router'
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-}
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -57,24 +53,12 @@ function RootLayoutNav() {
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       <Stack>
         <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: false,
-          }}
-        />
-
-        <Stack.Screen
-          name="modal"
-          options={{
-            title: 'Tamagui + Expo',
-            presentation: 'modal',
-            animation: 'slide_from_right',
-            gestureEnabled: true,
-            gestureDirection: 'horizontal',
-            contentStyle: {
-              backgroundColor: theme.background.val,
-            },
-          }}
+          name="index"
+          options={
+            {
+              headerShown: false,
+            }
+          }
         />
       </Stack>
     </ThemeProvider>
