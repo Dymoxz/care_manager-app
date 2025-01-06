@@ -50,7 +50,6 @@ function RootLayoutNav() {
   const theme = useTheme()
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
       <Stack>
         <Stack.Screen
           name="index"

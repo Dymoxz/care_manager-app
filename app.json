@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#C3E9ED"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -23,16 +23,17 @@
       "newArchEnabled": true
     },
     "androidStatusBar": {
-      "backgroundColor": "#ffffff",
-      "barStyle": "dark-content",
+      "backgroundColor": "#C3E9ED",
       "translucent": true,
       "hidden": false
     },
-
+    "androidNavigationBar": {
+        "backgroundColor": "#C3E9ED"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#C3E9ED"
       },
       "newArchEnabled": true
     },

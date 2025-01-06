@@ -1,45 +1,27 @@
-import { ExternalLink } from '@tamagui/lucide-icons'
-import { Anchor, H2, Paragraph, XStack, YStack } from 'tamagui'
+import { YStack } from 'tamagui';
+import { Dimensions } from 'react-native';
+import color from '../constants/Colors';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function TabOneScreen() {
-  return (
-    <YStack f={1} ai="center" gap="$8" px="$10" pt="$5" bg="$background">
-      <H2>Tamagui + Expo</H2>
-
-      <XStack ai="center" jc="center" fw="wrap" gap="$1.5" pos="absolute" b="$8">
-        <Paragraph fos="$5">Add</Paragraph>
-
-        <Paragraph fos="$5" px="$2" py="$1" col="$blue10" bg="$blue5">
-          tamagui.config.ts
-        </Paragraph>
-
-        <Paragraph fos="$5">to root and follow the</Paragraph>
-
-        <XStack
-          ai="center"
-          gap="$1.5"
-          px="$2"
-          py="$1"
-          br="$3"
-          bg="$purple5"
-          hoverStyle={{ bg: '$purple6' }}
-          pressStyle={{ bg: '$purple4' }}
+    return (
+        <YStack
+            f={1}
+            ai="center"
+            jc="center"  // Add justifyContent to center vertically
+            px="$10"
+            bg={color.light.background}
         >
-          <Anchor
-            href="https://tamagui.dev/docs/core/configuration"
-            textDecorationLine="none"
-            col="$purple10"
-            fos="$5"
-          >
-            Configuration guide
-          </Anchor>
-          <ExternalLink size="$1" col="$purple10" />
-        </XStack>
-
-        <Paragraph fos="$5" ta="center">
-          to configure your themes and tokens.
-        </Paragraph>
-      </XStack>
-    </YStack>
-  )
+            <YStack
+                bg="#E1F4F6"
+                width={(screenWidth * 85) / 100}
+                height={(screenHeight * 80) / 100}
+                justifyContent="center"
+                alignItems="center"
+                borderRadius="$10"
+            >
+            </YStack>
+        </YStack>
+    );
 }
