@@ -6,10 +6,13 @@ import { Toast, useToastController } from '@tamagui/toast'; // Import for toast
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-function ActivateDevice(bigNumber, navigation, showErrorToast) {
+function ActivateDevice(bigNumber, navigation, showErrorToast, showAlreadyActivatedToast) {
     // TODO: Replace this with API request to validate the BIG number
     if (bigNumber === '1234') {
         navigation.navigate('StartShiftScreen');
+    } else if (bigNumber === '5') {
+        // Show a different toast when the BIG number is already activated
+        showAlreadyActivatedToast();
     } else {
         // Show error toast when BIG number is invalid
         showErrorToast();
@@ -28,6 +31,15 @@ export default function ActivateScreen({ navigation }) {
         });
     };
 
+    // Function to show the toast for already activated BIG number
+    const showAlreadyActivatedToast = () => {
+        toast.show('BIG number already activated', {
+            message: "This BIG number has already been activated.",
+            native: false, // Using custom toast style
+
+        });
+    };
+
     return (
         <YStack
             f={1}
@@ -39,7 +51,7 @@ export default function ActivateScreen({ navigation }) {
             <YStack
                 bg="#E1F4F6"
                 width={(screenWidth * 80) / 100}
-                height={(screenHeight * 75) / 100}
+                height={(screenHeight * 70) / 100}
                 borderRadius="$10"
                 elevation="$0.25"
                 p="$6"
@@ -96,7 +108,7 @@ export default function ActivateScreen({ navigation }) {
                         pressStyle={{
                             bg: color.light.accent_focus,
                         }}
-                        onPress={() => ActivateDevice(bigNumber, navigation, showErrorToast)} // Pass input value and showErrorToast to function
+                        onPress={() => ActivateDevice(bigNumber, navigation, showErrorToast, showAlreadyActivatedToast)} // Pass input value and showErrorToast to function
                     >
                         <SizableText col={color.light.accent_content} size="$5" textAlign="center">
                             Activeer Apparaat
@@ -106,7 +118,7 @@ export default function ActivateScreen({ navigation }) {
             </YStack>
 
             {/* Toast for error message */}
-            <Toast />
+            <Toast/>
         </YStack>
     );
 }
