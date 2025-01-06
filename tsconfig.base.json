@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./caremanager",
     "rootDir": ".",
     "importHelpers": true,
     "allowJs": false,
