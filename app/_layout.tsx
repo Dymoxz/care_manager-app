@@ -2,6 +2,7 @@ import '../tamagui-web.css'
 
 import { useEffect } from 'react'
 import { StatusBar, useColorScheme } from 'react-native'
+import StackNavigator from './navigation/StackNavigator';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
@@ -13,6 +14,10 @@ export {
   ErrorBoundary,
 } from 'expo-router'
 
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: '(tabs)',
+}
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -50,16 +55,7 @@ function RootLayoutNav() {
   const theme = useTheme()
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen
-          name="index"
-          options={
-            {
-              headerShown: false,
-            }
-          }
-        />
-      </Stack>
+      <StackNavigator />
     </ThemeProvider>
   )
 }
