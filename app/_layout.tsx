@@ -54,8 +54,6 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme()
   const theme = useTheme()
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StackNavigator />
-    </ThemeProvider>
   )
 }
