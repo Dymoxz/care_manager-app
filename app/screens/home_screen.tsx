@@ -1,7 +1,7 @@
 import { CardProps, Card, YStack, XStack, SizableText, ScrollView, Paragraph } from 'tamagui';
 import React from 'react';
 import { Dimensions } from 'react-native';
-import { CirclePlay, Rocket } from '@tamagui/lucide-icons';
+import { CirclePlay, Rocket, ClipboardList } from '@tamagui/lucide-icons';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -20,6 +20,7 @@ export default function HomeScreen({ navigation }) {
     const pages = [
         { title: 'Activate', icon: <Rocket />, navLink: 'ActivateScreen' },
         { title: 'Start Shift', icon: <CirclePlay />, navLink: 'StartShiftScreen' },
+        { title: 'Patient List', icon: <ClipboardList/>, navLink: 'PatientListScreen' },
         // Add more pages here as needed
     ];
 
