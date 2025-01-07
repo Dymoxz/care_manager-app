@@ -1,14 +1,16 @@
-import {Button, Image, Input, SizableText, XStack, YStack} from 'tamagui';
+import { Button, Image, SizableText, YStack } from 'tamagui';
 import color from "../../constants/Colors";
-import {Toast} from "@tamagui/toast";
+import { Toast } from "@tamagui/toast";
 import React from "react";
-import {Dimensions} from "react-native";
-
+import { Dimensions } from "react-native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-export default function StartShiftScreen( {navigation}) {
+function user_name() {
+    return 'J. Smith';
+}
 
+export default function StartShiftScreen({ navigation }) {
     return (
         <YStack
             f={1}
@@ -25,7 +27,6 @@ export default function StartShiftScreen( {navigation}) {
                 elevation="$0.25"
                 p="$6"
                 ai="center"
-                jc="space-between"
             >
                 {/* Image Section */}
                 <YStack ai="center" jc="center" mt="$4">
@@ -41,8 +42,31 @@ export default function StartShiftScreen( {navigation}) {
                     />
                 </YStack>
 
+                {/* Welcome Text Section */}
+                <YStack ai="center" jc="center" mt="$4">
+                    <SizableText
+                        col={color.light.accent_content}
+                        size="$9"
+                        textAlign="center"
+                        fontWeight="700" // Use bold weight
+                    >
+                        Welkom terug
+                    </SizableText>
+                    <SizableText
+                        col={color.light.accent_content}
+                        size="$9"
+                        textAlign="center"
+                        fontWeight="700" // Use bold weight
+                    >
+                        {user_name()}!
+                    </SizableText>
+                </YStack>
+
+                {/* Spacer to push the button to the bottom */}
+                <YStack f={1} />
+
                 {/* Button Section */}
-                <YStack ai="center" jc="center" mt="$6" mb="$4">
+                <YStack ai="center" jc="flex-end" mb="$4">
                     <Button
                         bg={color.light.accent}
                         borderRadius="$10"
