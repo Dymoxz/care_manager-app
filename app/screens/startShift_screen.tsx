@@ -61,9 +61,6 @@ export default function StartShiftScreen( {navigation}) {
                     </Button>
                 </YStack>
             </YStack>
-
-            {/* Toast for error message */}
-            <Toast/>
         </YStack>
     );
 }

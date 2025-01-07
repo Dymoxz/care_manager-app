@@ -1,11 +1,16 @@
-import { CardProps, Card, YStack, XStack, SizableText, ScrollView, Paragraph } from 'tamagui';
+import {Button, Card, CardProps, Paragraph, ScrollView, SizableText, XStack, YStack} from 'tamagui';
 import React from 'react';
-import { Dimensions } from 'react-native';
-import { CirclePlay, Rocket, ClipboardList } from '@tamagui/lucide-icons';
+import {Dimensions} from 'react-native';
+import {CirclePlay, ClipboardList, Rocket} from '@tamagui/lucide-icons';
+import color from "../../constants/Colors";
 
-const { width: screenWidth } = Dimensions.get('window');
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
-export function DemoCard({ title, icon, onPress, ...props }: CardProps & { title: string; icon: any; onPress: () => void }) {
+export function DemoCard({title, icon, onPress, ...props}: CardProps & {
+    title: string;
+    icon: any;
+    onPress: () => void
+}) {
     return (
         <Card size="$4" bordered {...props} bg="white" onPress={onPress}>
             <YStack ai="center" jc="center" h="100%" space>
@@ -16,30 +21,27 @@ export function DemoCard({ title, icon, onPress, ...props }: CardProps & { title
     );
 }
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({navigation}) {
     const pages = [
-        { title: 'Activate', icon: <Rocket />, navLink: 'ActivateScreen' },
-        { title: 'Start Shift', icon: <CirclePlay />, navLink: 'StartShiftScreen' },
-        { title: 'Patient List', icon: <ClipboardList/>, navLink: 'PatientListScreen' },
-        // Add more pages here as needed
+        {title: 'Activate', icon: <Rocket/>, navLink: 'ActivateScreen'},
+        {title: 'Start Shift', icon: <CirclePlay/>, navLink: 'StartShiftScreen'},
+        {title: 'Patient List', icon: <ClipboardList/>, navLink: 'PatientListScreen'},
     ];
 
-    // Calculate card dimensions dynamically
-    const cardSpacing = 16; // Space between cards
-    const cardWidth = (screenWidth - cardSpacing * 4) / 3; // 3 items per row, including spacing
-    const cardHeight = cardWidth * 0.8; // Maintain a rectangular aspect ratio
+    const cardSpacing = 16;
+    const cardWidth = (screenWidth - cardSpacing * 4) / 3;
+    const cardHeight = cardWidth * 0.8;
 
     return (
-        <YStack f={1} bg="#caf0f8">
+        <YStack f={1} bg={color.light.background}>
             <ScrollView
                 contentContainerStyle={{
                     padding: cardSpacing,
-                    paddingTop: cardSpacing * 3,
-                    paddingBottom: cardSpacing * 3,
+                    paddingBottom: screenHeight * 0.1, // Extra padding for button space
                 }}
-                style={{ backgroundColor: 'transparent' }} // Ensures no background color
+                style={{backgroundColor: 'transparent'}}
             >
-                <Paragraph size="$9" fontWeight="700" py="$6" style={{ textAlign: 'center' }}>
+                <Paragraph size="$9" fontWeight="700" py="$6" style={{textAlign: 'center'}}>
                     Selecteer een taak
                 </Paragraph>
 
@@ -59,8 +61,8 @@ export default function HomeScreen({ navigation }) {
                                             width={cardWidth}
                                             height={cardHeight}
                                             animation="bouncy"
-                                            hoverStyle={{ scale: 0.925 }}
-                                            pressStyle={{ scale: 0.875 }}
+                                            hoverStyle={{scale: 0.925}}
+                                            pressStyle={{scale: 0.875}}
                                         />
                                     ))}
                                 </XStack>
@@ -69,6 +71,37 @@ export default function HomeScreen({ navigation }) {
                     })}
                 </YStack>
             </ScrollView>
+
+            {/* Fixed Button */}
+            <YStack
+                position="absolute"
+                bottom={16}
+                left={0}
+                right={0}
+                ai="center"
+                style={{
+                    backgroundColor: 'transparent',
+                }}
+            >
+                <Button
+                    bg={color.light.danger}
+                    borderRadius="$10"
+                    width={(screenWidth * 50) / 100}
+                    height="$6"
+                    pressStyle={{
+                        bg: color.light.danger_focus,
+                    }}
+                    borderColor={color.light.danger_focus}
+                    onPress={() => {
+                        navigation.navigate('StartShiftScreen');
+                    }
+                }
+                >
+                    <SizableText col='white' size="$4" textAlign="center">
+                        Dienst Beëindigen
+                    </SizableText>
+                </Button>
+            </YStack>
         </YStack>
     );
 }

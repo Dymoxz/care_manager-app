@@ -10,5 +10,9 @@ export default {
     accent_focus: '#DF9D4D',
     accent_content: '#634622',
 
+    danger: '#EF4444',
+    danger_focus: '#DC2626',
+    danger_content: '#7F1D1D'
+
   },
 };

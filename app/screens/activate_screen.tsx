@@ -116,9 +116,6 @@ export default function ActivateScreen({ navigation }) {
                     </Button>
                 </YStack>
             </YStack>
-
-            {/* Toast for error message */}
-            <Toast/>
         </YStack>
     );
 }
