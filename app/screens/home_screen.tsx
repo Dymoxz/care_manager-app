@@ -7,7 +7,7 @@ import {Dimensions} from "react-native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-export default function StartShiftScreen( {navigation}) {
+export default function HomeScreen( {navigation}) {
 
     return (
         <YStack
@@ -51,12 +51,9 @@ export default function StartShiftScreen( {navigation}) {
                         pressStyle={{
                             bg: color.light.accent_focus,
                         }}
-                        onPress={() => {
-                            navigation.navigate("HomeScreen");
-                        }}
                     >
                         <SizableText col={color.light.accent_content} size="$5" textAlign="center">
-                            Start dienst
+                            Activeer
                         </SizableText>
                     </Button>
                 </YStack>
