@@ -5,7 +5,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import ActivateScreen from '../screens/activate_screen';
 import StartShiftScreen from "../screens/startShift_screen";
 import HomeScreen from "../screens/home_screen";
-import IntakeScreen from "../screens/intake_screen";
 
 
 // Create a Stack Navigator
@@ -26,6 +25,10 @@ export default function StackNavigator() {
                           options={{
                               headerShown: false, // Keep header hidden
                           }}/>
+            <Stack.Screen name="PatientListScreen" component={PatientListScreen}
+                            options={{
+                                headerShown: false, // Keep header hidden
+                            }}/>
             <Stack.Screen name={"IntakeScreen"} component={IntakeScreen}
                             options={{
                                 headerShown: false, // Keep header hidden
