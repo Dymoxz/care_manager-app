@@ -5,6 +5,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import ActivateScreen from '../screens/activate_screen';
 import StartShiftScreen from "../screens/startShift_screen";
 import HomeScreen from "../screens/home_screen";
+import IntakeScreen from "../screens/intake_screen";
+import PatientListScreen from "../screens/patientList_screen";
 
 
 // Create a Stack Navigator
