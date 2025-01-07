@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { Button, Input, SizableText, XStack, YStack } from 'tamagui';
 import { Image, Dimensions } from 'react-native';
 import color from "../../constants/Colors";
@@ -30,7 +31,7 @@ function PatientCard({ name, room, hasAlert }: PatientCardProps) {
                 {hasAlert && (
                     <YStack mr="$3">
                         <AlertCircle
-                            style={{
+                             style={{
                                 width: '$3', // Increased size
                                 height: '$3', // Increased size
                                 color: 'red', // Set color to red
@@ -68,11 +69,19 @@ function PatientCard({ name, room, hasAlert }: PatientCardProps) {
 }
 
 export default function KinderOverzichtScreen({ navigation }) {
+    const [searchQuery, setSearchQuery] = useState('');
     const patients = [
         { name: 'Dymo Waltheer', room: '4b', hasAlert: true },
         { name: 'Menno Emmerik', room: '5b', hasAlert: false },
         { name: 'Stef Rensma', room: '6a', hasAlert: true },
     ];
+
+    // Filter patients based on the search query
+    const filteredPatients = patients.filter(
+        (patient) =>
+            patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.room.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <YStack f={1} bg="#D3F4F6" px="$6" py="$4" space="$4" ai="center" >
@@ -97,6 +106,7 @@ export default function KinderOverzichtScreen({ navigation }) {
                 </SizableText>
             </XStack>
 
+
             {/* Search Input */}
             <Input
                 placeholder="Zoek een patiënt of kamer"
@@ -107,11 +117,13 @@ export default function KinderOverzichtScreen({ navigation }) {
                 py="$3"
                 fontSize="$6"
                 mb="$4"
+                value={searchQuery}
+                onChangeText={(text) => setSearchQuery(text)} // Update search query
             />
 
             {/* Patient List */}
             <YStack space="$3">
-                {patients.map((patient, index) => (
+                {filteredPatients.map((patient, index) => (
                     <PatientCard
                         key={index}
                         name={patient.name}
