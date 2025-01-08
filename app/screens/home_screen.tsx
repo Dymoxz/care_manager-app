@@ -5,9 +5,9 @@ import {Rocket} from '@tamagui/lucide-icons';
 import color from "../../constants/Colors";
 import colors from "../../constants/Colors";
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
-
+import TitleLayout from "./titleLayout";
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
-const listIcon = <Svg style={{}} width='40%' height='50%' data-name="Layer 1" viewBox="0 0 128 128"><Path fill="#2d4356"
+const listIcon = <Svg width='40%' height='50%' data-name="Layer 1" viewBox="0 0 128 128"><Path fill="#2d4356"
                                                                                                           d="M102,0H26a8.01062,8.01062,0,0,0-8,8V120a8.01066,8.01066,0,0,0,8,8H93a4.0041,4.0041,0,0,0,2.83-1.17l13-13A4.0039,4.0039,0,0,0,110,111V8A8.01062,8.01062,0,0,0,102,0ZM37,4H91V9.4H82a1.96378,1.96378,0,0,0-.59.09L64,14.91,46.59,9.49A1.96378,1.96378,0,0,0,46,9.4L37,9.39Zm69,107L93,124H26a3.99891,3.99891,0,0,1-4-4V8a3.99887,3.99887,0,0,1,4-4h7V9.53a3.93432,3.93432,0,0,0,4,3.87h8.7l17.71,5.51a1.9785,1.9785,0,0,0,1.18005,0L82.3,13.4H91a3.93432,3.93432,0,0,0,4-3.87V4h7a3.99887,3.99887,0,0,1,4,4Z"/><Path
     fill="#fc785e"
     d="M91,4V9.4H82a1.96378,1.96378,0,0,0-.59.09L64,14.91,46.59,9.49A1.96378,1.96378,0,0,0,46,9.4L37,9.39V4Z"/><Path
@@ -37,7 +37,7 @@ const listIcon = <Svg style={{}} width='40%' height='50%' data-name="Layer 1" vi
     width="6" height="2" x="30" y="78" fill="#0f423c" opacity=".25"/><Rect width="6" height="2" x="30"
                                                                            y="98" fill="#0f423c"
                                                                            opacity=".25"/></Svg>
-const doctorIcon = <Svg style={{}} width='40%' height="50%" data-name="Layer 2" viewBox="0 0 128 128"><Path
+const doctorIcon = <Svg width='40%' height="50%" data-name="Layer 2" viewBox="0 0 128 128"><Path
     fill="#e1ebf4"
     d="m116.46 96.4-.01-.06v-.07c-1.13-17.58-25.31-21.65-25.56-21.69l-.03-.01h-.04a16.78 16.78 0 0 1-5.13-1.78c-2.51 9.49-7.46 16.31-13.83 19.37-.54 2.37-2.77 4.13-5.85 4.66a1.818 1.818 0 0 0 .43 1.25c1.13 1.22 4.61 1.16 7.17 1.13a25.133 25.133 0 0 1 3.88.11c4.28.61 8.75 4.37 8.5 9.37a7.87 7.87 0 0 1-5.01 6.72 5.906 5.906 0 0 1-.43 1.87A6.004 6.004 0 0 1 75 121a5.853 5.853 0 0 1-2.27-.45A5.999 5.999 0 0 1 75 109a5.853 5.853 0 0 1 2.27.45 5.978 5.978 0 0 1 2.59 2.04 3.783 3.783 0 0 0 2.14-3.01c.13-2.66-2.52-4.85-5.08-5.21a26.438 26.438 0 0 0-3.25-.08c-3.49.06-7.83.13-10.17-2.41a5.794 5.794 0 0 1-1.49-3.95c-2.86-.49-4.98-2.04-5.72-4.15C48.85 90 43.42 83.27 41.08 73.5a17.43 17.43 0 0 1-3.64 1.07h-.03l-.04.01c-.24.04-24.43 4.19-25.55 21.69l-.02.17-.02.17a101.944 101.944 0 0 0-.25 23.02 5.238 5.238 0 0 0 5.03 4.37h95.15a5.05 5.05 0 0 0 4.85-4.33 143.73 143.73 0 0 0-.1-23.27Zm-74.76 3.89a4.482 4.482 0 0 1-4.7 4.21h-.3v.57a4.332 4.332 0 0 1-4.21 4.43h-3.58a4.332 4.332 0 0 1-4.21-4.43v-.57h-.57a4.332 4.332 0 0 1-4.43-4.21v-3.58a4.332 4.332 0 0 1 4.43-4.21h.57v-.3a4.484 4.484 0 0 1 4.22-4.7h3.57a4.482 4.482 0 0 1 4.21 4.7v.3h.3a4.482 4.482 0 0 1 4.7 4.21Z"/><Path
     fill="#9fa5aa"
@@ -222,7 +222,7 @@ export function DemoCard({title, icon, onPress, ...props}: CardProps & {
     onPress: () => void
 }) {
     return (
-        <Card size="$4" bordered {...props} bg="white" onPress={onPress} borderRadius="$6" elevation='$0.25' jc="center"
+        <Card size="$4" bordered {...props} bg={color.light.container_alt} onPress={onPress} borderRadius="$6" elevation='$0.25' jc="center"
               px='$2' height='auto' maxHeight='$14'>
             <YStack ai="center" jc="center" py='$4'>
                 {icon}
@@ -250,77 +250,74 @@ export default function HomeScreen({navigation}) {
     const cardHeight = cardWidth * 0.8;
 
     return (
-        <YStack f={1} bg={color.light.background} pt='$8'>
-            <ScrollView
-                contentContainerStyle={{
-                    padding: cardSpacing,
-                    paddingBottom: screenHeight * 0.1, // Extra padding for button space
-                }}
-                style={{backgroundColor: 'transparent'}}
-            >
-                <Paragraph size="$9" fontWeight="700" py="$6" style={{textAlign: 'center'}}>
-                    Selecteer een taak
-                </Paragraph>
-
-                <YStack space={cardSpacing}>
-                    {pages.map((page, index) => {
-                        const isFirstInRow = index % 3 === 0;
-
-                        return (
-                            isFirstInRow && (
-                                <XStack key={index} space={cardSpacing}>
-                                    {pages.slice(index, index + 3).map((page, subIndex) => (
-                                        <DemoCard
-                                            key={subIndex + index}
-                                            title={page.title}
-                                            icon={page.icon}
-                                            onPress={() => navigation.navigate(page.navLink)}
-                                            width={cardWidth}
-                                            height={cardHeight}
-                                            animation="bouncy"
-                                            hoverStyle={{scale: 0.990}}
-                                            pressStyle={{scale: 0.975}}
-                                        />
-                                    ))}
-                                </XStack>
-                            )
-                        );
-                    })}
-                </YStack>
-            </ScrollView>
-
-            {/* Fixed Button */}
-            <YStack
-                position="absolute"
-                bottom='$6'
-                left={0}
-                right={0}
-                ai="center"
-                style={{
-                    backgroundColor: 'transparent',
-                }}
-            >
-                <Button
-                    bg={color.light.danger}
-                    borderRadius="$10"
-                    width={(screenWidth * 50) / 100}
-                    height="$6"
-                    pressStyle={{
-                        bg: color.light.danger_focus,
+            <TitleLayout titleText='Selecteer een taak'>
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingHorizontal: cardSpacing,
+                        paddingBottom: screenHeight * 0.1, // Extra padding for button space
                     }}
-                    elevation='$0.25'
-                    borderColor={color.light.danger_focus}
-                    onPress={() => {
-                        navigation.navigate('StartShiftScreen');
-                    }
-
-                    }
+                    style={{backgroundColor: 'transparent'}}
                 >
-                    <SizableText col='white' size="$4" textAlign="center">
-                        Dienst Beëindigen
-                    </SizableText>
-                </Button>
-            </YStack>
-        </YStack>
+                    <YStack space={cardSpacing}>
+                        {pages.map((page, index) => {
+                            const isFirstInRow = index % 3 === 0;
+
+                            return (
+                                isFirstInRow && (
+                                    <XStack key={index} space={cardSpacing}>
+                                        {pages.slice(index, index + 3).map((page, subIndex) => (
+                                            <DemoCard
+                                                key={subIndex + index}
+                                                title={page.title}
+                                                icon={page.icon}
+                                                onPress={() => navigation.navigate(page.navLink)}
+                                                width={cardWidth}
+                                                height={cardHeight}
+                                                animation="bouncy"
+                                                hoverStyle={{scale: 0.990}}
+                                                pressStyle={{scale: 0.975}}
+                                            />
+                                        ))}
+                                    </XStack>
+                                )
+                            );
+                        })}
+                    </YStack>
+                </ScrollView>
+
+                {/* Fixed Button */}
+                <YStack
+                    position="absolute"
+                    bottom='$6'
+                    left={0}
+                    right={0}
+                    ai="center"
+                    style={{
+                        backgroundColor: 'transparent',
+                    }}
+                >
+                    <Button
+                        bg={color.light.danger}
+                        borderRadius="$10"
+                        width={(screenWidth * 50) / 100}
+                        height="$6"
+                        pressStyle={{
+                            bg: color.light.danger_focus,
+                        }}
+                        elevation='$0.25'
+                        borderColor={color.light.danger_focus}
+                        onPress={() => {
+                            navigation.navigate('StartShiftScreen');
+                        }
+
+                        }
+                    >
+                        <SizableText col='white' size="$4" textAlign="center">
+                            Dienst Beëindigen
+                        </SizableText>
+                    </Button>
+                </YStack>
+            </TitleLayout>
+
     );
 }

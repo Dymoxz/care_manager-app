@@ -20,7 +20,7 @@ export default function IntakeScreen({ navigation }) {
             bg={color.light.background}
         >
             <YStack
-                bg="#E1F4F6"
+                bg={color.light.container}
                 width={(screenWidth * 80) / 100}
                 height={(screenHeight * 70) / 100}
                 borderRadius="$10"

@@ -45,7 +45,7 @@ export default function StartShiftScreen({ navigation }) {
                 {/* Welcome Text Section */}
                 <YStack ai="center" jc="center" mt="$4">
                     <SizableText
-                        col={color.light.accent_content}
+                        col={color.light.text}
                         size="$9"
                         textAlign="center"
                         fontWeight="700" // Use bold weight
@@ -53,7 +53,7 @@ export default function StartShiftScreen({ navigation }) {
                         Welkom terug
                     </SizableText>
                     <SizableText
-                        col={color.light.accent_content}
+                        col={color.light.text}
                         size="$9"
                         textAlign="center"
                         fontWeight="700" // Use bold weight

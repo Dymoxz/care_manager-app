@@ -1,11 +1,11 @@
-import React from 'react';
-import { useState } from 'react';
-import { Button, Input, SizableText, XStack, YStack } from 'tamagui';
-import { Image, Dimensions } from 'react-native';
+import React, {useState} from 'react';
+import {Button, Input, SizableText, XStack, YStack} from 'tamagui';
+import {Dimensions} from 'react-native';
 import color from "../../constants/Colors";
-import {Bed, AlertCircle, FileHeart, ArrowLeft, Search} from '@tamagui/lucide-icons';
+import {AlertCircle, ArrowLeft, Bed, FileHeart} from '@tamagui/lucide-icons';
+import TitleLayout from "./titleLayout";
 
-const { width: screenWidth } = Dimensions.get('window');
+const {width: screenWidth} = Dimensions.get('window');
 
 interface PatientCardProps {
     name: string;
@@ -13,41 +13,33 @@ interface PatientCardProps {
     hasAlert: boolean;
 }
 
-function PatientCard({ name, room, hasAlert }: PatientCardProps) {
+function PatientCard({name, room, hasAlert}: PatientCardProps) {
 
     return (
         <XStack
-            bg="white"
-            borderRadius="$6"
-            p="$4"
-            ai="center"
-            jc="space-between"
-            mb="$4"
-            elevation="$0.25"
-            mt="$2"
-            width={(screenWidth * 90) / 100}
+                bg={color.light.container_alt}
+                borderRadius="$6"
+                p="$4"
+                py="$5"
+                ai="center"
+                jc="space-between"
+                mb="$4"
+                elevation="$0.25"
+                width={(screenWidth * 90) / 100}
         >
             <XStack ai="center">
-                {hasAlert && (
-                    <YStack mr="$3">
-                        <AlertCircle
-                             style={{
-                                width: '$3', // Increased size
-                                height: '$3', // Increased size
-                                color: 'red', // Set color to red
-                            }}
-                        />
-                    </YStack>
-                )}
+                <YStack mr="$2" ml='$2'>
+                    <AlertCircle size="$2" color={hasAlert ? color.light.danger : color.light.container_alt}/>
+                </YStack>
 
-                <YStack>
+                <YStack ml='$4'>
                     <SizableText size="$8" fontWeight="700" col={color.light.text}>
                         {name}
                     </SizableText>
-                    <XStack ai="center" mt="$2">
+                    <XStack ai="center" mt="$1">
                         {/* Adjust the size of the <Bed /> icon */}
-                        <Bed style={{ width: 16, height: 16, marginRight: 6 }} />
-                        <SizableText size="$4" col={color.light.muted}>
+                        <Bed style={{}} mr='$2'/>
+                        <SizableText size="$4" col={color.light.text}>
                             Kamer {room}
                         </SizableText>
                     </XStack>
@@ -56,82 +48,89 @@ function PatientCard({ name, room, hasAlert }: PatientCardProps) {
             <Button
                 bg={color.light.accent}
                 borderRadius="$10"
-                width={60}
-                height={60}
+                width='$5'
+                mr='$2'
+                height='$5'
                 animation="bouncy"
-                hoverStyle={{ scale: 0.925 }}
-                pressStyle={{ scale: 0.875 }}
+                hoverStyle={{scale: 0.990, backgroundColor: color.light.accent_focus}}
+                pressStyle={{scale: 0.975, backgroundColor: color.light.accent_focus}}
+                icon={<FileHeart size='$2' color={color.light.accent_content}/>}
             >
-                <FileHeart/>
+
             </Button>
         </XStack>
     );
 }
 
-export default function KinderOverzichtScreen({ navigation }) {
+export default function KinderOverzichtScreen({navigation}) {
     const [searchQuery, setSearchQuery] = useState('');
     const patients = [
-        { name: 'Dymo Waltheer', room: '4b', hasAlert: true },
-        { name: 'Menno Emmerik', room: '5b', hasAlert: false },
-        { name: 'Stef Rensma', room: '6a', hasAlert: true },
+        {name: 'Dymo Waltheer', room: '4b', hasAlert: true},
+        {name: 'Menno Emmerik', room: '5b', hasAlert: false},
+        {name: 'Stef Rensma', room: '6a', hasAlert: true},
     ];
 
     // Filter patients based on the search query
     const filteredPatients = patients.filter(
-        (patient) =>
-            patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.room.toLowerCase().includes(searchQuery.toLowerCase())
+        (patient) => {
+            const nameParts = patient.name.toLowerCase().split(' ');
+            return nameParts.some(part => part.startsWith(searchQuery.toLowerCase())) ||
+                patient.room.toLowerCase().startsWith(searchQuery.toLowerCase());
+        }
     );
 
     return (
-        <YStack f={1} bg="#D3F4F6" px="$6" py="$4" space="$4" ai="center" >
-            {/* Header Section */}
-            <XStack ai="center" jc="flex-start" mb="$4" width="100%">
-                <Button
-                    bg="#0D8F83"
-                    borderRadius="$10"
-                    width={50}
-                    height={50}
-                    onPress={() => navigation.goBack()}
-                    mr="$4"
-                    mt="$8"
-                    animation="bouncy"
-                    hoverStyle={{ scale: 0.925 }}
-                    pressStyle={{ scale: 0.875 }}
-                >
-                    <ArrowLeft />
-                </Button>
-                <SizableText size="$9" fontWeight="700" col={color.light.text} ml="$2" mt="$8">
-                    Kinder overzicht
-                </SizableText>
-            </XStack>
 
+<TitleLayout
+    titleText='Kinder Overzicht'
+    topContent={
+<Button
+    bg={color.light.primary}
+    borderRadius="$10"
+    width='$3'
+    height='$3'
+    animation="bouncy"
+    hoverStyle={{scale: 0.990, backgroundColor: color.light.primary_focus}}
+    pressStyle={{scale: 0.975, backgroundColor: color.light.primary_focus}}
+    icon={<ArrowLeft size='$2' color={'white'}/>}
+    onPress={() => navigation.goBack()}
+    position='absolute'
+    left={screenWidth * 0.05}
+    top='$5'
+    // style={{ position: 'absolute', left: '20', top: 10 }}
+/>
+}
+>
+    <YStack ai="center">
+        <Input
+            placeholder="Zoek een patiënt of kamer"
+            bg="white"
+            borderRadius="$6"
+            width={(screenWidth * 90) / 100}
+            px="$4"
+            py="$4"
+            h='auto'
+            fontSize="$6"
+            mb="$3"
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)} // Update search query
+        />
 
-            {/* Search Input */}
-            <Input
-                placeholder="Zoek een patiënt of kamer"
-                bg="white"
-                borderRadius="$6"
-                width="100%"
-                px="$4"
-                py="$3"
-                fontSize="$6"
-                mb="$4"
-                value={searchQuery}
-                onChangeText={(text) => setSearchQuery(text)} // Update search query
-            />
-
-            {/* Patient List */}
-            <YStack space="$3">
-                {filteredPatients.map((patient, index) => (
-                    <PatientCard
-                        key={index}
-                        name={patient.name}
-                        room={patient.room}
-                        hasAlert={patient.hasAlert}
-                    />
-                ))}
-            </YStack>
+        {/* Patient List */}
+        <YStack space="$1" width={(screenWidth * 90) / 100}>
+            {filteredPatients.map((patient, index) => (
+                <PatientCard
+                    key={index}
+                    name={patient.name}
+                    room={patient.room}
+                    hasAlert={patient.hasAlert}
+                />
+            ))}
         </YStack>
+    </YStack>
+</TitleLayout>
+
+
+
     );
 }

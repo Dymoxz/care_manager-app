@@ -7,7 +7,7 @@ import StartShiftScreen from "../screens/startShift_screen";
 import HomeScreen from "../screens/home_screen";
 import IntakeScreen from "../screens/intake_screen";
 import PatientListScreen from "../screens/patientList_screen";
-
+import ChildDetailScreen from "../screens/childDetail_screen";
 
 // Create a Stack Navigator
 const Stack = createStackNavigator();
@@ -35,6 +35,12 @@ export default function StackNavigator() {
                             options={{
                                 headerShown: false, // Keep header hidden
                             }}/>
+            <Stack.Screen name="ChildDetailScreen" component={ChildDetailScreen}
+                            options={{
+                                headerShown: false, // Keep header hidden
+                            }}/>
+
+
         </Stack.Navigator>
     );
 }
