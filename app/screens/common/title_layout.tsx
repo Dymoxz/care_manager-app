@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paragraph, XStack, YStack } from 'tamagui';
-import color from '../../constants/Colors';
+import color from '../../../constants/Colors';
 import {Dimensions} from "react-native";
 
 const {width: screenWidth} = Dimensions.get('window');

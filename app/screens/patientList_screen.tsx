@@ -3,7 +3,7 @@ import {Button, Input, SizableText, XStack, YStack} from 'tamagui';
 import {Dimensions} from 'react-native';
 import color from "../../constants/Colors";
 import {AlertCircle, ArrowLeft, Bed, FileHeart} from '@tamagui/lucide-icons';
-import TitleLayout from "./title_layout";
+import TitleLayout from "./common/title_layout";
 
 const {width: screenWidth} = Dimensions.get('window');
 

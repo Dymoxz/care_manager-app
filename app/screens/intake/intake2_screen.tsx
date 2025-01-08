@@ -1,5 +1,5 @@
 import { Button, Image, SizableText, YStack } from 'tamagui';
-import color from "../../constants/Colors";
+import color from "../../../constants/Colors";
 import { Toast } from "@tamagui/toast";
 import React from "react";
 import { Dimensions } from "react-native";
@@ -10,7 +10,7 @@ function user_name() {
     return 'J. Smith';
 }
 
-export default function IntakeScreen({ navigation }) {
+export default function IntakeTwoScreen({ navigation }) {
     return (
         <YStack
             f={1}
@@ -31,7 +31,7 @@ export default function IntakeScreen({ navigation }) {
                 {/* Image Section */}
                 <YStack ai="center" jc="center" mt="$4">
                     <Image
-                        src={require('../../assets/images/skilled-Hospice-Nurse-768x612.png')}
+                        src={require('../../../assets/images/skilled-Hospice-Nurse-768x612.png')}
                         style={{
                             width: '60%',
                             aspectRatio: 4 / 3,
