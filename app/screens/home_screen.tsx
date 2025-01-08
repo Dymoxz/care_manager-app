@@ -5,7 +5,7 @@ import {Rocket} from '@tamagui/lucide-icons';
 import color from "../../constants/Colors";
 import colors from "../../constants/Colors";
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
-import TitleLayout from "./titleLayout";
+import TitleLayout from "./title_layout";
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const listIcon = <Svg width='40%' height='50%' data-name="Layer 1" viewBox="0 0 128 128"><Path fill="#2d4356"
                                                                                                           d="M102,0H26a8.01062,8.01062,0,0,0-8,8V120a8.01066,8.01066,0,0,0,8,8H93a4.0041,4.0041,0,0,0,2.83-1.17l13-13A4.0039,4.0039,0,0,0,110,111V8A8.01062,8.01062,0,0,0,102,0ZM37,4H91V9.4H82a1.96378,1.96378,0,0,0-.59.09L64,14.91,46.59,9.49A1.96378,1.96378,0,0,0,46,9.4L37,9.39Zm69,107L93,124H26a3.99891,3.99891,0,0,1-4-4V8a3.99887,3.99887,0,0,1,4-4h7V9.53a3.93432,3.93432,0,0,0,4,3.87h8.7l17.71,5.51a1.9785,1.9785,0,0,0,1.18005,0L82.3,13.4H91a3.93432,3.93432,0,0,0,4-3.87V4h7a3.99887,3.99887,0,0,1,4,4Z"/><Path
