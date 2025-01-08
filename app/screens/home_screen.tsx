@@ -4,6 +4,7 @@ import {Dimensions} from 'react-native';
 import {Rocket} from '@tamagui/lucide-icons';
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
 import TitleLayout from "./common/title_layout";
+import ShiftScreen from "./shift/shift_screen";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
@@ -271,10 +272,10 @@ export default function HomeScreen({navigation}) {
     const pages = [
 
         {title: 'Intake', navLink: 'IntakeScreen', icon: intakeIcon},
-        {title: 'Afspraak', navLink: 'ActivateScreen', icon: agreementIcon},
-        {title: 'Medcheck', navLink: 'ActivateScreen', icon: medcheckIcon},
+        {title: 'Afspraak', navLink: 'AgreementPickChildScreen', icon: agreementIcon},
+        {title: 'Medcheck', navLink: 'MedcheckPickChildScreen', icon: medcheckIcon},
         {title: 'Patïenten', navLink: 'PatientListScreen', icon: listIcon},
-        {title: 'Jouw dienst', navLink: 'ActivateScreen', icon: doctorIcon},
+        {title: 'Jouw dienst', navLink: 'ShiftScreen', icon: doctorIcon},
         {title: 'Plattegrond', navLink: 'MapScreen', icon: mapIcon},
         {title: 'Activate', navLink: 'ActivateScreen', icon: <Rocket/>},
     ];

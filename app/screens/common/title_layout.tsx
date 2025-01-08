@@ -35,6 +35,7 @@ const TitleLayout: React.FC<TitleLayoutProps> = ({
                     py="$6"
                     style={{ textAlign: 'left' }}
                     ml={screenWidth * 0.05}
+                    col={'$text'}
                 >
                     {titleText}
                 </Paragraph>

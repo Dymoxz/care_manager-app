@@ -3,6 +3,7 @@ import {Button, Input, SizableText, XStack, YStack} from 'tamagui';
 import {Dimensions} from 'react-native';
 import {AlertCircle, ArrowLeft, Bed, FileHeart} from '@tamagui/lucide-icons';
 import TitleLayout from "./common/title_layout";
+import BackButton from "./common/back_button";
 
 const {width: screenWidth} = Dimensions.get('window');
 
@@ -16,15 +17,15 @@ function PatientCard({name, room, hasAlert}: PatientCardProps) {
 
     return (
         <XStack
-                bg='$container_alt'
-                borderRadius="$6"
-                p="$4"
-                py="$5"
-                ai="center"
-                jc="space-between"
-                mb="$4"
-                elevation="$0.25"
-                width={(screenWidth * 90) / 100}
+            bg='$container_alt'
+            borderRadius="$6"
+            p="$4"
+            py="$5"
+            ai="center"
+            jc="space-between"
+            mb="$4"
+            elevation="$0.25"
+            width={(screenWidth * 90) / 100}
         >
             <XStack ai="center">
                 <YStack mr="$2" ml='$2'>
@@ -80,55 +81,40 @@ export default function KinderOverzichtScreen({navigation}) {
 
     return (
 
-<TitleLayout
-    titleText='Kinder Overzicht'
-    topContent={
-<Button
-    bg='$primary'
-    borderRadius="$10"
-    width='$3'
-    height='$3'
-    animation="bouncy"
-    hoverStyle={{scale: 0.990, backgroundColor: '$primary_focus'}}
-    pressStyle={{scale: 0.975, backgroundColor: '$primary_focus'}}
-    icon={<ArrowLeft size='$2' color={'white'}/>}
-    onPress={() => navigation.goBack()}
-    position='absolute'
-    left={screenWidth * 0.05}
-    top='$5'
-    // style={{ position: 'absolute', left: '20', top: 10 }}
-/>
-}
->
-    <YStack ai="center">
-        <Input
-            placeholder="Zoek een patiënt of kamer"
-            bg="white"
-            borderRadius="$6"
-            width={(screenWidth * 90) / 100}
-            px="$4"
-            py="$4"
-            h='auto'
-            fontSize="$6"
-            mb="$3"
-            value={searchQuery}
-            onChangeText={(text) => setSearchQuery(text)} // Update search query
-        />
-
-        {/* Patient List */}
-        <YStack space="$1" width={(screenWidth * 90) / 100}>
-            {filteredPatients.map((patient, index) => (
-                <PatientCard
-                    key={index}
-                    name={patient.name}
-                    room={patient.room}
-                    hasAlert={patient.hasAlert}
+        <TitleLayout
+            titleText='Kinder Overzicht'
+            topContent={
+                <BackButton navigation={navigation}/>
+            }
+        >
+            <YStack ai="center">
+                <Input
+                    placeholder="Zoek een patiënt of kamer"
+                    bg="white"
+                    borderRadius="$6"
+                    width={(screenWidth * 90) / 100}
+                    px="$4"
+                    py="$4"
+                    h='auto'
+                    fontSize="$6"
+                    mb="$3"
+                    value={searchQuery}
+                    onChangeText={(text) => setSearchQuery(text)} // Update search query
                 />
-            ))}
-        </YStack>
-    </YStack>
-</TitleLayout>
 
+                {/* Patient List */}
+                <YStack space="$1" width={(screenWidth * 90) / 100}>
+                    {filteredPatients.map((patient, index) => (
+                        <PatientCard
+                            key={index}
+                            name={patient.name}
+                            room={patient.room}
+                            hasAlert={patient.hasAlert}
+                        />
+                    ))}
+                </YStack>
+            </YStack>
+        </TitleLayout>
 
 
     );
