@@ -1,5 +1,4 @@
 import { Button, Image, SizableText, YStack } from 'tamagui';
-import color from "../../../constants/Colors";
 import { Toast } from "@tamagui/toast";
 import React from "react";
 import { Dimensions } from "react-native";
@@ -17,10 +16,10 @@ export default function IntakeOneScreen({ navigation }) {
             ai="center"
             jc="center"
             px="$10"
-            bg={color.light.background}
+            bg='$background'
         >
             <YStack
-                bg={color.light.container}
+                bg='$container'
                 width={(screenWidth * 80) / 100}
                 height={(screenHeight * 70) / 100}
                 borderRadius="$10"

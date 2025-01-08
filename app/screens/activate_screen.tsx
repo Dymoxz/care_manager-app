@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Button, SizableText, YStack, Image, Input, XStack } from 'tamagui';
 import { Dimensions } from 'react-native';
-import color from '../../constants/Colors';
-import { Toast, useToastController } from '@tamagui/toast'; // Import for toast
+import { useToastController } from '@tamagui/toast'; // Import for toast
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -46,7 +45,7 @@ export default function ActivateScreen({ navigation }) {
             ai="center"
             jc="center"
             px="$10"
-            bg={color.light.background}
+            bg='$background'
         >
             <YStack
                 bg="#E1F4F6"
@@ -101,16 +100,16 @@ export default function ActivateScreen({ navigation }) {
                 {/* Button Section */}
                 <YStack ai="center" jc="center" mt="$6" mb="$4">
                     <Button
-                        bg={color.light.accent}
+                        bg='$accent'
                         borderRadius="$10"
                         width={(screenWidth * 50) / 100}
                         height="$6"
                         pressStyle={{
-                            bg: color.light.accent_focus,
+                            bg: '$accent_focus',
                         }}
                         onPress={() => ActivateDevice(bigNumber, navigation, showErrorToast, showAlreadyActivatedToast)} // Pass input value and showErrorToast to function
                     >
-                        <SizableText col={color.light.accent_content} size="$5" textAlign="center">
+                        <SizableText col='$accent_content' size="$5" textAlign="center">
                             Activeer Apparaat
                         </SizableText>
                     </Button>

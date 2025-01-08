@@ -1,6 +1,4 @@
 import { Button, Image, SizableText, YStack } from 'tamagui';
-import color from "../../constants/Colors";
-import { Toast } from "@tamagui/toast";
 import React from "react";
 import { Dimensions } from "react-native";
 
@@ -17,7 +15,7 @@ export default function StartShiftScreen({ navigation }) {
             ai="center"
             jc="center"
             px="$10"
-            bg={color.light.background}
+            bg='$background'
         >
             <YStack
                 bg="#E1F4F6"
@@ -45,7 +43,7 @@ export default function StartShiftScreen({ navigation }) {
                 {/* Welcome Text Section */}
                 <YStack ai="center" jc="center" mt="$4">
                     <SizableText
-                        col={color.light.text}
+                        col='$text'
                         size="$9"
                         textAlign="center"
                         fontWeight="700" // Use bold weight
@@ -53,7 +51,7 @@ export default function StartShiftScreen({ navigation }) {
                         Welkom terug
                     </SizableText>
                     <SizableText
-                        col={color.light.text}
+                        col='$text'
                         size="$9"
                         textAlign="center"
                         fontWeight="700" // Use bold weight
@@ -68,18 +66,18 @@ export default function StartShiftScreen({ navigation }) {
                 {/* Button Section */}
                 <YStack ai="center" jc="flex-end" mb="$4">
                     <Button
-                        bg={color.light.accent}
+                        bg='$accent'
                         borderRadius="$10"
                         width={(screenWidth * 50) / 100}
                         height="$6"
                         pressStyle={{
-                            bg: color.light.accent_focus,
+                            bg: '$accent_focus',
                         }}
                         onPress={() => {
                             navigation.navigate("HomeScreen");
                         }}
                     >
-                        <SizableText col={color.light.accent_content} size="$5" textAlign="center">
+                        <SizableText col='$accent_content' size="$5" textAlign="center">
                             Start dienst
                         </SizableText>
                     </Button>

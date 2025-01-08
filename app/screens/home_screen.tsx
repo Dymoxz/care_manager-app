@@ -2,13 +2,13 @@ import {Button, Card, CardProps, Paragraph, ScrollView, SizableText, XStack, YSt
 import React from 'react';
 import {Dimensions} from 'react-native';
 import {Rocket} from '@tamagui/lucide-icons';
-import color from "../../constants/Colors";
-import colors from "../../constants/Colors";
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
 import TitleLayout from "./common/title_layout";
+
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+
 const listIcon = <Svg width='40%' height='50%' data-name="Layer 1" viewBox="0 0 128 128"><Path fill="#2d4356"
-                                                                                                          d="M102,0H26a8.01062,8.01062,0,0,0-8,8V120a8.01066,8.01066,0,0,0,8,8H93a4.0041,4.0041,0,0,0,2.83-1.17l13-13A4.0039,4.0039,0,0,0,110,111V8A8.01062,8.01062,0,0,0,102,0ZM37,4H91V9.4H82a1.96378,1.96378,0,0,0-.59.09L64,14.91,46.59,9.49A1.96378,1.96378,0,0,0,46,9.4L37,9.39Zm69,107L93,124H26a3.99891,3.99891,0,0,1-4-4V8a3.99887,3.99887,0,0,1,4-4h7V9.53a3.93432,3.93432,0,0,0,4,3.87h8.7l17.71,5.51a1.9785,1.9785,0,0,0,1.18005,0L82.3,13.4H91a3.93432,3.93432,0,0,0,4-3.87V4h7a3.99887,3.99887,0,0,1,4,4Z"/><Path
+                                                                                               d="M102,0H26a8.01062,8.01062,0,0,0-8,8V120a8.01066,8.01066,0,0,0,8,8H93a4.0041,4.0041,0,0,0,2.83-1.17l13-13A4.0039,4.0039,0,0,0,110,111V8A8.01062,8.01062,0,0,0,102,0ZM37,4H91V9.4H82a1.96378,1.96378,0,0,0-.59.09L64,14.91,46.59,9.49A1.96378,1.96378,0,0,0,46,9.4L37,9.39Zm69,107L93,124H26a3.99891,3.99891,0,0,1-4-4V8a3.99887,3.99887,0,0,1,4-4h7V9.53a3.93432,3.93432,0,0,0,4,3.87h8.7l17.71,5.51a1.9785,1.9785,0,0,0,1.18005,0L82.3,13.4H91a3.93432,3.93432,0,0,0,4-3.87V4h7a3.99887,3.99887,0,0,1,4,4Z"/><Path
     fill="#fc785e"
     d="M91,4V9.4H82a1.96378,1.96378,0,0,0-.59.09L64,14.91,46.59,9.49A1.96378,1.96378,0,0,0,46,9.4L37,9.39V4Z"/><Path
     fill="#e1ebf4"
@@ -215,6 +215,39 @@ const agreementIcon = <Svg style={{marginLeft: 8}} width='40%' height="50%" data
                                              opacity=".45"/><Path fill="#e5d0c3"
                                                                   d="M55,6V8a2.00587,2.00587,0,0,0-2-2H33a2.00587,2.00587,0,0,0-2,2V6a2.00587,2.00587,0,0,1,2-2H53A2.00587,2.00587,0,0,1,55,6Z"
                                                                   opacity=".3"/></Svg>
+const mapIcon = <Svg style={{marginLeft: 8}} width='40%' height="50%" data-name="Layer 1" viewBox="0 0 128 128"><Path
+    fill="#fc785e" d="M2.667 50.333h35.5v10.5h-35.5zM90.333 50.167h35.5v10.5h-35.5z"/><Path fill="#e1ebf4"
+                                                                                            d="M6 60.5h32.5v65.167H6zM89.333 60.5h32.5v65.167h-32.5z"/><Path
+    fill="#94e1e4"
+    d="M88 40v84H78v-22a3.999 3.999 0 0 0 4-4v-4a3.999 3.999 0 0 0-4-4H50a3.999 3.999 0 0 0-4 4v4a3.999 3.999 0 0 0 4 4v22H40V40Z"/><Path
+    fill="#e1ebf4" d="M46.125 46.75H81v32.375H46.125z"/><Path fill="#2d4356"
+                                                              d="M128 58v-6a3.999 3.999 0 0 0-4-4H96v4h28v6H96v4h24v62H92V39.86A4 4 0 0 0 95 36v-6a3.999 3.999 0 0 0-4-4H71.42v-3.58H77a2.006 2.006 0 0 0 2-2V9.58a2.006 2.006 0 0 0-2-2h-5.58V2a2.006 2.006 0 0 0-2-2H58.58a2.006 2.006 0 0 0-2 2v5.58H51a2.006 2.006 0 0 0-2 2v10.84a2.006 2.006 0 0 0 2 2h5.58V26H37a3.999 3.999 0 0 0-4 4v6a4 4 0 0 0 3 3.86V124H8V62h24v-4H4v-6h28v-4H4a3.999 3.999 0 0 0-4 4v6a3.999 3.999 0 0 0 4 4v62H2a2 2 0 0 0 0 4h124a2 2 0 0 0 0-4h-2V62a3.999 3.999 0 0 0 4-4ZM53 18.42v-6.84h5.58a1.993 1.993 0 0 0 2-2V4h6.84v5.58a1.993 1.993 0 0 0 2 2H75v6.84h-5.58a1.993 1.993 0 0 0-2 2V26h-6.84v-5.58a1.993 1.993 0 0 0-2-2ZM74 124H54v-22h20ZM50 98v-4h28v4Zm38 26H78v-22a3.999 3.999 0 0 0 4-4v-4a3.999 3.999 0 0 0-4-4H50a3.999 3.999 0 0 0-4 4v4a3.999 3.999 0 0 0 4 4v22H40V40h48Zm3-88H37v-6h54Z"/><Path
+    fill="#e1ebf4" d="M54 102h20v22H54z"/><Path fill="#fc785e" d="M50 94h28v4H50zM37 30h54v6H37z"/><Path fill="#94e1e4"
+                                                                                                         d="M75 11.58v6.84h-5.58a1.993 1.993 0 0 0-2 2V26h-6.84v-5.58a1.993 1.993 0 0 0-2-2H53v-6.84h5.58a1.993 1.993 0 0 0 2-2V4h6.84v5.58a1.993 1.993 0 0 0 2 2Z"/><Path
+    fill="#2d4356"
+    d="M48 82h32a4.004 4.004 0 0 0 4-4V48a4.004 4.004 0 0 0-4-4H48a4.004 4.004 0 0 0-4 4v30a4.004 4.004 0 0 0 4 4Zm24-34h8v7h-8Zm0 11h8.001v8H72Zm0 12h8.002v7H72ZM60 48h8v7h-8Zm0 11h8v8h-8Zm0 12h8v7h-8ZM48 48h8v7h-8Zm0 11h8v8h-8Zm0 12h8v7h-8Z"/><Path
+    fill="#94e1e4" d="M14.333 69H30v48.667H14.333z"/><Path fill="#2d4356"
+                                                           d="M16 66a4.004 4.004 0 0 0-4 4v46a4.004 4.004 0 0 0 4 4h12a4.004 4.004 0 0 0 4-4V70a4.004 4.004 0 0 0-4-4Zm12 50H16v-6h12Zm0-10H16v-6h12Zm0-10H16v-6h12Zm0-10H16v-6h12Zm0-10H16v-6h12Z"/><Path
+    fill="#94e1e4" d="M97.833 68.667H113.5v48.667H97.833z"/><Path fill="#2d4356"
+                                                                  d="M100 120h12a4.004 4.004 0 0 0 4-4V70a4.004 4.004 0 0 0-4-4h-12a4.004 4.004 0 0 0-4 4v46a4.004 4.004 0 0 0 4 4Zm0-50h12v6h-12Zm0 10h12l.001 6H100Zm0 10h12.001v6H100Zm0 10h12.002v6H100Zm0 10h12.003v6H100Z"/><Path
+    fill="#f9dbd7" d="M4 52h28v2H4z" opacity=".3"/><Path fill="#a54b3f" d="M4 56h28v2H4z" opacity=".5"/><Path
+    fill="#f9dbd7" d="M96 52h28v2H96z" opacity=".3"/><Path fill="#f5ffff" d="M60.58 4h6.84v2h-6.84z" opacity=".3"/><Path
+    fill="#426666" d="M60.58 24h6.84v2h-6.84z" opacity=".3"/><Path fill="#f9dbd7" d="M37 30h54v2H37z"
+                                                                   opacity=".3"/><Path fill="#a54b3f"
+                                                                                       d="M37 34h54v2H37zM96 56h28v2H96zM50 96h28v2H50z"
+                                                                                       opacity=".5"/><Path
+    fill="#9fa5aa" d="M92 122h28v2H92z" opacity=".5"/><Path fill="#426666" d="M78 122h10v2H78z" opacity=".3"/><Path
+    fill="#9fa5aa" d="M54 122h20v2H54z" opacity=".5"/><Path fill="#426666" d="M40 122h10v2H40z" opacity=".3"/><Path
+    fill="#9fa5aa" d="M8 122h28v2H8zM60 53h8v2h-8z" opacity=".5"/><Path fill="#426666" d="M16 114h12v2H16z"
+                                                                        opacity=".3"/><Path fill="#fff"
+                                                                                            d="M48 71h8v2h-8zM60 71h8v2h-8zM72 71h8v2h-8zM72 59h8v2h-8zM60 59h8v2h-8zM48 59h8v2h-8zM48 48h8v2h-8zM60 48h8v2h-8zM72 48h8v2h-8z"
+                                                                                            opacity=".5"/><Path
+    fill="#9fa5aa"
+    d="M72 53h8v2h-8zM48 53h8v2h-8zM48 65h8v2h-8zM60 65h8v2h-8zM72 65h8v2h-8zM72 76h8v2h-8zM60 76h8v2h-8zM48 76h8v2h-8z"
+    opacity=".5"/><Path fill="#426666"
+                        d="M16 74h12v2H16zM16 84h12v2H16zM16 94h12v2H16zM16 104h12v2H16zM100 114h12v2h-12zM100 104h12v2h-12zM100 94h12v2h-12zM100 84h12v2h-12zM100 74h12v2h-12z"
+                        opacity=".3"/></Svg>
+
 
 export function DemoCard({title, icon, onPress, ...props}: CardProps & {
     title: string;
@@ -222,12 +255,13 @@ export function DemoCard({title, icon, onPress, ...props}: CardProps & {
     onPress: () => void
 }) {
     return (
-        <Card size="$4" bordered {...props} bg={color.light.container_alt} onPress={onPress} borderRadius="$6" elevation='$0.25' jc="center"
+        <Card size="$4" bordered {...props} bg="$container_alt" onPress={onPress} borderRadius="$6"
+              elevation='$0.25' jc="center"
               px='$2' height='auto' maxHeight='$14'>
             <YStack ai="center" jc="center" py='$4'>
                 {icon}
                 <Paragraph pt='$3' fontWeight='600' textAlign='center' lineHeight='$1'
-                           col={colors.light.text}>{title}</Paragraph>
+                           col={'$text'}>{title}</Paragraph>
             </YStack>
         </Card>
     );
@@ -241,8 +275,8 @@ export default function HomeScreen({navigation}) {
         {title: 'Medcheck', navLink: 'ActivateScreen', icon: medcheckIcon},
         {title: 'Patïenten', navLink: 'PatientListScreen', icon: listIcon},
         {title: 'Jouw dienst', navLink: 'ActivateScreen', icon: doctorIcon},
+        {title: 'Plattegrond', navLink: 'MapScreen', icon: mapIcon},
         {title: 'Activate', navLink: 'ActivateScreen', icon: <Rocket/>},
-
     ];
 
     const cardSpacing = 16;
@@ -250,74 +284,74 @@ export default function HomeScreen({navigation}) {
     const cardHeight = cardWidth * 0.8;
 
     return (
-            <TitleLayout titleText='Selecteer een taak'>
-                <ScrollView
-                    contentContainerStyle={{
-                        paddingHorizontal: cardSpacing,
-                        paddingBottom: screenHeight * 0.1, // Extra padding for button space
-                    }}
-                    style={{backgroundColor: 'transparent'}}
-                >
-                    <YStack space={cardSpacing}>
-                        {pages.map((page, index) => {
-                            const isFirstInRow = index % 3 === 0;
+        <TitleLayout titleText='Selecteer een taak'>
+            <ScrollView
+                contentContainerStyle={{
+                    paddingHorizontal: cardSpacing,
+                    paddingBottom: screenHeight * 0.1, // Extra padding for button space
+                }}
+                style={{backgroundColor: 'transparent'}}
+            >
+                <YStack space={cardSpacing}>
+                    {pages.map((page, index) => {
+                        const isFirstInRow = index % 3 === 0;
 
-                            return (
-                                isFirstInRow && (
-                                    <XStack key={index} space={cardSpacing}>
-                                        {pages.slice(index, index + 3).map((page, subIndex) => (
-                                            <DemoCard
-                                                key={subIndex + index}
-                                                title={page.title}
-                                                icon={page.icon}
-                                                onPress={() => navigation.navigate(page.navLink)}
-                                                width={cardWidth}
-                                                height={cardHeight}
-                                                animation="bouncy"
-                                                hoverStyle={{scale: 0.990}}
-                                                pressStyle={{scale: 0.975}}
-                                            />
-                                        ))}
-                                    </XStack>
-                                )
-                            );
-                        })}
-                    </YStack>
-                </ScrollView>
-
-                {/* Fixed Button */}
-                <YStack
-                    position="absolute"
-                    bottom='$6'
-                    left={0}
-                    right={0}
-                    ai="center"
-                    style={{
-                        backgroundColor: 'transparent',
-                    }}
-                >
-                    <Button
-                        bg={color.light.danger}
-                        borderRadius="$10"
-                        width={(screenWidth * 50) / 100}
-                        height="$6"
-                        pressStyle={{
-                            bg: color.light.danger_focus,
-                        }}
-                        elevation='$0.25'
-                        borderColor={color.light.danger_focus}
-                        onPress={() => {
-                            navigation.navigate('StartShiftScreen');
-                        }
-
-                        }
-                    >
-                        <SizableText col='white' size="$4" textAlign="center">
-                            Dienst Beëindigen
-                        </SizableText>
-                    </Button>
+                        return (
+                            isFirstInRow && (
+                                <XStack key={index} space={cardSpacing}>
+                                    {pages.slice(index, index + 3).map((page, subIndex) => (
+                                        <DemoCard
+                                            key={subIndex + index}
+                                            title={page.title}
+                                            icon={page.icon}
+                                            onPress={() => navigation.navigate(page.navLink)}
+                                            width={cardWidth}
+                                            height={cardHeight}
+                                            animation="bouncy"
+                                            hoverStyle={{scale: 0.990}}
+                                            pressStyle={{scale: 0.975}}
+                                        />
+                                    ))}
+                                </XStack>
+                            )
+                        );
+                    })}
                 </YStack>
-            </TitleLayout>
+            </ScrollView>
+
+            {/* Fixed Button */}
+            <YStack
+                position="absolute"
+                bottom='$6'
+                left={0}
+                right={0}
+                ai="center"
+                style={{
+                    backgroundColor: 'transparent',
+                }}
+            >
+                <Button
+                    bg='$danger'
+                    borderRadius="$10"
+                    width={(screenWidth * 50) / 100}
+                    height="$6"
+                    pressStyle={{
+                        bg: '$danger_focus',
+                    }}
+                    elevation='$0.25'
+                    borderColor='$container_alt'
+                    onPress={() => {
+                        navigation.navigate('StartShiftScreen');
+                    }
+
+                    }
+                >
+                    <SizableText col='white' size="$4" textAlign="center">
+                        Dienst Beëindigen
+                    </SizableText>
+                </Button>
+            </YStack>
+        </TitleLayout>
 
     );
 }

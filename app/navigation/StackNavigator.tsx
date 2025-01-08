@@ -8,13 +8,14 @@ import HomeScreen from "../screens/home_screen";
 import IntakeScreen from "../screens/intake/intake1_screen";
 import PatientListScreen from "../screens/patientList_screen";
 import ChildDetailScreen from "../screens/child-detail/childDetail_screen";
+import MapScreen from "../screens/map_screen";
 
 // Create a Stack Navigator
 const Stack = createStackNavigator();
 
 export default function StackNavigator() {
     return (
-        <Stack.Navigator initialRouteName="ActivateScreen">
+        <Stack.Navigator initialRouteName="HomeScreen">
             <Stack.Screen name="ActivateScreen" component={ActivateScreen}
                           options={{
                               headerShown: false, // Keep header hidden
@@ -36,6 +37,10 @@ export default function StackNavigator() {
                                 headerShown: false, // Keep header hidden
                             }}/>
             <Stack.Screen name="ChildDetailScreen" component={ChildDetailScreen}
+                            options={{
+                                headerShown: false, // Keep header hidden
+                            }}/>
+            <Stack.Screen name={'MapScreen'} component={MapScreen}
                             options={{
                                 headerShown: false, // Keep header hidden
                             }}/>

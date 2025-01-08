@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Input, SizableText, XStack, YStack} from 'tamagui';
 import {Dimensions} from 'react-native';
-import color from "../../constants/Colors";
 import {AlertCircle, ArrowLeft, Bed, FileHeart} from '@tamagui/lucide-icons';
 import TitleLayout from "./common/title_layout";
 
@@ -17,7 +16,7 @@ function PatientCard({name, room, hasAlert}: PatientCardProps) {
 
     return (
         <XStack
-                bg={color.light.container_alt}
+                bg='$container_alt'
                 borderRadius="$6"
                 p="$4"
                 py="$5"
@@ -29,32 +28,32 @@ function PatientCard({name, room, hasAlert}: PatientCardProps) {
         >
             <XStack ai="center">
                 <YStack mr="$2" ml='$2'>
-                    <AlertCircle size="$2" color={hasAlert ? color.light.danger : color.light.container_alt}/>
+                    <AlertCircle size="$2" color={hasAlert ? '$danger' : '$container_alt'}/>
                 </YStack>
 
                 <YStack ml='$4'>
-                    <SizableText size="$8" fontWeight="700" col={color.light.text}>
+                    <SizableText size="$8" fontWeight="700" col='$text'>
                         {name}
                     </SizableText>
                     <XStack ai="center" mt="$1">
                         {/* Adjust the size of the <Bed /> icon */}
                         <Bed style={{}} mr='$2'/>
-                        <SizableText size="$4" col={color.light.text}>
+                        <SizableText size="$4" col='$text'>
                             Kamer {room}
                         </SizableText>
                     </XStack>
                 </YStack>
             </XStack>
             <Button
-                bg={color.light.accent}
+                bg='$accent'
                 borderRadius="$10"
                 width='$5'
                 mr='$2'
                 height='$5'
                 animation="bouncy"
-                hoverStyle={{scale: 0.990, backgroundColor: color.light.accent_focus}}
-                pressStyle={{scale: 0.975, backgroundColor: color.light.accent_focus}}
-                icon={<FileHeart size='$2' color={color.light.accent_content}/>}
+                hoverStyle={{scale: 0.990, backgroundColor: '$accent_focus'}}
+                pressStyle={{scale: 0.975, backgroundColor: '$accent_focus'}}
+                icon={<FileHeart size='$2' color='$accent_content'/>}
             >
 
             </Button>
@@ -85,13 +84,13 @@ export default function KinderOverzichtScreen({navigation}) {
     titleText='Kinder Overzicht'
     topContent={
 <Button
-    bg={color.light.primary}
+    bg='$primary'
     borderRadius="$10"
     width='$3'
     height='$3'
     animation="bouncy"
-    hoverStyle={{scale: 0.990, backgroundColor: color.light.primary_focus}}
-    pressStyle={{scale: 0.975, backgroundColor: color.light.primary_focus}}
+    hoverStyle={{scale: 0.990, backgroundColor: '$primary_focus'}}
+    pressStyle={{scale: 0.975, backgroundColor: '$primary_focus'}}
     icon={<ArrowLeft size='$2' color={'white'}/>}
     onPress={() => navigation.goBack()}
     position='absolute'
