@@ -236,7 +236,7 @@ export function DemoCard({title, icon, onPress, ...props}: CardProps & {
 export default function HomeScreen({navigation}) {
     const pages = [
 
-        {title: 'Intake', navLink: 'ActivateScreen', icon: intakeIcon},
+        {title: 'Intake', navLink: 'IntakeScreen', icon: intakeIcon},
         {title: 'Afspraak', navLink: 'ActivateScreen', icon: agreementIcon},
         {title: 'Medcheck', navLink: 'ActivateScreen', icon: medcheckIcon},
         {title: 'Patïenten', navLink: 'PatientListScreen', icon: listIcon},
