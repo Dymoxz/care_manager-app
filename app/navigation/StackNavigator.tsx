@@ -5,7 +5,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import ActivateScreen from '../screens/activate_screen';
 import StartShiftScreen from "../screens/startShift_screen";
 import HomeScreen from "../screens/home_screen";
-import IntakeScreen from "../screens/intake/intake1_screen";
+import IntakeOneScreen from "../screens/intake/intake1_screen";
+import IntakeTwoScreen from "../screens/intake/intake2_screen";
 import PatientListScreen from "../screens/patientList_screen";
 import ChildDetailScreen from "../screens/child-detail/childDetail_screen";
 import MapScreen from "../screens/map_screen";
@@ -43,6 +44,8 @@ export default function StackNavigator() {
                               headerShown: false, // Keep header hidden
                           }}/>
 
+
+
             {/*Home screen plus all the links that are present in the home screen*/}
             <Stack.Screen name="HomeScreen" component={HomeScreen}
                           options={{
@@ -52,8 +55,11 @@ export default function StackNavigator() {
                             options={{
                                 headerShown: false, // Keep header hidden
                             }}/>
-
-            <Stack.Screen name={"IntakeScreen"} component={IntakeScreen}
+            <Stack.Screen name={"IntakeOneScreen"} component={IntakeOneScreen}
+                            options={{
+                                headerShown: false, // Keep header hidden
+                            }}/>
+            <Stack.Screen name={"IntakeTwoScreen"} component={IntakeTwoScreen}
                             options={{
                                 headerShown: false, // Keep header hidden
                             }}/>
@@ -69,6 +75,8 @@ export default function StackNavigator() {
                           options={{
                               headerShown: false, // Keep header hidden
                           }}/>
+
+
 
             <Stack.Screen name="ChildDetailScreen" component={ChildDetailScreen}
                             options={{
