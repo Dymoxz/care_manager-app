@@ -13,8 +13,23 @@ import AgreementPickChildScreen from "../screens/agreement/agreementPickChild_sc
 import MedcheckPickChildScreen from "../screens/medcheck/medcheckPickChild_screen";
 import ShiftScreen from "../screens/shift/shift_screen";
 
+// Define RootStackParamList directly here
+type RootStackParamList = {
+    ActivateScreen: undefined;
+    StartShiftScreen: undefined;
+    HomeScreen: undefined;
+    PatientListScreen: undefined;
+    IntakeScreen: undefined;
+    AgreementPickChildScreen: undefined;
+    MedcheckPickChildScreen: undefined;
+    ShiftScreen: undefined;
+    ChildDetailScreen: { patient: any };
+    MapScreen: undefined;
+};
+
+
 // Create a Stack Navigator
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();  // Type the navigator
 
 export default function StackNavigator() {
     return (
@@ -28,8 +43,6 @@ export default function StackNavigator() {
                               headerShown: false, // Keep header hidden
                           }}/>
 
-
-
             {/*Home screen plus all the links that are present in the home screen*/}
             <Stack.Screen name="HomeScreen" component={HomeScreen}
                           options={{
@@ -39,6 +52,7 @@ export default function StackNavigator() {
                             options={{
                                 headerShown: false, // Keep header hidden
                             }}/>
+
             <Stack.Screen name={"IntakeScreen"} component={IntakeScreen}
                             options={{
                                 headerShown: false, // Keep header hidden
@@ -55,8 +69,6 @@ export default function StackNavigator() {
                           options={{
                               headerShown: false, // Keep header hidden
                           }}/>
-
-
 
             <Stack.Screen name="ChildDetailScreen" component={ChildDetailScreen}
                             options={{

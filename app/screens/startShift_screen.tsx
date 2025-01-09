@@ -1,6 +1,6 @@
 import { Button, Image, SizableText, YStack } from 'tamagui';
-import React from "react";
-import { Dimensions } from "react-native";
+import React, {useEffect} from "react";
+import {BackHandler, Dimensions} from "react-native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

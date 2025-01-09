@@ -1,41 +1,75 @@
 import React, { useState } from 'react';
 import { Button, SizableText, YStack, Image, Input, XStack } from 'tamagui';
 import { Dimensions } from 'react-native';
-import { useToastController } from '@tamagui/toast'; // Import for toast
+import { useToastController } from '@tamagui/toast';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-function ActivateDevice(bigNumber, navigation, showErrorToast, showAlreadyActivatedToast) {
-    // TODO: Replace this with API request to validate the BIG number
-    if (bigNumber === '1234') {
-        navigation.navigate('StartShiftScreen');
-    } else if (bigNumber === '5') {
-        // Show a different toast when the BIG number is already activated
-        showAlreadyActivatedToast();
-    } else {
-        // Show error toast when BIG number is invalid
-        showErrorToast();
+async function ActivateDevice(bigNumber, showErrorToast, showSuccessToast, navigation) {
+    try {
+        const response = await fetch(
+            `http://192.168.232.224:3000/api/soap/hcp?registrationNumber=${bigNumber}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ bigNumber }),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to activate device');
+        }
+
+        const responseText = await response.text();
+
+        if (!response.ok) {
+            throw new Error('Failed to activate device');
+        }
+
+        // Check if the response is a plain string or JSON
+        if (responseText === 'Niets gevonden') {
+            // Show error toast if the BIG number is not found
+            showErrorToast('No records found for the provided BIG number.');
+        } else {
+            // Try parsing the response as JSON
+            const data = JSON.parse(responseText);
+
+            // Show success toast with the response data
+            const successMessage = `Device activated successfully!
+            Name: ${data.Initial} ${data.BirthSurname}
+            BIG Number: ${data.Big_Number}`;
+            showSuccessToast(successMessage);
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            navigation.navigate('StartShiftScreen');
+
+        }
+    } catch (error) {
+        // Show error toast
+        showErrorToast(error.message || 'An error occurred while activating the device');
     }
 }
 
-export default function ActivateScreen({ navigation }) {
+export default function ActivateScreen({navigation}) {
     const [bigNumber, setBigNumber] = useState(''); // State to manage input value
     const toast = useToastController(); // Toast controller for error messages
 
     // Function to show a custom error toast
-    const showErrorToast = () => {
-        toast.show('Invalid BIG number', {
-            message: "The BIG number you entered is not valid.",
+    const showErrorToast = (message) => {
+        toast.show('Error', {
+            message,
             native: false, // Using custom toast style
         });
     };
 
-    // Function to show the toast for already activated BIG number
-    const showAlreadyActivatedToast = () => {
-        toast.show('BIG number already activated', {
-            message: "This BIG number has already been activated.",
+    // Function to show a success toast
+    const showSuccessToast = (message) => {
+        toast.show('Success', {
+            message,
             native: false, // Using custom toast style
-
         });
     };
 
@@ -107,7 +141,7 @@ export default function ActivateScreen({ navigation }) {
                         pressStyle={{
                             bg: '$accent_focus',
                         }}
-                        onPress={() => ActivateDevice(bigNumber, navigation, showErrorToast, showAlreadyActivatedToast)} // Pass input value and showErrorToast to function
+                        onPress={() => ActivateDevice(bigNumber, showErrorToast, showSuccessToast, navigation)} // Call function with input value
                     >
                         <SizableText col='$accent_content' size="$5" textAlign="center">
                             Activeer Apparaat
