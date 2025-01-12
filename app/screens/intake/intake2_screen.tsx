@@ -1,260 +1,231 @@
-import React, {useState} from "react";
-import { Button, Label, Input, Adapt, getFontSize, Sheet, Select, SizableText, XStack, YStack } from "tamagui"; // Ensure all components are correctly imported
-import { Toast } from "@tamagui/toast"; // Correct import for Toast
-import {Dimensions, PanResponder} from "react-native";
+import React, { useState, useRef, useEffect } from 'react';
+import {YStack, XStack, Text, Button, styled, SizableText, Input, TextArea} from 'tamagui';
+import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
-import {ArrowLeft, Check, ChevronUp, ChevronDown} from "@tamagui/lucide-icons";
-import { LinearGradient } from 'tamagui/linear-gradient'
-import type { FontSizeTokens, SelectProps } from 'tamagui'
+import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
+import {Dimensions} from "react-native";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
-function SelectGenderItem(props: { id: string, native: boolean }) {
-    return null;
-}
+const InputContainer = styled(XStack, {
+    borderWidth: 1,
+    borderColor: '$borderColor',
+    borderRadius: '$4',
+    paddingVertical: '$2',
+    paddingHorizontal: '$3',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    cursor: 'pointer', // For web-like feel
+    overflow: 'hidden', // To handle text overflow
+    backgroundColor: 'white'
+});
 
-export function SelectDemoItem(props) {
-    const [val, setVal] = React.useState("");
+const SelectedItemsText = styled(Text, {
+    flex: 1,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+});
 
-    const items = [
-        {name: 'jongen'},
-        {name: 'meisje'},
-    ]
+const DropdownIndicator = styled(Text, {
+    marginLeft: '$2',
+});
 
-    return (
-        <Select value={val} onValueChange={setVal} disablePreventBodyScroll {...props}>
-            <Select.Trigger width={240} iconAfter={ChevronDown}>
-                <Select.Value placeholder="Geslacht" />
-            </Select.Trigger>
+export default function IntakeTwoScreen ({navigation}) {
+    const [isZiektebeeldModalVisible, setIsZiektebeeldModalVisible] = useState(false);
+    const [selectedZiektebeelden, setSelectedZiektebeelden] = useState<string[]>([]);
 
-            <Adapt when="sm" platform="touch">
-                <Sheet
-                    native={!!props.native}
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                        type: 'spring',
-                        damping: 20,
-                        mass: 1.2,
-                        stiffness: 250,
-                    }}
-                >
-                    <Sheet.Frame
-                        width="100%" // Ensure full width
-                        height="10%" // Set the height to a small percentage (10% of the viewport height)
-                        justifyContent="center"
-                        alignItems="center"
-                        borderRadius="$4" // Optional: Rounding the corners
-                    >
-                        <Sheet.ScrollView>
-                            <Adapt.Contents />
-                        </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                        animation="lazy"
-                        enterStyle={{ opacity: 0 }}
-                        exitStyle={{ opacity: 0 }}
-                    />
-                </Sheet>
-            </Adapt>
+    const availableZiektebeelden = ['Diabetes', 'Astma', 'COPD', 'Hartfalen', 'Reuma', 'Kanker', 'Depressie', 'Hypertensie', 'Migraine', 'Epilepsie', 'Parkinson', 'Alzheimer', 'Osteoporose'];
+    const [ziektebeeldDisplayText, setZiektebeeldDisplayText] = useState('Kies of zoek een ziektebeeld');
 
+    const [isMedicijnenModalVisible, setIsMedicijnenModalVisible] = useState(false);
+    const [selectedMedicijnen, setSelectedMedicijnen] = useState<string[]>([]);
+    const availableMedicijnen = ['Paracetamol', 'Ibuprofen', 'Amoxicillin', 'Lisinopril', 'Atorvastatin'];
+    const [medicijnenDisplayText, setMedicijnenDisplayText] = useState('Kies of zoek medicijnen');
 
+    const [isKamersModalVisible, setIsKamersModalVisible] = useState(false);
+    const [selectedKamers, setSelectedKamers] = useState<string[]>([]);
+    const availableKamers = ['Kamer 101', 'Kamer 102', 'Kamer 201', 'Kamer 202', 'Kamer 301'];
+    const [kamersDisplayText, setKamersDisplayText] = useState('Kies een kamer');
 
-            <Select.Content zIndex={200000}>
-                <Select.ScrollUpButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$1"
-                >
-                    <YStack zIndex={10}>
-                        <ChevronUp size={20} />
-                    </YStack>
-                    <LinearGradient
-                        start={[0, 0]}
-                        end={[0, 1]}
-                        fullscreen
-                        colors={['$background', 'transparent']}
-                        borderRadius="$4"
-                    />
-                </Select.ScrollUpButton>
+    const handleZiektebeeldDone = (items: string[]) => {
+        setSelectedZiektebeelden(items);
+    };
 
-                <Select.Viewport
-                    // to do animations:
-                    // animation="quick"
-                    // animateOnly={['transform', 'opacity']}
-                    // enterStyle={{ o: 0, y: -10 }}
-                    // exitStyle={{ o: 0, y: 10 }}
-                    minWidth={200}
-                >
-                    <Select.Group>
-                        <Select.Label>Geslacht</Select.Label>
-                        {/* for longer lists memoizing these is useful */}
-                        {React.useMemo(
-                            () =>
-                                items.map((item, i) => {
-                                    return (
-                                        <Select.Item
-                                            index={i}
-                                            key={item.name}
-                                            value={item.name.toLowerCase()}
-                                        >
-                                            <Select.ItemText>{item.name}</Select.ItemText>
-                                            <Select.ItemIndicator marginLeft="auto">
-                                                <Check size={16} />
-                                            </Select.ItemIndicator>
-                                        </Select.Item>
-                                    )
-                                }),
-                            [items]
-                        )}
-                    </Select.Group>
-                    {/* Native gets an extra icon */}
-                    {props.native && (
-                        <YStack
-                            position="absolute"
-                            right={0}
-                            top={0}
-                            bottom={0}
-                            alignItems="center"
-                            justifyContent="center"
-                            width={'$4'}
-                            pointerEvents="none"
-                        >
-                            <ChevronDown
-                                size={getFontSize((props.size as FontSizeTokens) ?? '$true')}
-                            />
-                        </YStack>
-                    )}
-                </Select.Viewport>
+    const handleMedicijnenDone = (items: string[]) => {
+        setSelectedMedicijnen(items);
+    };
 
-                <Select.ScrollDownButton
-                    alignItems="center"
-                    justifyContent="center"
-                    position="relative"
-                    width="100%"
-                    height="$1"
-                >
-                    <YStack zIndex={10}>
-                        <ChevronDown size={20} />
-                    </YStack>
-                    <LinearGradient
-                        start={[0, 0]}
-                        end={[0, 1]}
-                        fullscreen
-                        colors={['transparent', '$background']}
-                        borderRadius="$4"
-                    />
-                </Select.ScrollDownButton>
-            </Select.Content>
-        </Select>
-    );
-}
+    const handleKamersDone = (items: string[]) => {
+        setSelectedKamers(items);
+    };
 
-export default function IntakeTwoScreen({ navigation }) {
+    useEffect(() => {
+        if (selectedZiektebeelden.length > 0) {
+            setZiektebeeldDisplayText(selectedZiektebeelden.join(', '));
+        } else {
+            setZiektebeeldDisplayText('Kies of zoek een ziektebeeld');
+        }
+    }, [selectedZiektebeelden]);
 
+    useEffect(() => {
+        if (selectedMedicijnen.length > 0) {
+            setMedicijnenDisplayText(selectedMedicijnen.join(', '));
+        } else {
+            setMedicijnenDisplayText('Kies of zoek medicijnen');
+        }
+    }, [selectedMedicijnen]);
 
-    // PanResponder to handle dragging
-    const createDragHandler = (value, setValue) =>
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => true,
-            onPanResponderMove: (_, gestureState) => {
-                // Dragging up increases value, down decreases it
-                const newValue = value + Math.round(gestureState.dy * -0.1);
-                if (newValue >= 0) {
-                    setValue(newValue);
-                }
-            },
-        });
+    useEffect(() => {
+        if (selectedKamers.length > 0) {
+            setKamersDisplayText(selectedKamers.join(', '));
+        } else {
+            setKamersDisplayText('Kies een kamer');
+        }
+    }, [selectedKamers]);
 
     return (
         <TitleLayout
-            titleText='Intake Patient'
+            titleText="Intake patient"
             topContent={
                 <Button
-                    bg={'$primary'}
+                    bg="$primary"
                     borderRadius="$10"
-                    width='$3'
-                    height='$3'
+                    width="$3"
+                    height="$3"
                     animation="bouncy"
-                    hoverStyle={{scale: 0.990, backgroundColor: '$primary_focus'}}
-                    pressStyle={{scale: 0.975, backgroundColor: '$primary_focus'}}
-                    icon={<ArrowLeft size='$2' color={'white'}/>}
+                    hoverStyle={{scale: 0.990, backgroundColor: "$primary_focus"}}
+                    pressStyle={{scale: 0.975, backgroundColor: "$primary_focus"}}
+                    icon={<ArrowLeft size="$2" color="white"/>}
                     onPress={() => navigation.goBack()}
-                    position='absolute'
+                    position="absolute"
                     left={screenWidth * 0.05}
-                    top='$5'
-                    // style={{ position: 'absolute', left: '20', top: 10 }}
+                    top="$5"
                 />
             }
         >
-            <YStack
-                bg={'$container'}
-                width={(screenWidth * 80) / 100}
-                height={(screenHeight * 70) / 100}
-                borderRadius="$10"
-                elevation="$0.25"
-                p="$6"
-                ai="center"
-            >
-                {/* Header Section */}
-                <YStack ai="center" jc="center" mt="$4">
-                    <SizableText fontSize="$4" color={'$text'} textAlign="left">
-                        Persoonlijke gegevens
-                    </SizableText>
-                    <YStack width="100%" height="1px" backgroundColor="#d3d3d3" mt="$2" />
-                </YStack>
 
-                {/* Form Fields Section */}
-                <YStack width="100%" mt="$6" space="$4">
-                    {/* Geslacht and Geboortedatum */}
-                    <XStack space="$4" ai="center">
-                        {/* Geslacht Dropdown */}
-                        <YStack f={0.4}>
-                            <SizableText fontSize="$4" color={'$text'}>
-                                Geslacht
-                            </SizableText>
-                            <SelectDemoItem id="select-demo-2" />
-                        </YStack>
-                    </XStack>
-
-
-                    {/* BSN */}
-                    <YStack>
-                        <SizableText fontSize="$4" color={'$text'}>
-                            BSN Nummer
-                        </SizableText>
-                        <Input
-                            placeholder="BSN"
-                            bg="#fff"
-                            borderWidth={1}
-                            borderColor="#d3d3d3"
-                            borderRadius="$4"
-                        />
-                    </YStack>
-                </YStack>
-
-                {/* Spacer to push the button to the bottom */}
-                <YStack f={1} />
-
-                {/* Next Step Button */}
-                <Button
-                    onPress={() => navigation.navigate("IntakeTwoScreen")}
-                    bg={'$primary'}
-                    borderRadius="$4"
-                    py="$3"
+            <YStack ai="center">
+                <YStack
+                    bg="$container"
+                    width={(screenWidth * 90) / 100}
+                    height={(screenHeight * 55) / 100}
+                    borderRadius="$10"
+                    elevation="$0.25"
                     px="$6"
+                    ai="center"
+                    position="relative" // Add relative position to the container
                 >
-                    <SizableText fontSize="$4" color="#fff">
-                        Submit
-                    </SizableText>
-                </Button>
+                    {/* Form Fields Section */}
+                    <YStack width="100%" mt="$6" space="$4">
+
+                        <YStack>
+                            <SizableText fontSize="$4" color="$text" mb='$1'>
+                                Ziektebeeld
+                            </SizableText>
+
+                            <InputContainer
+                                borderColor="#d3d3d3"
+                                h='$4'
+                                onPress={() => setIsZiektebeeldModalVisible(true)}>
+                                <SelectedItemsText col='gray' numberOfLines={1} ellipsizeMode='tail'>{ziektebeeldDisplayText}</SelectedItemsText>
+                                <DropdownIndicator>
+                                    <ChevronDown size='$1'/>
+                                </DropdownIndicator>
+                            </InputContainer>
+                        </YStack>
+
+                        <YStack>
+                            <SizableText fontSize="$4" color="$text" mb='$1'>
+                                Medicijnen
+                            </SizableText>
+                            <InputContainer
+                                borderColor="#d3d3d3"
+                                h='$4'
+                                onPress={() => setIsMedicijnenModalVisible(true)}>
+                                <SelectedItemsText col='gray' numberOfLines={1} ellipsizeMode='tail'>{medicijnenDisplayText}</SelectedItemsText>
+                                <DropdownIndicator>
+                                    <ChevronDown size='$1'/>
+                                </DropdownIndicator>
+                            </InputContainer>
+                        </YStack>
+
+                        <YStack>
+                            <SizableText fontSize="$4" color="$text" mb='$1'>
+                                Kamer
+                            </SizableText>
+                            <InputContainer
+                                borderColor="#d3d3d3"
+                                h='$4'
+                                onPress={() => setIsKamersModalVisible(true)}>
+                                <SelectedItemsText col='gray' numberOfLines={1} ellipsizeMode='tail'>{kamersDisplayText}</SelectedItemsText>
+                                <DropdownIndicator>
+                                    <ChevronDown size='$1'/>
+                                </DropdownIndicator>
+                            </InputContainer>
+                        </YStack>
+
+                        {/* BSN */}
+                        <YStack>
+                            <SizableText fontSize="$4" color="$text" mb='$1'>
+                                Voeding / Allergieën
+                            </SizableText>
+                            <TextArea
+                                bg='white'
+                                height='$8' // Adjust as needed
+                                borderWidth={1}
+                                borderRadius="$4"
+                                padding="$2"
+                                style={{
+                                    textAlignVertical: 'top', // For React Native platforms
+                                }}
+                            />
+                        </YStack>
+                    </YStack>
+                    {/* Next Step Button */}
+                    <Button
+                        pressStyle={{scale: 0.975, backgroundColor: "$accent_focus"}}
+                        bg="$accent"
+                        borderRadius="$10"
+                        position="absolute"
+                        borderColor="$accent_focus"
+                        bottom="$5"  // Align the button to the bottom
+                        right="$5"   // Align the button to the right
+                    >
+                        <SizableText fontSize="$4" color="$accent_content">
+                            Intake voltooien
+                        </SizableText>
+                    </Button>
+                </YStack>
             </YStack>
 
-            {/* Toast for error message */}
-            <Toast />
+            <DropdownModal
+                visible={isZiektebeeldModalVisible}
+                items={availableZiektebeelden}
+                onDone={handleZiektebeeldDone}
+                onClose={() => setIsZiektebeeldModalVisible(false)}
+                screenWidth={screenWidth} // Pass screenWidth to the modal
+                title="Selecteer ziektebeeld"
+            />
+
+            <DropdownModal
+                visible={isMedicijnenModalVisible}
+                items={availableMedicijnen}
+                onDone={handleMedicijnenDone}
+                onClose={() => setIsMedicijnenModalVisible(false)}
+                screenWidth={screenWidth} // Pass screenWidth to the modal
+                title="Selecteer medicijnen"
+            />
+
+            <DropdownModal
+                visible={isKamersModalVisible}
+                items={availableKamers}
+                onDone={handleKamersDone}
+                onClose={() => setIsKamersModalVisible(false)}
+                screenWidth={screenWidth} // Pass screenWidth to the modal
+                title="Selecteer kamer"
+            />
         </TitleLayout>
+
     );
-}
+};

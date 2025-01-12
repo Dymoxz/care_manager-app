@@ -20,7 +20,8 @@ type RootStackParamList = {
     StartShiftScreen: undefined;
     HomeScreen: undefined;
     PatientListScreen: undefined;
-    IntakeScreen: undefined;
+    IntakeOneScreen: undefined;
+    IntakeTwoScreen: undefined;
     AgreementPickChildScreen: undefined;
     MedcheckPickChildScreen: undefined;
     ShiftScreen: undefined;

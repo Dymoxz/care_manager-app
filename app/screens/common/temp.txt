@@ -1,0 +1,131 @@
+                      {/* Lengte and Gewicht */}
+                        {/*<XStack space="$4">*/}
+                        {/*    <YStack f={1} minHeight="$7">*/}
+                        {/*        <SizableText fontSize="$4" color="$text" mb="$1">*/}
+                        {/*            Lengte*/}
+                        {/*        </SizableText>*/}
+                        {/*        <XStack*/}
+                        {/*            f={1}*/}
+                        {/*            ai="center"*/}
+                        {/*            justifyContent="center"*/}
+                        {/*            bg="#fff"*/}
+                        {/*            borderWidth={1}*/}
+                        {/*            borderColor="#d3d3d3"*/}
+                        {/*            borderRadius="$4"*/}
+                        {/*        >*/}
+                        {/*            <Input*/}
+                        {/*                value={String(lengte)}*/}
+                        {/*                onChangeText={(value) => setLengte(Number(value) || 0)}*/}
+                        {/*                keyboardType="numeric"*/}
+                        {/*                bg="#ffffff00"*/}
+                        {/*                borderWidth={0}*/}
+                        {/*                flex={3}*/}
+                        {/*                px="$4"*/}
+                        {/*                py="$2"*/}
+                        {/*            />*/}
+                        {/*            <YStack*/}
+                        {/*                f={1}*/}
+                        {/*                ai="center"*/}
+                        {/*                justifyContent="center"*/}
+                        {/*                bg="#f0f0f0"*/}
+                        {/*                borderRadius="$3"*/}
+                        {/*                px="$2"*/}
+                        {/*                py="$2"*/}
+                        {/*                mr="$2"*/}
+                        {/*            >*/}
+                        {/*                <SizableText color="$text" fontSize="$4">*/}
+                        {/*                    cm*/}
+                        {/*                </SizableText>*/}
+                        {/*            </YStack>*/}
+                        {/*        </XStack>*/}
+                        {/*    </YStack>*/}
+
+                        {/*    <YStack f={1} minHeight="$7">*/}
+                        {/*        <SizableText fontSize="$4" color="$text" mb="$1">*/}
+                        {/*            Gewicht*/}
+                        {/*        </SizableText>*/}
+                        {/*        <XStack*/}
+                        {/*            f={1}*/}
+                        {/*            ai="center"*/}
+                        {/*            justifyContent="center"*/}
+                        {/*            bg="#fff"*/}
+                        {/*            borderWidth={1}*/}
+                        {/*            borderColor="#d3d3d3"*/}
+                        {/*            borderRadius="$4"*/}
+                        {/*        >*/}
+                        {/*            <Input*/}
+                        {/*                value={String(gewicht)}*/}
+                        {/*                onChangeText={(value) => setGewicht(parseFloat(value) || 0)}*/}
+                        {/*                keyboardType="decimal-pad"*/}
+                        {/*                bg="#ffffff00"*/}
+                        {/*                borderWidth={0}*/}
+                        {/*                flex={3}*/}
+                        {/*                px="$4"*/}
+                        {/*                py="$2"*/}
+                        {/*            />*/}
+                        {/*            <YStack*/}
+                        {/*                f={1}*/}
+                        {/*                ai="center"*/}
+                        {/*                justifyContent="center"*/}
+                        {/*                bg="#f0f0f0"*/}
+                        {/*                borderRadius="$3"*/}
+                        {/*                px="$2"*/}
+                        {/*                py="$2"*/}
+                        {/*                mr="$2"*/}
+                        {/*            >*/}
+                        {/*                <SizableText color="$text" fontSize="$4">*/}
+                        {/*                    kg*/}
+                        {/*                </SizableText>*/}
+                        {/*            </YStack>*/}
+                        {/*        </XStack>*/}
+                        {/*    </YStack>*/}
+                        {/*</XStack>*/}
+
+                        {/*/!* Geslacht and Geboortedatum *!/*/}
+                        {/*<XStack space="$4" ai="center">*/}
+                        {/*    <YStack f={0.4}>*/}
+                        {/*        <SizableText fontSize="$4" color="$text" mb="$1">*/}
+                        {/*            Geslacht*/}
+                        {/*        </SizableText>*/}
+                        {/*    </YStack>*/}
+                        {/*    <YStack f={0.6}>*/}
+                        {/*        <SizableText fontSize="$4" color="$text" mb='$1'>*/}
+                        {/*            Geboortedatum*/}
+                        {/*        </SizableText>*/}
+                        {/*        <Input*/}
+                        {/*            keyboardType="decimal-pad"*/}
+                        {/*            placeholder="dd-mm-jjjj"*/}
+                        {/*            bg="#fff"*/}
+                        {/*            borderWidth={1}*/}
+                        {/*            borderColor="#d3d3d3"*/}
+                        {/*            borderRadius="$4"*/}
+                        {/*            value={geboortedatum}*/}
+                        {/*            onChangeText={(text) => {*/}
+                        {/*                let formattedText = text.replace(/\D/g, '').slice(0, 8);*/}
+                        {/*                if (formattedText.length > 2) {*/}
+                        {/*                    formattedText = formattedText.slice(0, 2) + '-' + formattedText.slice(2);*/}
+                        {/*                }*/}
+                        {/*                if (formattedText.length > 5) {*/}
+                        {/*                    formattedText = formattedText.slice(0, 5) + '-' + formattedText.slice(5);*/}
+                        {/*                }*/}
+                        {/*                setGeboortedatum(formattedText);*/}
+                        {/*            }}*/}
+                        {/*        />*/}
+                        {/*    </YStack>*/}
+                        {/*</XStack>*/}
+
+                        {/*/!* BSN *!/*/}
+                        {/*<YStack>*/}
+                        {/*    <SizableText fontSize="$4" color="$text" mb='$1'>*/}
+                        {/*        BSN Nummer*/}
+                        {/*    </SizableText>*/}
+                        {/*    <Input*/}
+                        {/*        keyboardType="numeric"*/}
+                        {/*        bg="white"*/}
+                        {/*        borderWidth={1}*/}
+                        {/*        borderColor="#d3d3d3"*/}
+                        {/*        borderRadius="$4"*/}
+                        {/*        value={bsn.slice(0, 9)}*/}
+                        {/*        onChangeText={(text) => setBsn(text.replace(/\D/g, '').slice(0, 9))}*/}
+                        {/*    />*/}
+                        {/*</YStack>*/}
