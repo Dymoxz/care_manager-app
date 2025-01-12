@@ -30,7 +30,7 @@ export function SelectDemoItem(props) {
             <Select.Trigger width={240} iconAfter={ChevronDown}>
                 <Select.Value placeholder="Geslacht" col='$text'/>
             </Select.Trigger>
--
+            -
             <Adapt when="sm" platform="touch">
                 <Sheet
                     modal
@@ -118,8 +118,8 @@ export function SelectDemoItem(props) {
 export default function IntakeOneScreen({navigation}) {
     const [voornaam, setVoornaam] = useState("");
     const [achternaam, setAchternaam] = useState("");
-    const [lengte, setLengte] = useState(0);
-    const [gewicht, setGewicht] = useState(0);
+    const [lengte, setLengte] = useState(""); // Keep as string to avoid initial 0
+    const [gewicht, setGewicht] = useState(""); // Keep as string to avoid initial 0
     const [geslacht, setGeslacht] = useState("");
     const [geboortedatumRaw, setGeboortedatumRaw] = useState("");
     const [bsn, setBsn] = useState("");
@@ -128,14 +128,13 @@ export default function IntakeOneScreen({navigation}) {
         const intakeData = {
             voornaam,
             achternaam,
-            lengte,
-            gewicht,
+            lengte: parseInt(lengte, 10) || 0,
+            gewicht: parseFloat(gewicht) || 0,
             geslacht,
-            geboortedatum: geboortedatumRaw, // Store the raw value
+            geboortedatumRaw,
             bsn,
         };
 
-        // Navigate to the next screen and pass the data
         navigation.navigate("IntakeTwoScreen", {intakeData});
     };
 
@@ -234,8 +233,8 @@ export default function IntakeOneScreen({navigation}) {
                                     borderRadius="$4"
                                 >
                                     <Input
-                                        value={String(lengte)}
-                                        onChangeText={(value) => setLengte(Number(value) || 0)}
+                                        value={lengte}
+                                        onChangeText={setLengte}
                                         keyboardType="numeric"
                                         bg="#ffffff00"
                                         borderWidth={0}
@@ -274,8 +273,8 @@ export default function IntakeOneScreen({navigation}) {
                                     borderRadius="$4"
                                 >
                                     <Input
-                                        value={String(gewicht)}
-                                        onChangeText={(value) => setGewicht(parseFloat(value) || 0)}
+                                        value={gewicht}
+                                        onChangeText={setGewicht}
                                         keyboardType="decimal-pad"
                                         bg="#ffffff00"
                                         borderWidth={0}

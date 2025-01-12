@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {YStack, XStack, Text, Button, styled, SizableText, Input, TextArea} from 'tamagui';
+import React, {useEffect, useState} from 'react';
+import {Button, SizableText, styled, Text, TextArea, XStack, YStack} from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
 import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
@@ -31,12 +31,16 @@ const DropdownIndicator = styled(Text, {
     marginLeft: '$2',
 });
 
-export default function IntakeTwoScreen ({navigation}) {
+export default function IntakeTwoScreen({navigation, route}) {
+    const {intakeData} = route.params;
+
     const [isZiektebeeldModalVisible, setIsZiektebeeldModalVisible] = useState(false);
     const [selectedZiektebeelden, setSelectedZiektebeelden] = useState<string[]>([]);
 
     const availableZiektebeelden = ['Diabetes', 'Astma', 'COPD', 'Hartfalen', 'Reuma', 'Kanker', 'Depressie', 'Hypertensie', 'Migraine', 'Epilepsie', 'Parkinson', 'Alzheimer', 'Osteoporose'];
     const [ziektebeeldDisplayText, setZiektebeeldDisplayText] = useState('Kies of zoek een ziektebeeld');
+
+    const [voedingAllergieen, setVoedingAllergieen] = useState("");
 
     const [isMedicijnenModalVisible, setIsMedicijnenModalVisible] = useState(false);
     const [selectedMedicijnen, setSelectedMedicijnen] = useState<string[]>([]);
@@ -84,6 +88,26 @@ export default function IntakeTwoScreen ({navigation}) {
         }
     }, [selectedKamers]);
 
+    const handleSubmit = () => {
+        const patientData = {
+            patientNumber: Math.floor(Math.random() * 90000) + 10000, // Generate a random number
+            bsn: intakeData.bsn,
+            firstName: intakeData.voornaam,
+            lastName: intakeData.achternaam,
+            dateOfBirth: new Date(intakeData.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
+            length: intakeData.lengte,
+            weight: intakeData.gewicht,
+            clinicalProfile: selectedZiektebeelden.length > 0 ? selectedZiektebeelden.join(', ') : null,
+            diet: voedingAllergieen,
+        };
+        console.log(JSON.stringify(patientData, null, 2));
+
+        /*TODO Api request to create Patient*/
+
+        // Optionally navigate to a success screen or previous screen
+        // navigation.navigate('SuccessScreen');
+    };
+
     return (
         <TitleLayout
             titleText="Intake patient"
@@ -128,7 +152,8 @@ export default function IntakeTwoScreen ({navigation}) {
                                 borderColor="#d3d3d3"
                                 h='$4'
                                 onPress={() => setIsZiektebeeldModalVisible(true)}>
-                                <SelectedItemsText col='gray' numberOfLines={1} ellipsizeMode='tail'>{ziektebeeldDisplayText}</SelectedItemsText>
+                                <SelectedItemsText col='gray' numberOfLines={1}
+                                                   ellipsizeMode='tail'>{ziektebeeldDisplayText}</SelectedItemsText>
                                 <DropdownIndicator>
                                     <ChevronDown size='$1'/>
                                 </DropdownIndicator>
@@ -143,7 +168,8 @@ export default function IntakeTwoScreen ({navigation}) {
                                 borderColor="#d3d3d3"
                                 h='$4'
                                 onPress={() => setIsMedicijnenModalVisible(true)}>
-                                <SelectedItemsText col='gray' numberOfLines={1} ellipsizeMode='tail'>{medicijnenDisplayText}</SelectedItemsText>
+                                <SelectedItemsText col='gray' numberOfLines={1}
+                                                   ellipsizeMode='tail'>{medicijnenDisplayText}</SelectedItemsText>
                                 <DropdownIndicator>
                                     <ChevronDown size='$1'/>
                                 </DropdownIndicator>
@@ -158,14 +184,15 @@ export default function IntakeTwoScreen ({navigation}) {
                                 borderColor="#d3d3d3"
                                 h='$4'
                                 onPress={() => setIsKamersModalVisible(true)}>
-                                <SelectedItemsText col='gray' numberOfLines={1} ellipsizeMode='tail'>{kamersDisplayText}</SelectedItemsText>
+                                <SelectedItemsText col='gray' numberOfLines={1}
+                                                   ellipsizeMode='tail'>{kamersDisplayText}</SelectedItemsText>
                                 <DropdownIndicator>
                                     <ChevronDown size='$1'/>
                                 </DropdownIndicator>
                             </InputContainer>
                         </YStack>
 
-                        {/* BSN */}
+                        {/* Voeding / Allergieën */}
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
                                 Voeding / Allergieën
@@ -179,11 +206,14 @@ export default function IntakeTwoScreen ({navigation}) {
                                 style={{
                                     textAlignVertical: 'top', // For React Native platforms
                                 }}
+                                value={voedingAllergieen}
+                                onChangeText={setVoedingAllergieen}
                             />
                         </YStack>
                     </YStack>
-                    {/* Next Step Button */}
+                    {/* Intake voltooien Button */}
                     <Button
+                        onPress={handleSubmit}
                         pressStyle={{scale: 0.975, backgroundColor: "$accent_focus"}}
                         bg="$accent"
                         borderRadius="$10"
