@@ -8,13 +8,13 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 // Activate Device Function
 async function ActivateDevice(bigNumber: string, showErrorToast: (message: string) => void, showSuccessToast: (message: string) => void, navigation: any) {
+    const db = await SQLite.openDatabaseAsync('localdb');
     if (!bigNumber.trim()) {
         showErrorToast('Please enter a BIG number');
         return;
     }
 
     try {
-        const db = await SQLite.openDatabaseAsync('localdb');
 
         // Create the table if it doesn't exist
         await db.withTransactionAsync(async () => {
