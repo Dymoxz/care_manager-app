@@ -234,8 +234,10 @@ export default function IntakeTwoScreen({navigation, route}) {
                 items={availableZiektebeelden}
                 onDone={handleZiektebeeldDone}
                 onClose={() => setIsZiektebeeldModalVisible(false)}
-                screenWidth={screenWidth} // Pass screenWidth to the modal
+                screenWidth={screenWidth}
                 title="Selecteer ziektebeeld"
+                hasSearch={true}
+                isMultiSelect={true}
             />
 
             <DropdownModal
@@ -243,8 +245,10 @@ export default function IntakeTwoScreen({navigation, route}) {
                 items={availableMedicijnen}
                 onDone={handleMedicijnenDone}
                 onClose={() => setIsMedicijnenModalVisible(false)}
-                screenWidth={screenWidth} // Pass screenWidth to the modal
+                screenWidth={screenWidth}
                 title="Selecteer medicijnen"
+                hasSearch={true}
+                isMultiSelect={true}
             />
 
             <DropdownModal
@@ -252,8 +256,10 @@ export default function IntakeTwoScreen({navigation, route}) {
                 items={availableKamers}
                 onDone={handleKamersDone}
                 onClose={() => setIsKamersModalVisible(false)}
-                screenWidth={screenWidth} // Pass screenWidth to the modal
+                screenWidth={screenWidth}
                 title="Selecteer kamer"
+                hasSearch={true}
+                isMultiSelect={false}
             />
         </TitleLayout>
 

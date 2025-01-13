@@ -35,7 +35,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#C3E9ED"
       },
-      "newArchEnabled": true
+      "newArchEnabled": true,
+      "package": "com.memmik.caremanager"
     },
     "web": {
       "bundler": "metro",

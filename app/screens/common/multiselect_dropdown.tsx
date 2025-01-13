@@ -19,7 +19,9 @@ interface DropdownModalProps {
     onDone: (selectedItems: string[]) => void;
     onClose: () => void;
     screenWidth: number;
-    title: string; // Add title prop
+    title: string;
+    hasSearch: boolean; // Prop to control search bar visibility
+    isMultiSelect: boolean; // Prop to control multiple selections
 }
 
 const ModalContent = styled(YStack, {
@@ -51,7 +53,7 @@ const ItemButton = styled(Button, {
     },
 });
 
-const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, onClose, screenWidth, title }) => {
+const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, onClose, screenWidth, title, hasSearch, isMultiSelect }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
@@ -60,10 +62,14 @@ const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, o
     );
 
     const handleItemPress = (item: string) => {
-        if (selectedItems.includes(item)) {
-            setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item));
+        if (isMultiSelect) {
+            if (selectedItems.includes(item)) {
+                setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item));
+            } else {
+                setSelectedItems([...selectedItems, item]);
+            }
         } else {
-            setSelectedItems([...selectedItems, item]);
+            setSelectedItems([item]);
         }
     };
 
@@ -96,12 +102,14 @@ const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, o
                     style={{ maxWidth: screenWidth * 0.9 }}
                 >
                     <Dialog.Title fontSize='$8'>{title}</Dialog.Title>
-                    <Input
-                        placeholder="Zoeken..."
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        mb="$3"
-                    />
+                    {hasSearch && (
+                        <Input
+                            placeholder="Zoeken..."
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            mb="$3"
+                        />
+                    )}
                     <ScrollView style={{ maxHeight: 300, flexGrow: 1 }} nestedScrollEnabled={true}>
                         {filteredItems.map(item => (
                             <ItemButton
