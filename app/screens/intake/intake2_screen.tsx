@@ -1,3 +1,4 @@
+// IntakeTwoScreen.tsx
 import React, {useEffect, useState} from 'react';
 import {Button, SizableText, styled, Text, TextArea, XStack, YStack} from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
@@ -20,6 +21,7 @@ interface ClinicalProfile {
 interface Room {
     id: string;
     roomNumber: string;
+    floor: string; // Added floor to the Room interface
 }
 
 const InputContainer = styled(XStack, {
@@ -97,7 +99,7 @@ export default function IntakeTwoScreen({navigation, route}) {
     useEffect(() => {
         setRoomsDisplayText(
             selectedRooms.length > 0
-                ? selectedRooms.map(room => room.roomNumber).join(', ')
+                ? selectedRooms.map(room => `${room.roomNumber} - ${room.floor}`).join(', ')
                 : 'Choose a room'
         );
     }, [selectedRooms]);
@@ -151,8 +153,11 @@ export default function IntakeTwoScreen({navigation, route}) {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data: Room[] = await response.json();
-            setAvailableRooms(data);
+            const data: Omit<Room, 'floor'>[] = await response.json(); // Temporarily omit floor from the fetched data
+            // Assuming your backend returns floor information, adjust accordingly.
+            // For now, let's mock the floor data.
+            const roomsWithFloor: Room[] = data.map(room => ({ ...room, floor: '1st Floor' }));
+            setAvailableRooms(roomsWithFloor);
         } catch (error) {
             console.error("Failed to fetch rooms:", error);
             setAvailableRooms([]);
@@ -302,7 +307,8 @@ export default function IntakeTwoScreen({navigation, route}) {
                 title="Select clinical profile"
                 hasSearch={true}
                 isMultiSelect={true}
-                itemKey="clinicalProfile"
+                getItemKey={(item) => item.clinicalProfile}
+                getTextForItem={(item) => item.clinicalProfile}
             />
 
             <DropdownModal<Medicine>
@@ -314,7 +320,8 @@ export default function IntakeTwoScreen({navigation, route}) {
                 title="Select medicines"
                 hasSearch={true}
                 isMultiSelect={true}
-                itemKey="name"
+                getItemKey={(item) => item.atcCode}
+                getTextForItem={(item) => item.name}
             />
 
             <DropdownModal<Room>
@@ -326,7 +333,8 @@ export default function IntakeTwoScreen({navigation, route}) {
                 title="Select room"
                 hasSearch={true}
                 isMultiSelect={false}
-                itemKey="roomNumber"
+                getItemKey={(item) => `${item.roomNumber}-${item.floor}`}
+                getTextForItem={(item) => `${item.roomNumber} - ${item.floor}`}
             />
         </TitleLayout>
     );

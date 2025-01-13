@@ -1,3 +1,4 @@
+// DropdownModal.tsx
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import {
@@ -20,7 +21,8 @@ interface DropdownModalProps<T> {
     title: string;
     hasSearch: boolean;
     isMultiSelect: boolean;
-    itemKey: keyof T;
+    getItemKey: (item: T) => string;
+    getTextForItem?: (item: T) => string;
 }
 
 const ModalContent = styled(YStack, {
@@ -52,21 +54,22 @@ const ItemButton = styled(Button, {
     },
 });
 
-const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, onClose, screenWidth, title, hasSearch, isMultiSelect, itemKey }: DropdownModalProps<T>) => {
+const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, onClose, screenWidth, title, hasSearch, isMultiSelect, getItemKey, getTextForItem }: DropdownModalProps<T>) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedItems, setSelectedItems] = useState<T[]>([]);
 
-    const filteredItems = items.filter(item =>
-        String(item[itemKey]).toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredItems = items.filter(item => {
+        const itemValue = Object.values(item).join(' ').toLowerCase(); // Search across all values
+        return itemValue.includes(searchQuery.toLowerCase());
+    });
 
     const handleItemPress = (item: T) => {
-        const itemId = (item as any).id; // Assuming 'id' exists and is unique
+        const itemKey = getItemKey(item);
 
         if (isMultiSelect) {
-            const isSelected = selectedItems.some(selectedItem => (selectedItem as any).id === itemId);
+            const isSelected = selectedItems.some(selectedItem => getItemKey(selectedItem) === itemKey);
             if (isSelected) {
-                setSelectedItems(selectedItems.filter(selectedItem => (selectedItem as any).id !== itemId));
+                setSelectedItems(selectedItems.filter(selectedItem => getItemKey(selectedItem) !== itemKey));
             } else {
                 setSelectedItems([...selectedItems, item]);
             }
@@ -102,12 +105,12 @@ const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, 
                     <ScrollView style={{ maxHeight: 300, flexGrow: 1 }} nestedScrollEnabled={true}>
                         {filteredItems.map(item => (
                             <ItemButton
-                                key={(item as any).id}
+                                key={getItemKey(item)}
                                 onPress={() => handleItemPress(item)}
-                                selected={selectedItems.some(selectedItem => (selectedItem as any).id === (item as any).id)}
+                                selected={selectedItems.some(selectedItem => getItemKey(selectedItem) === getItemKey(item))}
                             >
-                                <Text>{String(item[itemKey])}</Text>
-                                {selectedItems.some(selectedItem => (selectedItem as any).id === (item as any).id) && <Text>✓</Text>}
+                                <Text>{getTextForItem ? getTextForItem(item) : Object.values(item).join(' ')}</Text>
+                                {selectedItems.some(selectedItem => getItemKey(selectedItem) === getItemKey(item)) && <Text>✓</Text>}
                             </ItemButton>
                         ))}
                     </ScrollView>
