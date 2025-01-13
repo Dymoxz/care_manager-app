@@ -1,10 +1,11 @@
 import {Button, Card, CardProps, Paragraph, ScrollView, SizableText, XStack, YStack} from 'tamagui';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Dimensions} from 'react-native';
 import {Rocket} from '@tamagui/lucide-icons';
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
 import TitleLayout from "./common/title_layout";
 import ShiftScreen from "./shift/shift_screen";
+import * as SQLite from "expo-sqlite";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
@@ -268,7 +269,37 @@ export function DemoCard({title, icon, onPress, ...props}: CardProps & {
     );
 }
 
+async function ActivateDevice(){
+    const db = await SQLite.openDatabaseAsync('localdb');
+
+    try{
+        await db.withTransactionAsync(async () => {
+            await db.execAsync(
+                'CREATE TABLE IF NOT EXISTS Caretakers (id INTEGER PRIMARY KEY AUTOINCREMENT, BirthSurname TEXT, Initial TEXT, Big_Number TEXT);'
+            );
+        });
+
+        await db.withTransactionAsync(async () => {
+            await db.runAsync(
+                'INSERT INTO Caretakers (BirthSurname, Initial, Big_Number) VALUES (?, ?, ?);',
+                ['Doe', 'J.', '79059994401']
+            );
+        });
+
+    }
+    catch (error: any) {
+        console.error('Database initialization error:', error);
+    }
+
+
+}
+
 export default function HomeScreen({navigation}) {
+    useEffect(() => {
+        ActivateDevice().then(r => console.log('Activated'));
+
+    }, []);
+
     const pages = [
 
         {title: 'Intake', navLink: 'IntakeScreen', icon: intakeIcon},

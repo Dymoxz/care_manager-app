@@ -25,14 +25,14 @@ async function getUserName(): Promise<string> {
 
     } catch (error) {
         console.error('Error fetching user name:', error);
-        return 'User';
+        return '79059994401';
     }
 }
 
 
 
 export default function StartShiftScreen({ navigation }: { navigation: any }) {
-    const [userName, setUserName] = useState<string>("User");
+    const [userName, setUserName] = useState<string>("79059994401");
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const toast = useToastController();
 

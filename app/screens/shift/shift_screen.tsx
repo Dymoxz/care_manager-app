@@ -35,9 +35,12 @@ interface PatientCardProps {
     name: string;
     room: string;
     hasAlert: boolean;
-    patient: Patient; // Pass the whole patient object to the card
-    onPress: (patient: Patient) => void; // Callback to handle patient click
+    patient: Patient;
+    isSelected: boolean;
+    onSelect: (patient: Patient) => void;
 }
+
+
 async function getBigNumber(): Promise<string> {
     try {
         const db = await SQLite.openDatabaseAsync('localdb');
@@ -54,6 +57,31 @@ async function getBigNumber(): Promise<string> {
     } catch (error) {
         console.error('Error fetching user big number:', error);
         return 'User';
+    }
+}
+
+async function postShiftData(patients: Patient[]) {
+    // Post shift data to the server
+    const bigNumber = await getBigNumber();
+    console.log(patients.length)
+    const patientNumbers = patients.map((patient) => patient.patientNumber.toString());
+    console.log('Big number:', bigNumber);
+    console.log('Patients:', patientNumbers);
+    try {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/careTaker/${bigNumber}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(patientNumbers),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch patient data');
+        }
+
+    } catch (error: any) {
+        console.log(error.message || 'An error occurred while fetching patients');
     }
 }
 
@@ -83,24 +111,7 @@ async function ActivateDevice(
         showErrorToast(error.message || 'An error occurred while fetching patients');
     }
 }
-
-function PatientCard({ name, room, hasAlert, patient, onPress }: PatientCardProps) {
-    const [bigNumber, setBigNumber] = useState<string>();
-
-    useEffect(() => {
-        const fetchBigNumber = async () => {
-            try {
-                const big = await getBigNumber();
-                setBigNumber(big);
-            } catch (error) {
-                console.error('Error in fetchUserName:', error);
-                }
-        };
-
-        fetchBigNumber();
-    }, []);
-
-   const [checked, setChecked] = useState(false);
+function PatientCard({ name, room, hasAlert, patient, isSelected, onSelect }: PatientCardProps) {
     return (
         <XStack
             bg='$container_alt'
@@ -112,7 +123,7 @@ function PatientCard({ name, room, hasAlert, patient, onPress }: PatientCardProp
             mb="$4"
             elevation="$0.25"
             width={(screenWidth * 90) / 100}
-            onPress={() => setChecked((prevState) => !prevState)}
+            onPress={() => onSelect(patient)}
         >
             <XStack ai="center">
                 <YStack mr="$2" ml='$2'>
@@ -133,10 +144,10 @@ function PatientCard({ name, room, hasAlert, patient, onPress }: PatientCardProp
             </XStack>
             <Checkbox
                 size="$7"
-                backgroundColor={checked ? '$accent' : '$white'}
+                backgroundColor={isSelected ? '$accent' : '$white'}
                 borderColor='$accent_focus'
-                checked={checked}
-                onPress={() => setChecked((prevState) => !prevState)}
+                checked={isSelected}
+                onPress={() => onSelect(patient)}
             >
                 <Checkbox.Indicator>
                     <Check color="black" />
@@ -145,9 +156,11 @@ function PatientCard({ name, room, hasAlert, patient, onPress }: PatientCardProp
         </XStack>
     );
 }
-export default function ShiftScreen( {navigation} ) {
+
+export default function ShiftScreen({ navigation }) {
     const [patients, setPatients] = useState<Patient[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedPatients, setSelectedPatients] = useState<Patient[]>([]);
 
     useEffect(() => {
         ActivateDevice(
@@ -166,9 +179,24 @@ export default function ShiftScreen( {navigation} ) {
         );
     });
 
-    const handlePatientPress = (patient: Patient) => {
-        // Navigate to PatientDetailsScreen and pass patient data
-        navigation.navigate('', { patient });
+    const handlePatientSelect = (patient: Patient) => {
+        setSelectedPatients((prevSelected) => {
+            const isCurrentlySelected = prevSelected.some(p => p._id === patient._id);
+            if (isCurrentlySelected) {
+                return prevSelected.filter(p => p._id !== patient._id);  // New correct version
+            } else {
+                return [...prevSelected, patient];
+            }
+        });
+    };
+
+    const handleSave = async () => {
+        if (selectedPatients.length === 0) {
+            // You might want to show an error message here
+            return;
+        }
+        await postShiftData(selectedPatients);
+        navigation.navigate('HomeScreen');
     };
 
     return (
@@ -188,7 +216,7 @@ export default function ShiftScreen( {navigation} ) {
                     fontSize="$6"
                     mb="$3"
                     value={searchQuery}
-                    onChangeText={(text) => setSearchQuery(text)} // Update search query
+                    onChangeText={setSearchQuery}
                 />
 
                 <YStack space="$1" width={(screenWidth * 90) / 100}>
@@ -199,28 +227,25 @@ export default function ShiftScreen( {navigation} ) {
                             room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
                             hasAlert={patient.room?.isScaled || false}
                             patient={patient}
-                            onPress={handlePatientPress}
+                            isSelected={selectedPatients.some(p => p._id === patient._id)}
+                            onSelect={handlePatientSelect}
                         />
                     ))}
                 </YStack>
 
-                {/* Buttons at the bottom */}
                 <XStack
                     ai="center"
                     jc="space-between"
-                    pb={20} // Add padding to push buttons up from the bottom
-                    width="100%" // Ensure the stack takes up full width
+                    pb={20}
+                    width="100%"
                     position="absolute"
-                    bottom={0} // Position it at the bottom
-                    px="$4" // Add horizontal padding for space
-                    space="$2" // Space between buttons
+                    bottom={0}
+                    px="$4"
+                    space="$2"
                 >
-
                     <Button
-                        onPress={() => {
-                            navigation.navigate("HomeScreen");
-                        }}
-                        bg="$danger" // Red background color for the cancel button
+                        onPress={() => navigation.navigate("HomeScreen")}
+                        bg="$danger"
                         borderRadius="$6"
                         px="$4"
                         py="$2"
@@ -235,10 +260,8 @@ export default function ShiftScreen( {navigation} ) {
                         </Button.Text>
                     </Button>
                     <Button
-                        onPress={() => {
-                            navigation.navigate("HomeScreen");
-                        }}
-                        bg="$primary" // Blue background color
+                        onPress={handleSave}
+                        bg="$primary"
                         borderRadius="$6"
                         px="$4"
                         py="$2"
@@ -256,5 +279,4 @@ export default function ShiftScreen( {navigation} ) {
             </YStack>
         </TitleLayout>
     );
-
 }

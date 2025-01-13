@@ -33,7 +33,7 @@ const Stack = createStackNavigator<RootStackParamList>();  // Type the navigator
 
 export default function StackNavigator() {
     return (
-        <Stack.Navigator initialRouteName="HomeScreen">
+        <Stack.Navigator initialRouteName="ActivateScreen">
             <Stack.Screen name="ActivateScreen" component={ActivateScreen}
                           options={{
                               headerShown: false, // Keep header hidden
