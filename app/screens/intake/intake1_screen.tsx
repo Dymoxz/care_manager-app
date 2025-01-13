@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect} from "react";
 import {
     Button,
     Input,
@@ -8,10 +8,11 @@ import {
     styled,
     Text,
 } from "tamagui";
-import {Dimensions, Keyboard, TouchableWithoutFeedback, findNodeHandle} from "react-native";
+import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
 import TitleLayout from "../common/title_layout";
 import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
-import DropdownModal from "../common/multiselect_dropdown"; // Assuming DropdownModal is in this path
+import DropdownModal from "../common/multiselect_dropdown";
+import {useIntakeForm} from "./useIntakeForm"; // Import the hook
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
@@ -57,52 +58,42 @@ const DropdownIndicator = styled(Text, {
     marginLeft: '$2',
 });
 
-export default function IntakeOneScreen({navigation}) {
-    const [voornaam, setVoornaam] = useState("");
-    const [achternaam, setAchternaam] = useState("");
-    const [lengte, setLengte] = useState("");
-    const [gewicht, setGewicht] = useState("");
+interface IntakeOneScreenProps {
+    navigation: any;
+    route: any;
+}
+
+export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProps) {
+    const {formState, setFieldValue, handleGenderSelect} = useIntakeForm(route.params?.formData);
     const [isGenderModalVisible, setIsGenderModalVisible] = useState(false);
-    const [selectedGender, setSelectedGender] = useState<Gender | null>(null);
     const [availableGenders, setAvailableGenders] = useState<Gender[]>([{id: 'male', name: 'Jongen'}, {
         id: 'female',
         name: 'Meisje'
     }]);
     const [genderDisplayText, setGenderDisplayText] = useState('Selecteer geslacht');
-    const [geboortedatumRaw, setGeboortedatumRaw] = useState("");
-    const [bsn, setBsn] = useState("");
-
-    const handleGenderDone = (item: Gender[]) => {
-        if (item.length > 0) {
-            setSelectedGender(item[0]);
-        } else {
-            setSelectedGender(null); // Reset if no item is selected
-        }
-    };
 
     useEffect(() => {
-        if (selectedGender) {
-            setGenderDisplayText(selectedGender.name);
+        if (formState.selectedGender) {
+            setGenderDisplayText(formState.selectedGender.name);
         } else {
             setGenderDisplayText('Selecteer geslacht');
         }
-    }, [selectedGender]);
+    }, [formState.selectedGender]);
 
-    const handleNext = () => {
-        const intakeData = {
-            voornaam,
-            achternaam,
-            lengte: parseInt(lengte, 10) || 0,
-            gewicht: parseFloat(gewicht) || 0,
-            geslacht: selectedGender?.name || '', // Pass the selected gender name
-            geboortedatumRaw,
-            bsn,
-        };
-
-        navigation.navigate("IntakeTwoScreen", {intakeData});
+    const handleGenderDone = (item: Gender[]) => {
+        if (item.length > 0) {
+            handleGenderSelect(item[0]);
+        } else {
+            handleGenderSelect(null);
+        }
+        setIsGenderModalVisible(false);
     };
 
-    const formatDate = (rawDate) => {
+    const handleNext = () => {
+        navigation.navigate("IntakeTwoScreen", {formData: formState});
+    };
+
+    const formatDate = (rawDate: string) => {
         const cleanedDate = rawDate.replace(/\D/g, '').slice(0, 8);
         const day = cleanedDate.slice(0, 2);
         const month = cleanedDate.slice(2, 4);
@@ -159,8 +150,8 @@ export default function IntakeOneScreen({navigation}) {
                                         borderWidth={1}
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
-                                        value={voornaam}
-                                        onChangeText={setVoornaam}
+                                        value={formState.voornaam}
+                                        onChangeText={(text) => setFieldValue('voornaam', text)}
                                         onSubmitEditing={Keyboard.dismiss}
                                     />
                                 </YStack>
@@ -173,8 +164,8 @@ export default function IntakeOneScreen({navigation}) {
                                         borderWidth={1}
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
-                                        value={achternaam}
-                                        onChangeText={setAchternaam}
+                                        value={formState.achternaam}
+                                        onChangeText={(text) => setFieldValue('achternaam', text)}
                                         onSubmitEditing={Keyboard.dismiss}
                                     />
                                 </YStack>
@@ -195,8 +186,8 @@ export default function IntakeOneScreen({navigation}) {
                                         borderRadius="$4"
                                     >
                                         <Input
-                                            value={lengte}
-                                            onChangeText={setLengte}
+                                            value={formState.lengte}
+                                            onChangeText={(text) => setFieldValue('lengte', text)}
                                             keyboardType="numeric"
                                             bg="#ffffff00"
                                             borderWidth={0}
@@ -236,8 +227,8 @@ export default function IntakeOneScreen({navigation}) {
                                         borderRadius="$4"
                                     >
                                         <Input
-                                            value={gewicht}
-                                            onChangeText={setGewicht}
+                                            value={formState.gewicht}
+                                            onChangeText={(text) => setFieldValue('gewicht', text)}
                                             keyboardType="decimal-pad"
                                             bg="#ffffff00"
                                             borderWidth={0}
@@ -270,7 +261,7 @@ export default function IntakeOneScreen({navigation}) {
                                         Geslacht
                                     </SizableText>
                                     <InputContainer onPress={() => setIsGenderModalVisible(true)} h='$4' >
-                                        <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' hasValue={!!selectedGender}>
+                                        <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' hasValue={!!formState.selectedGender}>
                                             {genderDisplayText}
                                         </SelectedItemsText>
                                         <DropdownIndicator>
@@ -289,8 +280,8 @@ export default function IntakeOneScreen({navigation}) {
                                         borderWidth={1}
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
-                                        value={formatDate(geboortedatumRaw)}
-                                        onChangeText={(text) => setGeboortedatumRaw(text)}
+                                        value={formatDate(formState.geboortedatumRaw)}
+                                        onChangeText={(text) => setFieldValue('geboortedatumRaw', text)}
                                         onSubmitEditing={Keyboard.dismiss}
                                     />
                                 </YStack>
@@ -306,8 +297,8 @@ export default function IntakeOneScreen({navigation}) {
                                     borderWidth={1}
                                     borderColor="#d3d3d3"
                                     borderRadius="$4"
-                                    value={bsn.slice(0, 9)}
-                                    onChangeText={(text) => setBsn(text.replace(/\D/g, '').slice(0, 9))}
+                                    value={formState.bsn.slice(0, 9)}
+                                    onChangeText={(text) => setFieldValue('bsn', text.replace(/\D/g, '').slice(0, 9))}
                                     onSubmitEditing={Keyboard.dismiss}
                                 />
                             </YStack>

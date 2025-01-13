@@ -4,6 +4,7 @@ import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
 import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
 import {Dimensions} from "react-native";
+import {useIntakeForm} from "./useIntakeForm"; // Import the hook
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
@@ -20,7 +21,7 @@ interface ClinicalProfile {
 interface Room {
     id: string;
     roomNumber: string;
-    floor: string; // Added floor to the Room interface
+    floor: string;
 }
 
 const InputContainer = styled(XStack, {
@@ -60,62 +61,64 @@ const DropdownIndicator = styled(Text, {
     marginLeft: '$2',
 });
 
-export default function IntakeTwoScreen({navigation, route}) {
-    const {intakeData} = route.params;
-    const [geslacht, setGeslacht] = useState(intakeData?.geslacht || ''); // Access geslacht from intakeData
+interface IntakeTwoScreenProps {
+    navigation: any;
+    route: any;
+}
+
+export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProps) {
+    const {formState, setFieldValue, handleClinicalProfileSelect, handleMedicineSelect, handleRoomSelect} = useIntakeForm(route.params?.formData);
 
     const [isClinicalProfileModalVisible, setIsClinicalProfileModalVisible] = useState(false);
-    const [selectedClinicalProfiles, setSelectedClinicalProfiles] = useState<ClinicalProfile[]>([]);
     const [availableClinicalProfiles, setAvailableClinicalProfiles] = useState<ClinicalProfile[]>([]);
     const [clinicalProfileDisplayText, setClinicalProfileDisplayText] = useState('Zoek of selecteer een ziektebeeld');
 
-    const [foodAllergies, setFoodAllergies] = useState("");
-
     const [isMedicinesModalVisible, setIsMedicinesModalVisible] = useState(false);
-    const [selectedMedicines, setSelectedMedicines] = useState<Medicine[]>([]);
     const [availableMedicines, setAvailableMedicines] = useState<Medicine[]>([]);
     const [medicinesDisplayText, setMedicinesDisplayText] = useState('Zoek of selecteer medicijnen');
 
     const [isRoomsModalVisible, setIsRoomsModalVisible] = useState(false);
-    const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
     const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
     const [roomsDisplayText, setRoomsDisplayText] = useState('Zoek of selecteer een kamer');
 
-    const handleClinicalProfileDone = (items: ClinicalProfile[]) => {
-        setSelectedClinicalProfiles(items);
-    };
-
-    const handleMedicinesDone = (items: Medicine[]) => {
-        setSelectedMedicines(items);
-    };
-
-    const handleRoomsDone = (items: Room[]) => {
-        setSelectedRooms(items);
-    };
-
     useEffect(() => {
         setClinicalProfileDisplayText(
-            selectedClinicalProfiles.length > 0
-                ? selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', ')
+            formState.selectedClinicalProfiles.length > 0
+                ? formState.selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', ')
                 : 'Zoek of selecteer een ziektebeeld'
         );
-    }, [selectedClinicalProfiles]);
+    }, [formState.selectedClinicalProfiles]);
 
     useEffect(() => {
         setMedicinesDisplayText(
-            selectedMedicines.length > 0
-                ? selectedMedicines.map(med => med.name).join(', ')
+            formState.selectedMedicines.length > 0
+                ? formState.selectedMedicines.map(med => med.name).join(', ')
                 : 'Zoek of selecteer medicijnen'
         );
-    }, [selectedMedicines]);
+    }, [formState.selectedMedicines]);
 
     useEffect(() => {
         setRoomsDisplayText(
-            selectedRooms.length > 0
-                ? selectedRooms.map(room => `${room.roomNumber} - ${room.floor}`).join(', ')
+            formState.selectedRooms.length > 0
+                ? formState.selectedRooms.map(room => `${room.roomNumber} - ${room.floor}`).join(', ')
                 : 'Zoek of selecteer een kamer'
         );
-    }, [selectedRooms]);
+    }, [formState.selectedRooms]);
+
+    const handleClinicalProfileDone = (items: ClinicalProfile[]) => {
+        handleClinicalProfileSelect(items);
+        setIsClinicalProfileModalVisible(false);
+    };
+
+    const handleMedicinesDone = (items: Medicine[]) => {
+        handleMedicineSelect(items);
+        setIsMedicinesModalVisible(false);
+    };
+
+    const handleRoomsDone = (items: Room[]) => {
+        handleRoomSelect(items);
+        setIsRoomsModalVisible(false);
+    };
 
     const fetchClinicalProfiles = async () => {
         try {
@@ -167,8 +170,6 @@ export default function IntakeTwoScreen({navigation, route}) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data: Omit<Room, 'floor'>[] = await response.json(); // Temporarily omit floor from the fetched data
-            // Assuming your backend returns floor information, adjust accordingly.
-            // For now, let's mock the floor data.
             const roomsWithFloor: Room[] = data.map(room => ({...room, floor: '1st Floor'}));
             setAvailableRooms(roomsWithFloor);
         } catch (error) {
@@ -184,17 +185,17 @@ export default function IntakeTwoScreen({navigation, route}) {
     const handleSubmit = () => {
         const patientData = {
             patientNumber: Math.floor(Math.random() * 90000) + 10000,
-            bsn: intakeData.bsn,
-            firstName: intakeData.voornaam,
-            lastName: intakeData.achternaam,
-            dateOfBirth: new Date(intakeData.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
-            length: intakeData.lengte,
-            weight: intakeData.gewicht,
-            geslacht: geslacht, // Include geslacht in the patientData
-            clinicalProfile: selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', '),
-            diet: foodAllergies,
-            medication: selectedMedicines.map(med => med.atcCode),
-            rooms: selectedRooms,
+            bsn: formState.bsn,
+            firstName: formState.voornaam,
+            lastName: formState.achternaam,
+            dateOfBirth: new Date(formState.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
+            length: parseInt(formState.lengte, 10) || 0,
+            weight: parseFloat(formState.gewicht) || 0,
+            geslacht: formState.selectedGender?.name || '',
+            clinicalProfile: formState.selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', '),
+            diet: formState.foodAllergies,
+            medication: formState.selectedMedicines.map(med => med.atcCode),
+            rooms: formState.selectedRooms,
         };
         console.log(JSON.stringify(patientData, null, 2));
 
@@ -202,6 +203,10 @@ export default function IntakeTwoScreen({navigation, route}) {
 
         // Optionally navigate to a success screen or previous screen
         // navigation.navigate('SuccessScreen');
+    };
+
+    const goBack = () => {
+        navigation.navigate('IntakeOneScreen', {formData: formState});
     };
 
     return (
@@ -217,7 +222,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                     hoverStyle={{scale: 0.990, backgroundColor: "$primary_focus"}}
                     pressStyle={{scale: 0.975, backgroundColor: "$primary_focus"}}
                     icon={<ArrowLeft size="$2" color="white"/>}
-                    onPress={() => navigation.goBack()}
+                    onPress={goBack}
                     position="absolute"
                     left={screenWidth * 0.05}
                     top="$5"
@@ -235,8 +240,6 @@ export default function IntakeTwoScreen({navigation, route}) {
                     ai="center"
                     position="relative"
                 >
-                    {/* You can display the geslacht here if needed for verification */}
-                    {/* <Text>Geslacht: {geslacht}</Text> */}
                     <YStack width="100%" mt="$6" space="$4">
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
@@ -246,7 +249,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                                 <SelectedItemsText
                                     numberOfLines={1}
                                     ellipsizeMode='tail'
-                                    hasValue={selectedClinicalProfiles.length > 0}
+                                    hasValue={formState.selectedClinicalProfiles.length > 0}
                                 >
                                     {clinicalProfileDisplayText}
                                 </SelectedItemsText>
@@ -264,7 +267,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                                 <SelectedItemsText
                                     numberOfLines={1}
                                     ellipsizeMode='tail'
-                                    hasValue={selectedMedicines.length > 0}
+                                    hasValue={formState.selectedMedicines.length > 0}
                                 >
                                     {medicinesDisplayText}
                                 </SelectedItemsText>
@@ -282,7 +285,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                                 <SelectedItemsText
                                     numberOfLines={1}
                                     ellipsizeMode='tail'
-                                    hasValue={selectedRooms.length > 0}
+                                    hasValue={formState.selectedRooms.length > 0}
                                 >
                                     {roomsDisplayText}
                                 </SelectedItemsText>
@@ -303,8 +306,8 @@ export default function IntakeTwoScreen({navigation, route}) {
                                 borderRadius="$4"
                                 padding="$2"
                                 style={{textAlignVertical: 'top'}}
-                                value={foodAllergies}
-                                onChangeText={setFoodAllergies}
+                                value={formState.foodAllergies}
+                                onChangeText={(text) => setFieldValue('foodAllergies', text)}
                             />
                         </YStack>
                     </YStack>
