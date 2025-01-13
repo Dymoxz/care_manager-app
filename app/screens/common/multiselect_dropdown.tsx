@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { ScrollView } from 'react-native';
 import {
-    Adapt,
     Button,
     Dialog,
     Input,
-    Sheet,
     Text,
     YStack,
     styled,
@@ -13,15 +11,16 @@ import {
 } from 'tamagui';
 import { X } from '@tamagui/lucide-icons';
 
-interface DropdownModalProps {
+interface DropdownModalProps<T> {
     visible: boolean;
-    items: string[];
-    onDone: (selectedItems: string[]) => void;
+    items: T[];
+    onDone: (selectedItems: T[]) => void;
     onClose: () => void;
     screenWidth: number;
     title: string;
-    hasSearch: boolean; // Prop to control search bar visibility
-    isMultiSelect: boolean; // Prop to control multiple selections
+    hasSearch: boolean;
+    isMultiSelect: boolean;
+    itemKey: keyof T;
 }
 
 const ModalContent = styled(YStack, {
@@ -53,18 +52,21 @@ const ItemButton = styled(Button, {
     },
 });
 
-const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, onClose, screenWidth, title, hasSearch, isMultiSelect }) => {
+const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, onClose, screenWidth, title, hasSearch, isMultiSelect, itemKey }: DropdownModalProps<T>) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [selectedItems, setSelectedItems] = useState<T[]>([]);
 
     const filteredItems = items.filter(item =>
-        item.toLowerCase().includes(searchQuery.toLowerCase())
+        String(item[itemKey]).toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleItemPress = (item: string) => {
+    const handleItemPress = (item: T) => {
+        const itemId = (item as any).id; // Assuming 'id' exists and is unique
+
         if (isMultiSelect) {
-            if (selectedItems.includes(item)) {
-                setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item));
+            const isSelected = selectedItems.some(selectedItem => (selectedItem as any).id === itemId);
+            if (isSelected) {
+                setSelectedItems(selectedItems.filter(selectedItem => (selectedItem as any).id !== itemId));
             } else {
                 setSelectedItems([...selectedItems, item]);
             }
@@ -81,19 +83,11 @@ const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, o
                     enterStyle={{ opacity: 0 }}
                     exitStyle={{ opacity: 0 }}
                     backgroundColor="rgba(0, 0, 0, 0.5)"
-                    pointerEvents="box-none" // Added pointerEvents
+                    pointerEvents="box-none"
                 />
                 <Dialog.Content
-                    bordered
                     elevate
-                    animation={[
-                        'quicker',
-                        {
-                            opacity: {
-                                overshootClamping: true,
-                            },
-                        },
-                    ]}
+                    animation={['quicker', { opacity: { overshootClamping: true } }]}
                     enterStyle={{ y: -20, opacity: 0, scale: 0.9 }}
                     exitStyle={{ y: 10, opacity: 0, scale: 0.95 }}
                     gap="$4"
@@ -103,22 +97,17 @@ const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, o
                 >
                     <Dialog.Title fontSize='$8'>{title}</Dialog.Title>
                     {hasSearch && (
-                        <Input
-                            placeholder="Zoeken..."
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            mb="$3"
-                        />
+                        <Input placeholder="Search..." value={searchQuery} onChangeText={setSearchQuery} mb="$3"/>
                     )}
                     <ScrollView style={{ maxHeight: 300, flexGrow: 1 }} nestedScrollEnabled={true}>
                         {filteredItems.map(item => (
                             <ItemButton
-                                key={item}
+                                key={(item as any).id}
                                 onPress={() => handleItemPress(item)}
-                                selected={selectedItems.includes(item)}
+                                selected={selectedItems.some(selectedItem => (selectedItem as any).id === (item as any).id)}
                             >
-                                <Text>{item}</Text>
-                                {selectedItems.includes(item) && <Text>✓</Text>}
+                                <Text>{String(item[itemKey])}</Text>
+                                {selectedItems.some(selectedItem => (selectedItem as any).id === (item as any).id) && <Text>✓</Text>}
                             </ItemButton>
                         ))}
                     </ScrollView>
@@ -127,14 +116,7 @@ const DropdownModal: React.FC<DropdownModalProps> = ({ visible, items, onDone, o
                     </Button>
                     <Unspaced>
                         <Dialog.Close asChild>
-                            <Button
-                                position="absolute"
-                                top="$3"
-                                right="$3"
-                                size="$2"
-                                circular
-                                icon={X}
-                            />
+                            <Button position="absolute" top="$3" right="$3" size="$2" circular icon={X}/>
                         </Dialog.Close>
                     </Unspaced>
                 </Dialog.Content>

@@ -7,6 +7,21 @@ import {Dimensions} from "react-native";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
+interface Medicine {
+    atcCode: string;
+    name: string;
+}
+
+interface ClinicalProfile {
+    id: string;
+    clinicalProfile: string;
+}
+
+interface Room {
+    id: string;
+    roomNumber: string;
+}
+
 const InputContainer = styled(XStack, {
     borderWidth: 1,
     borderColor: '$borderColor',
@@ -15,8 +30,8 @@ const InputContainer = styled(XStack, {
     paddingHorizontal: '$3',
     alignItems: 'center',
     justifyContent: 'space-between',
-    cursor: 'pointer', // For web-like feel
-    overflow: 'hidden', // To handle text overflow
+    cursor: 'pointer',
+    overflow: 'hidden',
     backgroundColor: 'white'
 });
 
@@ -34,71 +49,133 @@ const DropdownIndicator = styled(Text, {
 export default function IntakeTwoScreen({navigation, route}) {
     const {intakeData} = route.params;
 
-    const [isZiektebeeldModalVisible, setIsZiektebeeldModalVisible] = useState(false);
-    const [selectedZiektebeelden, setSelectedZiektebeelden] = useState<string[]>([]);
+    const [isClinicalProfileModalVisible, setIsClinicalProfileModalVisible] = useState(false);
+    const [selectedClinicalProfiles, setSelectedClinicalProfiles] = useState<ClinicalProfile[]>([]);
+    const [availableClinicalProfiles, setAvailableClinicalProfiles] = useState<ClinicalProfile[]>([]);
+    const [clinicalProfileDisplayText, setClinicalProfileDisplayText] = useState('Choose or search a clinical profile');
 
-    const availableZiektebeelden = ['Diabetes', 'Astma', 'COPD', 'Hartfalen', 'Reuma', 'Kanker', 'Depressie', 'Hypertensie', 'Migraine', 'Epilepsie', 'Parkinson', 'Alzheimer', 'Osteoporose'];
-    const [ziektebeeldDisplayText, setZiektebeeldDisplayText] = useState('Kies of zoek een ziektebeeld');
+    const [foodAllergies, setFoodAllergies] = useState("");
 
-    const [voedingAllergieen, setVoedingAllergieen] = useState("");
+    const [isMedicinesModalVisible, setIsMedicinesModalVisible] = useState(false);
+    const [selectedMedicines, setSelectedMedicines] = useState<Medicine[]>([]);
+    const [availableMedicines, setAvailableMedicines] = useState<Medicine[]>([]);
+    const [medicinesDisplayText, setMedicinesDisplayText] = useState('Choose or search medicines');
 
-    const [isMedicijnenModalVisible, setIsMedicijnenModalVisible] = useState(false);
-    const [selectedMedicijnen, setSelectedMedicijnen] = useState<string[]>([]);
-    const availableMedicijnen = ['Paracetamol', 'Ibuprofen', 'Amoxicillin', 'Lisinopril', 'Atorvastatin'];
-    const [medicijnenDisplayText, setMedicijnenDisplayText] = useState('Kies of zoek medicijnen');
+    const [isRoomsModalVisible, setIsRoomsModalVisible] = useState(false);
+    const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
+    const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+    const [roomsDisplayText, setRoomsDisplayText] = useState('Choose a room');
 
-    const [isKamersModalVisible, setIsKamersModalVisible] = useState(false);
-    const [selectedKamers, setSelectedKamers] = useState<string[]>([]);
-    const availableKamers = ['Kamer 101', 'Kamer 102', 'Kamer 201', 'Kamer 202', 'Kamer 301'];
-    const [kamersDisplayText, setKamersDisplayText] = useState('Kies een kamer');
-
-    const handleZiektebeeldDone = (items: string[]) => {
-        setSelectedZiektebeelden(items);
+    const handleClinicalProfileDone = (items: ClinicalProfile[]) => {
+        setSelectedClinicalProfiles(items);
     };
 
-    const handleMedicijnenDone = (items: string[]) => {
-        setSelectedMedicijnen(items);
+    const handleMedicinesDone = (items: Medicine[]) => {
+        setSelectedMedicines(items);
     };
 
-    const handleKamersDone = (items: string[]) => {
-        setSelectedKamers(items);
+    const handleRoomsDone = (items: Room[]) => {
+        setSelectedRooms(items);
     };
 
     useEffect(() => {
-        if (selectedZiektebeelden.length > 0) {
-            setZiektebeeldDisplayText(selectedZiektebeelden.join(', '));
-        } else {
-            setZiektebeeldDisplayText('Kies of zoek een ziektebeeld');
-        }
-    }, [selectedZiektebeelden]);
+        setClinicalProfileDisplayText(
+            selectedClinicalProfiles.length > 0
+                ? selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', ')
+                : 'Choose or search a clinical profile'
+        );
+    }, [selectedClinicalProfiles]);
 
     useEffect(() => {
-        if (selectedMedicijnen.length > 0) {
-            setMedicijnenDisplayText(selectedMedicijnen.join(', '));
-        } else {
-            setMedicijnenDisplayText('Kies of zoek medicijnen');
-        }
-    }, [selectedMedicijnen]);
+        setMedicinesDisplayText(
+            selectedMedicines.length > 0
+                ? selectedMedicines.map(med => med.name).join(', ')
+                : 'Choose or search medicines'
+        );
+    }, [selectedMedicines]);
 
     useEffect(() => {
-        if (selectedKamers.length > 0) {
-            setKamersDisplayText(selectedKamers.join(', '));
-        } else {
-            setKamersDisplayText('Kies een kamer');
+        setRoomsDisplayText(
+            selectedRooms.length > 0
+                ? selectedRooms.map(room => room.roomNumber).join(', ')
+                : 'Choose a room'
+        );
+    }, [selectedRooms]);
+
+    const fetchClinicalProfiles = async () => {
+        try {
+            const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
+            if (!backendUrl) {
+                console.error("EXPO_PUBLIC_BACKEND_URL is not defined in process.env");
+                return;
+            }
+            const response = await fetch(`${backendUrl}/clinicalProfile`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data: ClinicalProfile[] = await response.json();
+            setAvailableClinicalProfiles(data);
+        } catch (error) {
+            console.error("Failed to fetch clinical profiles:", error);
+            setAvailableClinicalProfiles([]);
         }
-    }, [selectedKamers]);
+    };
+
+    const fetchMedicines = async () => {
+        try {
+            const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
+            if (!backendUrl) {
+                console.error("EXPO_PUBLIC_BACKEND_URL is not defined in process.env");
+                return;
+            }
+            const response = await fetch(`${backendUrl}/medicine`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data: Medicine[] = await response.json();
+            setAvailableMedicines(data);
+        } catch (error) {
+            console.error("Failed to fetch medicines:", error);
+            setAvailableMedicines([]);
+        }
+    };
+
+    const fetchRooms = async () => {
+        try {
+            const backendUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
+            if (!backendUrl) {
+                console.error("EXPO_PUBLIC_BACKEND_URL is not defined in process.env");
+                return;
+            }
+            const response = await fetch(`${backendUrl}/room`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data: Room[] = await response.json();
+            setAvailableRooms(data);
+        } catch (error) {
+            console.error("Failed to fetch rooms:", error);
+            setAvailableRooms([]);
+        }
+    };
+
+    useEffect(() => {
+        Promise.all([fetchClinicalProfiles(), fetchMedicines(), fetchRooms()]);
+    }, []);
 
     const handleSubmit = () => {
         const patientData = {
-            patientNumber: Math.floor(Math.random() * 90000) + 10000, // Generate a random number
+            patientNumber: Math.floor(Math.random() * 90000) + 10000,
             bsn: intakeData.bsn,
             firstName: intakeData.voornaam,
             lastName: intakeData.achternaam,
             dateOfBirth: new Date(intakeData.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
             length: intakeData.lengte,
             weight: intakeData.gewicht,
-            clinicalProfile: selectedZiektebeelden.length > 0 ? selectedZiektebeelden.join(', ') : null,
-            diet: voedingAllergieen,
+            clinicalProfile: selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', '),
+            diet: foodAllergies,
+            medication: selectedMedicines.map(med => med.atcCode),
+            rooms: selectedRooms,
         };
         console.log(JSON.stringify(patientData, null, 2));
 
@@ -128,7 +205,6 @@ export default function IntakeTwoScreen({navigation, route}) {
                 />
             }
         >
-
             <YStack ai="center">
                 <YStack
                     bg="$container"
@@ -138,22 +214,17 @@ export default function IntakeTwoScreen({navigation, route}) {
                     elevation="$0.25"
                     px="$6"
                     ai="center"
-                    position="relative" // Add relative position to the container
+                    position="relative"
                 >
-                    {/* Form Fields Section */}
                     <YStack width="100%" mt="$6" space="$4">
-
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Ziektebeeld
+                                Clinical Profile
                             </SizableText>
-
-                            <InputContainer
-                                borderColor="#d3d3d3"
-                                h='$4'
-                                onPress={() => setIsZiektebeeldModalVisible(true)}>
-                                <SelectedItemsText col='gray' numberOfLines={1}
-                                                   ellipsizeMode='tail'>{ziektebeeldDisplayText}</SelectedItemsText>
+                            <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)}>
+                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail'>
+                                    {clinicalProfileDisplayText}
+                                </SelectedItemsText>
                                 <DropdownIndicator>
                                     <ChevronDown size='$1'/>
                                 </DropdownIndicator>
@@ -162,14 +233,12 @@ export default function IntakeTwoScreen({navigation, route}) {
 
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Medicijnen
+                                Medicines
                             </SizableText>
-                            <InputContainer
-                                borderColor="#d3d3d3"
-                                h='$4'
-                                onPress={() => setIsMedicijnenModalVisible(true)}>
-                                <SelectedItemsText col='gray' numberOfLines={1}
-                                                   ellipsizeMode='tail'>{medicijnenDisplayText}</SelectedItemsText>
+                            <InputContainer onPress={() => setIsMedicinesModalVisible(true)}>
+                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail'>
+                                    {medicinesDisplayText}
+                                </SelectedItemsText>
                                 <DropdownIndicator>
                                     <ChevronDown size='$1'/>
                                 </DropdownIndicator>
@@ -178,40 +247,35 @@ export default function IntakeTwoScreen({navigation, route}) {
 
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Kamer
+                                Room
                             </SizableText>
-                            <InputContainer
-                                borderColor="#d3d3d3"
-                                h='$4'
-                                onPress={() => setIsKamersModalVisible(true)}>
-                                <SelectedItemsText col='gray' numberOfLines={1}
-                                                   ellipsizeMode='tail'>{kamersDisplayText}</SelectedItemsText>
+                            <InputContainer onPress={() => setIsRoomsModalVisible(true)}>
+                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail'>
+                                    {roomsDisplayText}
+                                </SelectedItemsText>
                                 <DropdownIndicator>
                                     <ChevronDown size='$1'/>
                                 </DropdownIndicator>
                             </InputContainer>
                         </YStack>
 
-                        {/* Voeding / Allergieën */}
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Voeding / Allergieën
+                                Food / Allergies
                             </SizableText>
                             <TextArea
                                 bg='white'
-                                height='$8' // Adjust as needed
+                                height='$8'
                                 borderWidth={1}
                                 borderRadius="$4"
                                 padding="$2"
-                                style={{
-                                    textAlignVertical: 'top', // For React Native platforms
-                                }}
-                                value={voedingAllergieen}
-                                onChangeText={setVoedingAllergieen}
+                                style={{ textAlignVertical: 'top' }}
+                                value={foodAllergies}
+                                onChangeText={setFoodAllergies}
                             />
                         </YStack>
                     </YStack>
-                    {/* Intake voltooien Button */}
+
                     <Button
                         onPress={handleSubmit}
                         pressStyle={{scale: 0.975, backgroundColor: "$accent_focus"}}
@@ -219,49 +283,51 @@ export default function IntakeTwoScreen({navigation, route}) {
                         borderRadius="$10"
                         position="absolute"
                         borderColor="$accent_focus"
-                        bottom="$5"  // Align the button to the bottom
-                        right="$5"   // Align the button to the right
+                        bottom="$5"
+                        right="$5"
                     >
                         <SizableText fontSize="$4" color="$accent_content">
-                            Intake voltooien
+                            Complete Intake
                         </SizableText>
                     </Button>
                 </YStack>
             </YStack>
 
-            <DropdownModal
-                visible={isZiektebeeldModalVisible}
-                items={availableZiektebeelden}
-                onDone={handleZiektebeeldDone}
-                onClose={() => setIsZiektebeeldModalVisible(false)}
+            <DropdownModal<ClinicalProfile>
+                visible={isClinicalProfileModalVisible}
+                items={availableClinicalProfiles}
+                onDone={handleClinicalProfileDone}
+                onClose={() => setIsClinicalProfileModalVisible(false)}
                 screenWidth={screenWidth}
-                title="Selecteer ziektebeeld"
+                title="Select clinical profile"
                 hasSearch={true}
                 isMultiSelect={true}
+                itemKey="clinicalProfile"
             />
 
-            <DropdownModal
-                visible={isMedicijnenModalVisible}
-                items={availableMedicijnen}
-                onDone={handleMedicijnenDone}
-                onClose={() => setIsMedicijnenModalVisible(false)}
+            <DropdownModal<Medicine>
+                visible={isMedicinesModalVisible}
+                items={availableMedicines}
+                onDone={handleMedicinesDone}
+                onClose={() => setIsMedicinesModalVisible(false)}
                 screenWidth={screenWidth}
-                title="Selecteer medicijnen"
+                title="Select medicines"
                 hasSearch={true}
                 isMultiSelect={true}
+                itemKey="name"
             />
 
-            <DropdownModal
-                visible={isKamersModalVisible}
-                items={availableKamers}
-                onDone={handleKamersDone}
-                onClose={() => setIsKamersModalVisible(false)}
+            <DropdownModal<Room>
+                visible={isRoomsModalVisible}
+                items={availableRooms}
+                onDone={handleRoomsDone}
+                onClose={() => setIsRoomsModalVisible(false)}
                 screenWidth={screenWidth}
-                title="Selecteer kamer"
+                title="Select room"
                 hasSearch={true}
                 isMultiSelect={false}
+                itemKey="roomNumber"
             />
         </TitleLayout>
-
     );
-};
+}

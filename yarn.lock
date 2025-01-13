@@ -2027,6 +2027,11 @@
   resolved "https://registry.npmjs.org/@react-native/normalize-colors/-/normalize-colors-0.76.5.tgz"
   integrity sha512-6QRLEok1r55gLqj+94mEWUENuU5A6wsr2OoXpyq/CgQ7THWowbHtru/kRGRr6o3AQXrVnZheR60JNgFcpNYIug==
 
+"@react-native/normalize-colors@0.76.6":
+  version "0.76.6"
+  resolved "https://registry.npmjs.org/@react-native/normalize-colors/-/normalize-colors-0.76.6.tgz"
+  integrity sha512-1n4udXH2Cla31iA/8eLRdhFHpYUYK1NKWCn4m1Sr9L4SarWKAYuRFliK1fcLvPPALCFoFlWvn8I0ekdUOHMzDQ==
+
 "@react-native/virtualized-lists@0.76.5":
   version "0.76.5"
   resolved "https://registry.npmjs.org/@react-native/virtualized-lists/-/virtualized-lists-0.76.5.tgz"
@@ -5323,9 +5328,9 @@ expo-keep-awake@~14.0.1:
   integrity sha512-c5mGCAIk2YM+Vsdy90BlEJ4ZX+KG5Au9EkJUIxXWlpnuKmDAJ3N+5nEZ7EUO1ZTheqoSBeAo4jJ8rTWPU+JXdw==
 
 expo-linear-gradient@^14.0.1:
-  version "14.0.1"
-  resolved "https://registry.npmjs.org/expo-linear-gradient/-/expo-linear-gradient-14.0.1.tgz"
-  integrity sha512-apGtUO9AZ52ZWvX9f6K9TamWw8XcUby7jZ0Pcvd5LxUO7pl7tDPx2VlKqpzbhhS4yfCiUwX58wqocwVnE/0ZVg==
+  version "14.0.2"
+  resolved "https://registry.npmjs.org/expo-linear-gradient/-/expo-linear-gradient-14.0.2.tgz"
+  integrity sha512-nvac1sPUfFFJ4mY25UkvubpUV/olrBH+uQw5k+beqSvQaVQiUfFtYzfRr+6HhYBNb4AEsOtpsCRkpDww3M2iGQ==
 
 expo-linking@*, expo-linking@~7.0.3:
   version "7.0.3"
@@ -5396,11 +5401,11 @@ expo-status-bar@~2.0.0:
   integrity sha512-vxxdpvpNDMTEc5uTiIrbTvySKKUsOACmfl8OZuUdjNle05oGqwtq3v5YObwym/njSByjoyuZX8UpXBZnxvarwQ==
 
 expo-system-ui@~4.0.6:
-  version "4.0.6"
-  resolved "https://registry.npmjs.org/expo-system-ui/-/expo-system-ui-4.0.6.tgz"
-  integrity sha512-JWmw0aaNIB8YxA6bXgH6nClyledZaAG5VNzoRvmXT4+j3MY4waAHSSSdVV71bUgjchT/2KOAcibZ/EeosJONug==
+  version "4.0.7"
+  resolved "https://registry.npmjs.org/expo-system-ui/-/expo-system-ui-4.0.7.tgz"
+  integrity sha512-x1VDoE7J8m4wxTgWyUBEYqsf1KabIg64dOLzYiZjg0cWOE6o6kX2Mg6n3abVWEEC01WhZBoo9+Urcce/6ZJ3tg==
   dependencies:
-    "@react-native/normalize-colors" "0.76.5"
+    "@react-native/normalize-colors" "0.76.6"
     debug "^4.3.2"
 
 expo-updates-interface@~1.0.0:
