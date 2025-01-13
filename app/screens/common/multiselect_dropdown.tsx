@@ -98,9 +98,9 @@ const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, 
                     width={screenWidth * 0.9}
                     style={{ maxWidth: screenWidth * 0.9 }}
                 >
-                    <Dialog.Title fontSize='$8'>{title}</Dialog.Title>
+                    <Dialog.Title fontSize='$7'>{title}</Dialog.Title>
                     {hasSearch && (
-                        <Input placeholder="Search..." value={searchQuery} onChangeText={setSearchQuery} mb="$3"/>
+                        <Input placeholder="Zoeken..." value={searchQuery} onChangeText={setSearchQuery} mb="$3"/>
                     )}
                     <ScrollView style={{ maxHeight: 300, flexGrow: 1 }} nestedScrollEnabled={true}>
                         {filteredItems.map(item => (
@@ -114,12 +114,12 @@ const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, 
                             </ItemButton>
                         ))}
                     </ScrollView>
-                    <Button mt="$4" onPress={() => { onDone(selectedItems); onClose(); }}>
-                        Done
+                    <Button mt="$4" mx='$8' onPress={() => { onDone(selectedItems); onClose(); }} bg='$accent' borderRadius='$10' borderColor='$accent_focus' col='$accent_content'>
+                        Bevestigen
                     </Button>
                     <Unspaced>
                         <Dialog.Close asChild>
-                            <Button position="absolute" top="$3" right="$3" size="$2" circular icon={X}/>
+                            <Button bg='$secondary' col='white' position="absolute" top="$3" right="$3" size="$2" circular icon={X}/>
                         </Dialog.Close>
                     </Unspaced>
                 </Dialog.Content>

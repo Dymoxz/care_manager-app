@@ -54,19 +54,19 @@ export default function IntakeTwoScreen({navigation, route}) {
     const [isClinicalProfileModalVisible, setIsClinicalProfileModalVisible] = useState(false);
     const [selectedClinicalProfiles, setSelectedClinicalProfiles] = useState<ClinicalProfile[]>([]);
     const [availableClinicalProfiles, setAvailableClinicalProfiles] = useState<ClinicalProfile[]>([]);
-    const [clinicalProfileDisplayText, setClinicalProfileDisplayText] = useState('Choose or search a clinical profile');
+    const [clinicalProfileDisplayText, setClinicalProfileDisplayText] = useState('Zoek of selecteer een ziektebeeld');
 
     const [foodAllergies, setFoodAllergies] = useState("");
 
     const [isMedicinesModalVisible, setIsMedicinesModalVisible] = useState(false);
     const [selectedMedicines, setSelectedMedicines] = useState<Medicine[]>([]);
     const [availableMedicines, setAvailableMedicines] = useState<Medicine[]>([]);
-    const [medicinesDisplayText, setMedicinesDisplayText] = useState('Choose or search medicines');
+    const [medicinesDisplayText, setMedicinesDisplayText] = useState('Zoek of selecteer medicijnen');
 
     const [isRoomsModalVisible, setIsRoomsModalVisible] = useState(false);
     const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
     const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
-    const [roomsDisplayText, setRoomsDisplayText] = useState('Choose a room');
+    const [roomsDisplayText, setRoomsDisplayText] = useState('Zoek of selecteer een kamer');
 
     const handleClinicalProfileDone = (items: ClinicalProfile[]) => {
         setSelectedClinicalProfiles(items);
@@ -84,7 +84,7 @@ export default function IntakeTwoScreen({navigation, route}) {
         setClinicalProfileDisplayText(
             selectedClinicalProfiles.length > 0
                 ? selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', ')
-                : 'Choose or search a clinical profile'
+                : 'Zoek of selecteer een ziektebeeld'
         );
     }, [selectedClinicalProfiles]);
 
@@ -92,7 +92,7 @@ export default function IntakeTwoScreen({navigation, route}) {
         setMedicinesDisplayText(
             selectedMedicines.length > 0
                 ? selectedMedicines.map(med => med.name).join(', ')
-                : 'Choose or search medicines'
+                : 'Zoek of selecteer medicijnen'
         );
     }, [selectedMedicines]);
 
@@ -100,7 +100,7 @@ export default function IntakeTwoScreen({navigation, route}) {
         setRoomsDisplayText(
             selectedRooms.length > 0
                 ? selectedRooms.map(room => `${room.roomNumber} - ${room.floor}`).join(', ')
-                : 'Choose a room'
+                : 'Zoek of selecteer een kamer'
         );
     }, [selectedRooms]);
 
@@ -224,10 +224,10 @@ export default function IntakeTwoScreen({navigation, route}) {
                     <YStack width="100%" mt="$6" space="$4">
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Clinical Profile
+                                Ziektebeeld
                             </SizableText>
                             <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)}>
-                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail'>
+                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' col='gray'>
                                     {clinicalProfileDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
@@ -238,10 +238,10 @@ export default function IntakeTwoScreen({navigation, route}) {
 
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Medicines
+                                Medicijnen
                             </SizableText>
                             <InputContainer onPress={() => setIsMedicinesModalVisible(true)}>
-                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail'>
+                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' col='gray'>
                                     {medicinesDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
@@ -252,10 +252,10 @@ export default function IntakeTwoScreen({navigation, route}) {
 
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Room
+                                Kamer
                             </SizableText>
                             <InputContainer onPress={() => setIsRoomsModalVisible(true)}>
-                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail'>
+                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' col='gray'>
                                     {roomsDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
@@ -266,7 +266,7 @@ export default function IntakeTwoScreen({navigation, route}) {
 
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Food / Allergies
+                                Voeding / Allergiëen
                             </SizableText>
                             <TextArea
                                 bg='white'
@@ -292,7 +292,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                         right="$5"
                     >
                         <SizableText fontSize="$4" color="$accent_content">
-                            Complete Intake
+                            Intake Voltooie
                         </SizableText>
                     </Button>
                 </YStack>
@@ -304,7 +304,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                 onDone={handleClinicalProfileDone}
                 onClose={() => setIsClinicalProfileModalVisible(false)}
                 screenWidth={screenWidth}
-                title="Select clinical profile"
+                title="Selecteer ziektebeeld"
                 hasSearch={true}
                 isMultiSelect={true}
                 getItemKey={(item) => item.clinicalProfile}
@@ -317,7 +317,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                 onDone={handleMedicinesDone}
                 onClose={() => setIsMedicinesModalVisible(false)}
                 screenWidth={screenWidth}
-                title="Select medicines"
+                title="Selecteer medicijnen"
                 hasSearch={true}
                 isMultiSelect={true}
                 getItemKey={(item) => item.atcCode}
@@ -330,7 +330,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                 onDone={handleRoomsDone}
                 onClose={() => setIsRoomsModalVisible(false)}
                 screenWidth={screenWidth}
-                title="Select room"
+                title="Selecteer kamer"
                 hasSearch={true}
                 isMultiSelect={false}
                 getItemKey={(item) => `${item.roomNumber}-${item.floor}`}

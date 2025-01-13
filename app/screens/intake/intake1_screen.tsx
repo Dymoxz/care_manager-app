@@ -252,7 +252,7 @@ export default function IntakeOneScreen({navigation}) {
                                         py="$2"
                                         mr="$2"
                                     >
-                                        <SizableText color="$text" fontSize="$4">
+                                        <SizableText color="$text" fontSize="$3">
                                             cm
                                         </SizableText>
                                     </YStack>
@@ -292,7 +292,7 @@ export default function IntakeOneScreen({navigation}) {
                                         py="$2"
                                         mr="$2"
                                     >
-                                        <SizableText color="$text" fontSize="$4">
+                                        <SizableText color="$text" fontSize="$3">
                                             kg
                                         </SizableText>
                                     </YStack>
