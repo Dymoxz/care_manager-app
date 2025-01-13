@@ -1,4 +1,3 @@
-// IntakeTwoScreen.tsx
 import React, {useEffect, useState} from 'react';
 import {Button, SizableText, styled, Text, TextArea, XStack, YStack} from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
@@ -42,6 +41,19 @@ const SelectedItemsText = styled(Text, {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    variants: {
+        hasValue: {
+            true: {
+                color: '$text',
+            },
+            false: {
+                color: 'gray',
+            },
+        },
+    },
+    defaultVariants: {
+        hasValue: false,
+    },
 });
 
 const DropdownIndicator = styled(Text, {
@@ -50,6 +62,7 @@ const DropdownIndicator = styled(Text, {
 
 export default function IntakeTwoScreen({navigation, route}) {
     const {intakeData} = route.params;
+    const [geslacht, setGeslacht] = useState(intakeData?.geslacht || ''); // Access geslacht from intakeData
 
     const [isClinicalProfileModalVisible, setIsClinicalProfileModalVisible] = useState(false);
     const [selectedClinicalProfiles, setSelectedClinicalProfiles] = useState<ClinicalProfile[]>([]);
@@ -156,7 +169,7 @@ export default function IntakeTwoScreen({navigation, route}) {
             const data: Omit<Room, 'floor'>[] = await response.json(); // Temporarily omit floor from the fetched data
             // Assuming your backend returns floor information, adjust accordingly.
             // For now, let's mock the floor data.
-            const roomsWithFloor: Room[] = data.map(room => ({ ...room, floor: '1st Floor' }));
+            const roomsWithFloor: Room[] = data.map(room => ({...room, floor: '1st Floor'}));
             setAvailableRooms(roomsWithFloor);
         } catch (error) {
             console.error("Failed to fetch rooms:", error);
@@ -177,6 +190,7 @@ export default function IntakeTwoScreen({navigation, route}) {
             dateOfBirth: new Date(intakeData.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
             length: intakeData.lengte,
             weight: intakeData.gewicht,
+            geslacht: geslacht, // Include geslacht in the patientData
             clinicalProfile: selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', '),
             diet: foodAllergies,
             medication: selectedMedicines.map(med => med.atcCode),
@@ -221,13 +235,19 @@ export default function IntakeTwoScreen({navigation, route}) {
                     ai="center"
                     position="relative"
                 >
+                    {/* You can display the geslacht here if needed for verification */}
+                    {/* <Text>Geslacht: {geslacht}</Text> */}
                     <YStack width="100%" mt="$6" space="$4">
                         <YStack>
                             <SizableText fontSize="$4" color="$text" mb='$1'>
                                 Ziektebeeld
                             </SizableText>
-                            <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)}>
-                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' col='gray'>
+                            <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)} h='$4'>
+                                <SelectedItemsText
+                                    numberOfLines={1}
+                                    ellipsizeMode='tail'
+                                    hasValue={selectedClinicalProfiles.length > 0}
+                                >
                                     {clinicalProfileDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
@@ -240,8 +260,12 @@ export default function IntakeTwoScreen({navigation, route}) {
                             <SizableText fontSize="$4" color="$text" mb='$1'>
                                 Medicijnen
                             </SizableText>
-                            <InputContainer onPress={() => setIsMedicinesModalVisible(true)}>
-                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' col='gray'>
+                            <InputContainer onPress={() => setIsMedicinesModalVisible(true)} h='$4'>
+                                <SelectedItemsText
+                                    numberOfLines={1}
+                                    ellipsizeMode='tail'
+                                    hasValue={selectedMedicines.length > 0}
+                                >
                                     {medicinesDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
@@ -254,8 +278,12 @@ export default function IntakeTwoScreen({navigation, route}) {
                             <SizableText fontSize="$4" color="$text" mb='$1'>
                                 Kamer
                             </SizableText>
-                            <InputContainer onPress={() => setIsRoomsModalVisible(true)}>
-                                <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' col='gray'>
+                            <InputContainer onPress={() => setIsRoomsModalVisible(true)} h='$4'>
+                                <SelectedItemsText
+                                    numberOfLines={1}
+                                    ellipsizeMode='tail'
+                                    hasValue={selectedRooms.length > 0}
+                                >
                                     {roomsDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
@@ -274,7 +302,7 @@ export default function IntakeTwoScreen({navigation, route}) {
                                 borderWidth={1}
                                 borderRadius="$4"
                                 padding="$2"
-                                style={{ textAlignVertical: 'top' }}
+                                style={{textAlignVertical: 'top'}}
                                 value={foodAllergies}
                                 onChangeText={setFoodAllergies}
                             />
