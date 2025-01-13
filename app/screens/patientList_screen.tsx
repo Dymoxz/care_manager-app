@@ -41,7 +41,7 @@ async function ActivateDevice(
     setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
 ) {
     try {
-        const response = await fetch(`http://192.168.232.224:3000/api/patient`, {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
                         <PatientCard
                             key={patient._id}
                             name={`${patient.firstName} ${patient.lastName}`}
-                            room={`Kamer ${patient.room?.roomNumber || 'Onbekend'} (Verdieping ${patient.room?.floor || '?'})`}
+                            room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
                             hasAlert={patient.room?.isScaled || false}
                             patient={patient}
                             onPress={handlePatientPress}

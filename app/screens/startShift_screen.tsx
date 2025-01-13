@@ -3,15 +3,11 @@ import { Button, Image, SizableText, YStack } from 'tamagui';
 import { BackHandler, Dimensions } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useToastController } from '@tamagui/toast';
+import {Caretaker} from "../caretaker.interface";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-interface Caretaker {
-    id: number;
-    BirthSurname: string;
-    Initial: string;
-    Big_Number: string;
-}
+
 
 // Function to get user data
 async function getUserName(): Promise<string> {
@@ -124,7 +120,7 @@ export default function StartShiftScreen({ navigation }: { navigation: any }) {
                         width={(screenWidth * 50) / 100}
                         height="$6"
                         pressStyle={{ bg: '$accent_focus' }}
-                        onPress={() => navigation.navigate("HomeScreen")}
+                        onPress={() => navigation.navigate("ShiftScreen")}
                     >
                         <SizableText col="$accent_content" size="$5" textAlign="center">
                             Start dienst
