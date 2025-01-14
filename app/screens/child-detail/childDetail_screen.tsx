@@ -22,6 +22,7 @@ import { ChevronDown, Edit3, Plus, Trash, X, Calendar, Pill } from "@tamagui/luc
 import Svg, { Path } from "react-native-svg";
 import theme from "tailwindcss/defaultTheme";
 import MedicineDetailModal from "./medicineDetail_modal";
+import DeleteModal from "./delete_modal";
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -110,6 +111,23 @@ export function AccordionDemo() {
 
 export default function ChildDetailScreen({ route, navigation }: PatientDetailsScreenProps) {
     const { patient } = route.params;
+
+    const [isDischargeModalVisible, setDischargeModalVisible] = useState(false);
+
+    const handleDischargePress = () => {
+        setDischargeModalVisible(true);
+    };
+
+    const handleDischargeConfirm = (reason: string) => {
+        console.log('Discharge reason:', reason);
+        //Handle logic of reason here, like sending an api request.
+        setDischargeModalVisible(false);
+    };
+
+
+    const handleCloseModal = () => {
+        setDischargeModalVisible(false);
+    };
 
     const [selectedMedicine, setSelectedMedicine] = useState<string | null>(null);
     const [isModalVisible, setModalVisible] = useState(false);
@@ -519,7 +537,7 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                     {isFABOpen && (
                         <>
                             <TouchableOpacity
-                                onPress={() => console.log('Ontslag')}
+                                onPress={handleDischargePress}
                                 style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
@@ -540,6 +558,8 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                     Ontslag
                                 </SizableText>
                             </TouchableOpacity>
+
+
                             <TouchableOpacity
                                 onPress={() => console.log('Afspraak maken')}
                                 style={{
@@ -640,6 +660,14 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                 </TouchableOpacity>
 
             </YStack>
+            <DeleteModal
+                visible={isDischargeModalVisible}
+                onDone={handleDischargeConfirm}
+                onClose={handleCloseModal}
+                screenWidth={screenWidth}
+                patientName={patient.firstName + ' ' + patient.lastName}
+                patientNumber={patient.patientNumber}
+        />
         </TitleLayout>
     );
 }
