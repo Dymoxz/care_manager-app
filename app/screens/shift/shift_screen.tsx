@@ -1,14 +1,13 @@
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
 import React, {useEffect, useState} from "react";
-import {Button, Input, SizableText, XStack, YStack} from "tamagui";
-import {AlertCircle, Bed, Check, FileHeart} from "@tamagui/lucide-icons";
-import {Dimensions} from "react-native";
-import { Checkbox, Label, } from 'tamagui'
+import {Button, Checkbox, Input, SizableText, XStack, YStack} from "tamagui";
+import {AlertCircle, Bed, Check} from "@tamagui/lucide-icons";
+import {Dimensions, ScrollView} from "react-native";
 import * as SQLite from "expo-sqlite";
 import {Caretaker} from "../../caretaker.interface";
-const { width: screenWidth } = Dimensions.get('window');
 
+const { width: screenWidth } = Dimensions.get('window');
 
 
 interface Room {
@@ -30,6 +29,9 @@ interface Patient {
     __v: number;
     room: Room;
 }
+
+let initialSelectedPatients : Patient[] = [];
+
 
 interface PatientCardProps {
     name: string;
@@ -68,12 +70,12 @@ async function postShiftData(patients: Patient[]) {
     console.log('Big number:', bigNumber);
     console.log('Patients:', patientNumbers);
     try {
-        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/careTaker/${bigNumber}`, {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/careTaker/${bigNumber}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(patientNumbers),
+            body: JSON.stringify({ patientNumberList: patientNumbers }), // Changed body
         });
 
         if (!response.ok) {
@@ -82,6 +84,51 @@ async function postShiftData(patients: Patient[]) {
 
     } catch (error: any) {
         console.log(error.message || 'An error occurred while fetching patients');
+    }
+}
+
+async function postDeletedShiftData(patients: Patient[]) {
+
+    const bigNumber = await getBigNumber();
+    const patientNumbers = patients.map((patient) => patient.patientNumber.toString());
+    console.log('Patients:', patientNumbers);
+    try {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/careTaker/${bigNumber}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ patientNumberList: patientNumbers }), // Changed body
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch patient data');
+        }
+
+    } catch (error: any) {
+        console.log(error.message || 'An error occurred while fetching patients');
+    }
+}
+
+async function getAssignedPatients(): Promise<Patient[]> {
+    const bigNumber = await getBigNumber();
+    try {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/careTaker/${bigNumber}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch patient data');
+        }
+        const data = await response.json(); //Store the json in data
+        initialSelectedPatients = data; // Assign data to the global variable
+        return data; // return the variables
+    } catch (error: any) {
+        console.error(error.message || 'An error occurred while fetching patients');
+        return [];
     }
 }
 
@@ -150,7 +197,7 @@ function PatientCard({ name, room, hasAlert, patient, isSelected, onSelect }: Pa
                 onPress={() => onSelect(patient)}
             >
                 <Checkbox.Indicator>
-                    <Check color="black" />
+                    <Check color="white" />
                 </Checkbox.Indicator>
             </Checkbox>
         </XStack>
@@ -169,6 +216,14 @@ export default function ShiftScreen({ navigation }) {
             setPatients
         );
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            const assignedPatients = await getAssignedPatients();
+            setSelectedPatients(assignedPatients);
+        })();
+    }, []);
+
 
     const filteredPatients = patients.filter((patient) => {
         const name = `${patient.firstName} ${patient.lastName}`.toLowerCase();
@@ -190,14 +245,18 @@ export default function ShiftScreen({ navigation }) {
         });
     };
 
+
     const handleSave = async () => {
-        if (selectedPatients.length === 0) {
-            // You might want to show an error message here
-            return;
-        }
-        await postShiftData(selectedPatients);
         navigation.navigate('HomeScreen');
+        await postShiftData(selectedPatients);
+        await postDeletedShiftData(initialSelectedPatients.filter(patient => !selectedPatients.some(selected => selected._id === patient._id)));
+
     };
+
+    // Split selected and non-selected patients
+    const selected = filteredPatients.filter(patient => selectedPatients.some(selected => selected._id === patient._id));
+    const nonSelected = filteredPatients.filter(patient => !selectedPatients.some(selected => selected._id === patient._id));
+
 
     return (
         <TitleLayout
@@ -218,20 +277,35 @@ export default function ShiftScreen({ navigation }) {
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
-
-                <YStack space="$1" width={(screenWidth * 90) / 100}>
-                    {filteredPatients.map((patient) => (
+<ScrollView>
+                <YStack space="$8" width={(screenWidth * 90) / 100}>
+                    {/* Render selected patients first */}
+                    {selected.map((patient) => (
                         <PatientCard
                             key={patient._id}
                             name={`${patient.firstName} ${patient.lastName}`}
                             room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
                             hasAlert={patient.room?.isScaled || false}
                             patient={patient}
-                            isSelected={selectedPatients.some(p => p._id === patient._id)}
+                            isSelected={true}
+                            onSelect={handlePatientSelect}
+                        />
+                    ))}
+
+                    {/* Render non-selected patients second */}
+                    {nonSelected.map((patient) => (
+                        <PatientCard
+                            key={patient._id}
+                            name={`${patient.firstName} ${patient.lastName}`}
+                            room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
+                            hasAlert={patient.room?.isScaled || false}
+                            patient={patient}
+                            isSelected={false}
                             onSelect={handlePatientSelect}
                         />
                     ))}
                 </YStack>
+</ScrollView>
 
                 <XStack
                     ai="center"
