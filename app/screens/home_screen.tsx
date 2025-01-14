@@ -6,6 +6,7 @@ import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
 import TitleLayout from "./common/title_layout";
 import ShiftScreen from "./shift/shift_screen";
 import * as SQLite from "expo-sqlite";
+import {Caretaker} from "../caretaker.interface";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
@@ -270,29 +271,47 @@ export function DemoCard({title, icon, onPress, ...props}: CardProps & {
 }
 
 async function ActivateDevice(){
-    const db = await SQLite.openDatabaseAsync('localdb');
+    try {
+        const db = await SQLite.openDatabaseAsync('localdb');
+        const result = await db.getFirstAsync<Caretaker>(
+            'SELECT * FROM Caretakers LIMIT 1;'
+        );
 
-    try{
-        await db.withTransactionAsync(async () => {
-            await db.execAsync(
-                'CREATE TABLE IF NOT EXISTS Caretakers (id INTEGER PRIMARY KEY AUTOINCREMENT, BirthSurname TEXT, Initial TEXT, Big_Number TEXT);'
-            );
-        });
+        if (result && result.Initial && result.BirthSurname) {
+            return `${result.Initial} ${result.BirthSurname}`;
+        }
 
-        await db.withTransactionAsync(async () => {
-            await db.runAsync(
-                'INSERT INTO Caretakers (BirthSurname, Initial, Big_Number) VALUES (?, ?, ?);',
-                ['Doe', 'J.', '79059994401']
-            );
-        });
+        throw new Error('No valid user data found');
 
-    }
-    catch (error: any) {
-        console.error('Database initialization error:', error);
+    } catch (error) {
+        console.error('Error fetching user name:', error);
+        return '79059994401';
     }
 
 
 }
+
+
+async function postDeletedShiftData() {
+    const bigNumber = ActivateDevice();
+    try {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/endShift/${bigNumber}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch patient data');
+        }
+
+    } catch (error: any) {
+        console.log(error.message || 'An error occurred while fetching patients');
+    }
+}
+
+
 
 export default function HomeScreen({navigation}) {
     useEffect(() => {
@@ -310,6 +329,11 @@ export default function HomeScreen({navigation}) {
         {title: 'Plattegrond', navLink: 'MapScreen', icon: mapIcon},
         {title: 'Activate', navLink: 'ActivateScreen', icon: <Rocket/>},
     ];
+
+    const handleSave = async () => {
+        navigation.navigate('StartShiftScreen');
+        await postDeletedShiftData();
+    };
 
     const cardSpacing = 16;
     const cardWidth = (screenWidth - cardSpacing * 4) / 3;
@@ -372,11 +396,8 @@ export default function HomeScreen({navigation}) {
                     }}
                     elevation='$0.25'
                     borderColor='$container_alt'
-                    onPress={() => {
-                        navigation.navigate('StartShiftScreen');
-                    }
+                    onPress={handleSave}
 
-                    }
                 >
                     <SizableText col='white' size="$4" textAlign="center">
                         Dienst Beëindigen
