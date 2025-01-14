@@ -1,11 +1,22 @@
-import {Button, Card, CardProps, Paragraph, ScrollView, SizableText, XStack, YStack} from 'tamagui';
-import React, {useEffect} from 'react';
+import {
+    Button,
+    Card,
+    CardProps,
+    Dialog, DialogClose,
+    DialogContent, DialogTitle,
+    Paragraph,
+    ScrollView,
+    SizableText,
+    XStack,
+    YStack
+} from 'tamagui';
+import React, {useEffect, useState} from 'react';
 import {Dimensions} from 'react-native';
-import {Rocket} from '@tamagui/lucide-icons';
+import {Rocket, Settings} from '@tamagui/lucide-icons';
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
 import TitleLayout from "./common/title_layout";
-import ShiftScreen from "./shift/shift_screen";
 import * as SQLite from "expo-sqlite";
+import {DeleteModal} from "./child-detail/delete_modal";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
@@ -153,7 +164,8 @@ const intakeIcon = <Svg style={{marginLeft: 7}} width='40%' height="50%" data-na
     fill="#9fa5aa" d="M48.36 92H46v2h3.55a6.171 6.171 0 0 1-1.19-2Z" opacity=".5"/><Path fill="#fff"
                                                                                          d="M48.921 86H46v2h2.333l.588-2z"
                                                                                          opacity=".5"/></Svg>
-const agreementIcon = <Svg style={{marginLeft: 8}} width='40%' height="50%" data-name="Layer 4" viewBox="0 0 128 128"><Rect
+const agreementIcon = <Svg style={{marginLeft: 8}} width='40%' height="50%" data-name="Layer 4"
+                           viewBox="0 0 128 128"><Rect
     width="11.129" height="22.942"
     x="74.954" y="52.058"
     fill="#e1ebf4"/><Path
@@ -269,10 +281,10 @@ export function DemoCard({title, icon, onPress, ...props}: CardProps & {
     );
 }
 
-async function ActivateDevice(){
+async function ActivateDevice() {
     const db = await SQLite.openDatabaseAsync('localdb');
 
-    try{
+    try {
         await db.withTransactionAsync(async () => {
             await db.execAsync(
                 'CREATE TABLE IF NOT EXISTS Caretakers (id INTEGER PRIMARY KEY AUTOINCREMENT, BirthSurname TEXT, Initial TEXT, Big_Number TEXT);'
@@ -286,19 +298,20 @@ async function ActivateDevice(){
             );
         });
 
-    }
-    catch (error: any) {
+    } catch (error: any) {
         console.error('Database initialization error:', error);
     }
 
 
 }
 
+
 export default function HomeScreen({navigation}) {
     useEffect(() => {
         ActivateDevice().then(r => console.log('Activated'));
-
     }, []);
+
+    const [modalOpen, setModalOpen] = useState(false);
 
     const pages = [
 
@@ -309,6 +322,7 @@ export default function HomeScreen({navigation}) {
         {title: 'Jouw dienst', navLink: 'ShiftScreen', icon: doctorIcon},
         {title: 'Plattegrond', navLink: 'MapScreen', icon: mapIcon},
         {title: 'Activate', navLink: 'ActivateScreen', icon: <Rocket/>},
+        {title: 'Modal', icon: <Settings/>, isModal: true },
     ];
 
     const cardSpacing = 16;
@@ -336,7 +350,13 @@ export default function HomeScreen({navigation}) {
                                             key={subIndex + index}
                                             title={page.title}
                                             icon={page.icon}
-                                            onPress={() => navigation.navigate(page.navLink)}
+                                            onPress={() => {
+                                                if (page.isModal) {
+                                                    setModalOpen(true);
+                                                } else {
+                                                    navigation.navigate(page.navLink);
+                                                }
+                                            }}
                                             width={cardWidth}
                                             height={cardHeight}
                                             animation="bouncy"
@@ -350,6 +370,7 @@ export default function HomeScreen({navigation}) {
                     })}
                 </YStack>
             </ScrollView>
+            <DeleteModal open={modalOpen} setOpen={setModalOpen} />
 
             {/* Fixed Button */}
             <YStack
