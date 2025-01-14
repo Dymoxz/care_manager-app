@@ -12,7 +12,7 @@ import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
 import TitleLayout from "../common/title_layout";
 import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
 import DropdownModal from "../common/multiselect_dropdown";
-import {useIntakeForm} from "./useIntakeForm"; // Import the hook
+import {useIntakeForm} from "./useIntakeForm";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
@@ -58,19 +58,35 @@ const DropdownIndicator = styled(Text, {
     marginLeft: '$2',
 });
 
+const ErrorText = styled(Text, {
+    color: 'red',
+    fontSize: 12,
+    width: '100%',
+    paddingLeft: 5,
+    minHeight: 20
+});
+
 interface IntakeOneScreenProps {
     navigation: any;
     route: any;
 }
 
 export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProps) {
-    const {formState, setFieldValue, handleGenderSelect} = useIntakeForm(route.params?.formData);
+    const {formState, setFieldValue, handleGenderSelect, errors, validateField, validateForm} = useIntakeForm(route.params?.formData);
     const [isGenderModalVisible, setIsGenderModalVisible] = useState(false);
     const [availableGenders, setAvailableGenders] = useState<Gender[]>([{id: 'male', name: 'Jongen'}, {
         id: 'female',
         name: 'Meisje'
     }]);
     const [genderDisplayText, setGenderDisplayText] = useState('Selecteer geslacht');
+
+    // State to track the number of active errors
+    const [activeErrorCount, setActiveErrorCount] = useState(0);
+
+    // Update activeErrorCount whenever the errors object changes
+    useEffect(() => {
+        setActiveErrorCount(Object.values(errors).filter(error => error !== undefined).length);
+    }, [errors]);
 
     useEffect(() => {
         if (formState.selectedGender) {
@@ -83,14 +99,19 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
     const handleGenderDone = (item: Gender[]) => {
         if (item.length > 0) {
             handleGenderSelect(item[0]);
+            validateField('selectedGender', item[0]);
         } else {
             handleGenderSelect(null);
+            validateField('selectedGender', null);
         }
         setIsGenderModalVisible(false);
     };
 
     const handleNext = () => {
-        navigation.navigate("IntakeTwoScreen", {formData: formState});
+        const isValid = validateForm('page1');
+        if (isValid) {
+            navigation.navigate("IntakeTwoScreen", {formData: formState});
+        }
     };
 
     const formatDate = (rawDate: string) => {
@@ -106,6 +127,9 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
 
         return formattedDate;
     };
+
+    // Calculate container height based on the number of active errors
+    const containerHeight = (screenHeight * 0.55) + (activeErrorCount * 20);
 
     return (
         <TitleLayout
@@ -132,7 +156,7 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                     <YStack
                         bg="$container"
                         width={(screenWidth * 90) / 100}
-                        height={(screenHeight * 55) / 100}
+                        height={containerHeight} // Use calculated height
                         borderRadius="$10"
                         elevation="$0.25"
                         px="$6"
@@ -151,9 +175,13 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
                                         value={formState.voornaam}
-                                        onChangeText={(text) => setFieldValue('voornaam', text)}
+                                        onChangeText={(text) => {
+                                            setFieldValue('voornaam', text);
+                                            validateField('voornaam', text);
+                                        }}
                                         onSubmitEditing={Keyboard.dismiss}
                                     />
+                                    {errors.voornaam && <ErrorText>{errors.voornaam}</ErrorText>}
                                 </YStack>
                                 <YStack f={1}>
                                     <SizableText fontSize="$4" color="$text" mb="$1">
@@ -165,14 +193,18 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
                                         value={formState.achternaam}
-                                        onChangeText={(text) => setFieldValue('achternaam', text)}
+                                        onChangeText={(text) => {
+                                            setFieldValue('achternaam', text);
+                                            validateField('achternaam', text);
+                                        }}
                                         onSubmitEditing={Keyboard.dismiss}
                                     />
+                                    {errors.achternaam && <ErrorText>{errors.achternaam}</ErrorText>}
                                 </YStack>
                             </XStack>
 
-                            <XStack space="$4">
-                                <YStack f={1} minHeight="$7">
+                            <XStack space="$4" >
+                                <YStack f={1}  minHeight={68}>
                                     <SizableText fontSize="$4" color="$text" mb="$1">
                                         Lengte
                                     </SizableText>
@@ -184,10 +216,14 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                         borderWidth={1}
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
+                                        minHeight={38}
                                     >
                                         <Input
                                             value={formState.lengte}
-                                            onChangeText={(text) => setFieldValue('lengte', text)}
+                                            onChangeText={(text) => {
+                                                setFieldValue('lengte', text);
+                                                validateField('lengte', text);
+                                            }}
                                             keyboardType="numeric"
                                             bg="#ffffff00"
                                             borderWidth={0}
@@ -211,9 +247,10 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                             </SizableText>
                                         </YStack>
                                     </XStack>
+                                    {errors.lengte && <ErrorText>{errors.lengte}</ErrorText>}
                                 </YStack>
 
-                                <YStack f={1} minHeight="$7">
+                                <YStack f={1}  minHeight={68}>
                                     <SizableText fontSize="$4" color="$text" mb="$1">
                                         Gewicht
                                     </SizableText>
@@ -225,10 +262,14 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                         borderWidth={1}
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
+                                        minHeight={38}
                                     >
                                         <Input
                                             value={formState.gewicht}
-                                            onChangeText={(text) => setFieldValue('gewicht', text)}
+                                            onChangeText={(text) => {
+                                                setFieldValue('gewicht', text);
+                                                validateField('gewicht', text);
+                                            }}
                                             keyboardType="decimal-pad"
                                             bg="#ffffff00"
                                             borderWidth={0}
@@ -252,15 +293,16 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                             </SizableText>
                                         </YStack>
                                     </XStack>
+                                    {errors.gewicht && <ErrorText>{errors.gewicht}</ErrorText>}
                                 </YStack>
                             </XStack>
 
-                            <XStack space="$4" ai="center">
-                                <YStack f={0.6}>
+                            <XStack space="$4" ai="center" >
+                                <YStack f={0.6} justifyContent="flex-start">
                                     <SizableText fontSize="$4" color="$text" mb="$1">
                                         Geslacht
                                     </SizableText>
-                                    <InputContainer onPress={() => setIsGenderModalVisible(true)} h='$4' >
+                                    <InputContainer onPress={() => setIsGenderModalVisible(true)} h='$4'>
                                         <SelectedItemsText numberOfLines={1} ellipsizeMode='tail' hasValue={!!formState.selectedGender}>
                                             {genderDisplayText}
                                         </SelectedItemsText>
@@ -268,6 +310,7 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                             <ChevronDown size='$1'/>
                                         </DropdownIndicator>
                                     </InputContainer>
+                                    {errors.selectedGender && <ErrorText>{errors.selectedGender}</ErrorText>}
                                 </YStack>
                                 <YStack f={0.4}>
                                     <SizableText fontSize="$4" color="$text" mb='$1'>
@@ -281,9 +324,13 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                         borderColor="#d3d3d3"
                                         borderRadius="$4"
                                         value={formatDate(formState.geboortedatumRaw)}
-                                        onChangeText={(text) => setFieldValue('geboortedatumRaw', text)}
+                                        onChangeText={(text) => {
+                                            setFieldValue('geboortedatumRaw', text);
+                                            validateField('geboortedatumRaw', text);
+                                        }}
                                         onSubmitEditing={Keyboard.dismiss}
                                     />
+                                    {errors.geboortedatumRaw && <ErrorText>{errors.geboortedatumRaw}</ErrorText>}
                                 </YStack>
                             </XStack>
 
@@ -301,6 +348,7 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                     onChangeText={(text) => setFieldValue('bsn', text.replace(/\D/g, '').slice(0, 9))}
                                     onSubmitEditing={Keyboard.dismiss}
                                 />
+                                {errors.bsn && <ErrorText>{errors.bsn}</ErrorText>}
                             </YStack>
                         </YStack>
 

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Button, SizableText, styled, Text, TextArea, XStack, YStack, Spinner } from 'tamagui';
+import React, {useEffect, useState} from 'react';
+import {Button, SizableText, Spinner, styled, Text, TextArea, XStack, YStack} from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
-import { ArrowLeft, ChevronDown } from "@tamagui/lucide-icons";
-import { Dimensions } from "react-native";
-import { useIntakeForm } from "./useIntakeForm"; // Import the hook
-import { useToastController } from '@tamagui/toast';
+import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
+import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
+import {useIntakeForm} from "./useIntakeForm"; // Import the hook
+import {useToastController} from '@tamagui/toast';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
 interface Medicine {
     atcCode: string;
@@ -62,13 +62,29 @@ const DropdownIndicator = styled(Text, {
     marginLeft: '$2',
 });
 
+const ErrorText = styled(Text, {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 2,
+    width: '100%'
+});
+
 interface IntakeTwoScreenProps {
     navigation: any;
     route: any;
 }
 
-export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenProps) {
-    const { formState, setFieldValue, handleClinicalProfileSelect, handleMedicineSelect, handleRoomSelect } = useIntakeForm(route.params?.formData);
+export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProps) {
+    const {
+        formState,
+        setFieldValue,
+        handleClinicalProfileSelect,
+        handleMedicineSelect,
+        handleRoomSelect,
+        errors,
+        validateField,
+        validateForm
+    } = useIntakeForm(route.params?.formData);
 
     const [isClinicalProfileModalVisible, setIsClinicalProfileModalVisible] = useState(false);
     const [availableClinicalProfiles, setAvailableClinicalProfiles] = useState<ClinicalProfile[]>([]);
@@ -112,6 +128,7 @@ export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenPr
     const handleClinicalProfileDone = (items: ClinicalProfile[]) => {
         handleClinicalProfileSelect(items);
         setIsClinicalProfileModalVisible(false);
+        validateField('selectedClinicalProfiles', items);
     };
 
     const handleMedicinesDone = (items: Medicine[]) => {
@@ -122,6 +139,7 @@ export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenPr
     const handleRoomsDone = (items: Room[]) => {
         handleRoomSelect(items);
         setIsRoomsModalVisible(false);
+        validateField('selectedRooms', items);
     };
 
     const fetchClinicalProfiles = async () => {
@@ -174,7 +192,7 @@ export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenPr
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data: Omit<Room, 'floor'>[] = await response.json(); // Temporarily omit floor from the fetched data
-            const roomsWithFloor: Room[] = data.map(room => ({ ...room, floor: '1st Floor' }));
+            const roomsWithFloor: Room[] = data.map(room => ({...room, floor: '1st Floor'}));
             setAvailableRooms(roomsWithFloor);
         } catch (error) {
             console.error("Failed to fetch rooms:", error);
@@ -200,10 +218,14 @@ export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenPr
     };
 
     const handleSubmit = async () => {
+        const isValid = validateForm('page2');
+        if (!isValid) {
+            return;
+        }
         setIsLoading(true);
         const patientData = {
             createPatientDto: {
-                patientNumber: Math.random() * 10000 + Math.random() * 2,
+                patientNumber: Math.floor(Math.random() * 10000) + Math.floor(Math.random() * 2),
                 firstName: formState.voornaam,
                 lastName: formState.achternaam,
                 bsn: formState.bsn,
@@ -252,7 +274,7 @@ export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenPr
     };
 
     const goBack = () => {
-        navigation.navigate('IntakeOneScreen', { formData: formState });
+        navigation.navigate('IntakeOneScreen', {formData: formState});
     };
 
     return (
@@ -265,9 +287,9 @@ export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenPr
                     width="$3"
                     height="$3"
                     animation="bouncy"
-                    hoverStyle={{ scale: 0.990, backgroundColor: "$primary_focus" }}
-                    pressStyle={{ scale: 0.975, backgroundColor: "$primary_focus" }}
-                    icon={<ArrowLeft size="$2" color="white" />}
+                    hoverStyle={{scale: 0.990, backgroundColor: "$primary_focus"}}
+                    pressStyle={{scale: 0.975, backgroundColor: "$primary_focus"}}
+                    icon={<ArrowLeft size="$2" color="white"/>}
                     onPress={goBack}
                     position="absolute"
                     left={screenWidth * 0.05}
@@ -275,110 +297,118 @@ export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenPr
                 />
             }
         >
-            <YStack ai="center">
-                <YStack
-                    bg="$container"
-                    width={(screenWidth * 90) / 100}
-                    height={(screenHeight * 55) / 100}
-                    borderRadius="$10"
-                    elevation="$0.25"
-                    px="$6"
-                    ai="center"
-                    position="relative"
-                >
-                    <YStack width="100%" mt="$6" space="$4">
-                        <YStack>
-                            <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Ziektebeeld
-                            </SizableText>
-                            <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)} h='$4'>
-                                <SelectedItemsText
-                                    numberOfLines={1}
-                                    ellipsizeMode='tail'
-                                    hasValue={formState.selectedClinicalProfiles.length > 0}
-                                >
-                                    {clinicalProfileDisplayText}
-                                </SelectedItemsText>
-                                <DropdownIndicator>
-                                    <ChevronDown size='$1' />
-                                </DropdownIndicator>
-                            </InputContainer>
-                        </YStack>
-
-                        <YStack>
-                            <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Medicijnen
-                            </SizableText>
-                            <InputContainer onPress={() => setIsMedicinesModalVisible(true)} h='$4'>
-                                <SelectedItemsText
-                                    numberOfLines={1}
-                                    ellipsizeMode='tail'
-                                    hasValue={formState.selectedMedicines.length > 0}
-                                >
-                                    {medicinesDisplayText}
-                                </SelectedItemsText>
-                                <DropdownIndicator>
-                                    <ChevronDown size='$1' />
-                                </DropdownIndicator>
-                            </InputContainer>
-                        </YStack>
-
-                        <YStack>
-                            <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Kamer
-                            </SizableText>
-                            <InputContainer onPress={() => setIsRoomsModalVisible(true)} h='$4'>
-                                <SelectedItemsText
-                                    numberOfLines={1}
-                                    ellipsizeMode='tail'
-                                    hasValue={formState.selectedRooms.length > 0}
-                                >
-                                    {roomsDisplayText}
-                                </SelectedItemsText>
-                                <DropdownIndicator>
-                                    <ChevronDown size='$1' />
-                                </DropdownIndicator>
-                            </InputContainer>
-                        </YStack>
-
-                        <YStack>
-                            <SizableText fontSize="$4" color="$text" mb='$1'>
-                                Voeding / Allergiëen
-                            </SizableText>
-                            <TextArea
-                                bg='white'
-                                height='$8'
-                                borderWidth={1}
-                                borderRadius="$4"
-                                padding="$2"
-                                style={{ textAlignVertical: 'top' }}
-                                value={formState.foodAllergies}
-                                onChangeText={(text) => setFieldValue('foodAllergies', text)}
-                            />
-                        </YStack>
-                    </YStack>
-
-                    <Button
-                        onPress={handleSubmit}
-                        disabled={isLoading}
-                        pressStyle={{ scale: 0.975, backgroundColor: "$accent_focus" }}
-                        bg="$accent"
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <YStack ai="center">
+                    <YStack
+                        bg="$container"
+                        width={(screenWidth * 90) / 100}
+                        height={(screenHeight * 65) / 100}
                         borderRadius="$10"
-                        position="absolute"
-                        borderColor="$accent_focus"
-                        bottom="$5"
-                        right="$5"
+                        elevation="$0.25"
+                        px="$6"
+                        ai="center"
+                        position="relative"
                     >
-                        {isLoading ? (
-                            <Spinner size="small" color="$accent_content" />
-                        ) : (
-                            <SizableText fontSize="$4" color="$accent_content">
-                                Intake Voltooien
-                            </SizableText>
-                        )}
-                    </Button>
+                        <YStack width="100%" mt="$6" space="$4">
+                            <YStack>
+                                <SizableText fontSize="$4" color="$text" mb='$1'>
+                                    Ziektebeeld
+                                </SizableText>
+                                <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)} h='$4'>
+                                    <SelectedItemsText
+                                        numberOfLines={1}
+                                        ellipsizeMode='tail'
+                                        hasValue={formState.selectedClinicalProfiles.length > 0}
+                                    >
+                                        {clinicalProfileDisplayText}
+                                    </SelectedItemsText>
+                                    <DropdownIndicator>
+                                        <ChevronDown size='$1'/>
+                                    </DropdownIndicator>
+                                </InputContainer>
+                                {errors.selectedClinicalProfiles &&
+                                    <ErrorText>{errors.selectedClinicalProfiles}</ErrorText>}
+                            </YStack>
+
+                            <YStack>
+                                <SizableText fontSize="$4" color="$text" mb='$1'>
+                                    Medicijnen
+                                </SizableText>
+                                <InputContainer onPress={() => setIsMedicinesModalVisible(true)} h='$4'>
+                                    <SelectedItemsText
+                                        numberOfLines={1}
+                                        ellipsizeMode='tail'
+                                        hasValue={formState.selectedMedicines.length > 0}
+                                    >
+                                        {medicinesDisplayText}
+                                    </SelectedItemsText>
+                                    <DropdownIndicator>
+                                        <ChevronDown size='$1'/>
+                                    </DropdownIndicator>
+                                </InputContainer>
+                                {/* No error display for optional fields */}
+                            </YStack>
+
+                            <YStack>
+                                <SizableText fontSize="$4" color="$text" mb='$1'>
+                                    Kamer
+                                </SizableText>
+                                <InputContainer onPress={() => setIsRoomsModalVisible(true)} h='$4'>
+                                    <SelectedItemsText
+                                        numberOfLines={1}
+                                        ellipsizeMode='tail'
+                                        hasValue={formState.selectedRooms.length > 0}
+                                    >
+                                        {roomsDisplayText}
+                                    </SelectedItemsText>
+                                    <DropdownIndicator>
+                                        <ChevronDown size='$1'/>
+                                    </DropdownIndicator>
+                                </InputContainer>
+                                {errors.selectedRooms && <ErrorText>{errors.selectedRooms}</ErrorText>}
+                            </YStack>
+
+                            <YStack>
+                                <SizableText fontSize="$4" color="$text" mb='$1'>
+                                    Voeding / Allergiëen
+                                </SizableText>
+                                <TextArea
+                                    bg='white'
+                                    height='$8'
+                                    borderWidth={1}
+                                    borderRadius="$4"
+                                    padding="$2"
+                                    style={{textAlignVertical: 'top'}}
+                                    value={formState.foodAllergies}
+                                    onChangeText={(text) => setFieldValue('foodAllergies', text)}
+                                />
+                                {/* No error display for optional fields */}
+                            </YStack>
+                        </YStack>
+
+                        <Button
+                            onPress={handleSubmit}
+                            disabled={isLoading}
+                            pressStyle={{scale: 0.975, backgroundColor: "$accent_focus"}}
+                            bg="$accent"
+                            borderRadius="$10"
+                            position="absolute"
+                            borderColor="$accent_focus"
+                            bottom="$5"
+                            right="$5"
+                        >
+                            {isLoading ? (
+                                <Spinner size="small" color="$accent_content"/>
+                            ) : (
+                                <SizableText fontSize="$4" color="$accent_content">
+                                    Intake Voltooien
+                                </SizableText>
+                            )}
+                        </Button>
+                    </YStack>
                 </YStack>
-            </YStack>
+            </TouchableWithoutFeedback>
+
 
             <DropdownModal<ClinicalProfile>
                 visible={isClinicalProfileModalVisible}
