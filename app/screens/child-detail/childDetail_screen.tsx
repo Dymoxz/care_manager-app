@@ -119,8 +119,6 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
     };
 
     const handleDischargeConfirm = (reason: string) => {
-        console.log('Discharge reason:', reason);
-        //Handle logic of reason here, like sending an api request.
         setDischargeModalVisible(false);
     };
 
