@@ -1,12 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {Button, SizableText, styled, Text, TextArea, XStack, YStack} from 'tamagui';
+import React, { useEffect, useState } from 'react';
+import { Button, SizableText, styled, Text, TextArea, XStack, YStack, Spinner } from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
-import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
-import {Dimensions} from "react-native";
-import {useIntakeForm} from "./useIntakeForm"; // Import the hook
+import { ArrowLeft, ChevronDown } from "@tamagui/lucide-icons";
+import { Dimensions } from "react-native";
+import { useIntakeForm } from "./useIntakeForm"; // Import the hook
+import { useToastController } from '@tamagui/toast';
 
-const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 interface Medicine {
     atcCode: string;
@@ -66,8 +67,8 @@ interface IntakeTwoScreenProps {
     route: any;
 }
 
-export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProps) {
-    const {formState, setFieldValue, handleClinicalProfileSelect, handleMedicineSelect, handleRoomSelect} = useIntakeForm(route.params?.formData);
+export default function IntakeTwoScreen({ navigation, route }: IntakeTwoScreenProps) {
+    const { formState, setFieldValue, handleClinicalProfileSelect, handleMedicineSelect, handleRoomSelect } = useIntakeForm(route.params?.formData);
 
     const [isClinicalProfileModalVisible, setIsClinicalProfileModalVisible] = useState(false);
     const [availableClinicalProfiles, setAvailableClinicalProfiles] = useState<ClinicalProfile[]>([]);
@@ -80,6 +81,9 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
     const [isRoomsModalVisible, setIsRoomsModalVisible] = useState(false);
     const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
     const [roomsDisplayText, setRoomsDisplayText] = useState('Zoek of selecteer een kamer');
+
+    const [isLoading, setIsLoading] = useState(false);
+    const toast = useToastController();
 
     useEffect(() => {
         setClinicalProfileDisplayText(
@@ -170,7 +174,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data: Omit<Room, 'floor'>[] = await response.json(); // Temporarily omit floor from the fetched data
-            const roomsWithFloor: Room[] = data.map(room => ({...room, floor: '1st Floor'}));
+            const roomsWithFloor: Room[] = data.map(room => ({ ...room, floor: '1st Floor' }));
             setAvailableRooms(roomsWithFloor);
         } catch (error) {
             console.error("Failed to fetch rooms:", error);
@@ -182,31 +186,73 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
         Promise.all([fetchClinicalProfiles(), fetchMedicines(), fetchRooms()]);
     }, []);
 
-    const handleSubmit = () => {
+    const showSuccessToast = (message) => {
+        toast.show('Success', {
+            message,
+            native: false, // Using custom toast style
+        });
+    };
+    const showErrorToast = (message) => {
+        toast.show('Error', {
+            message,
+            native: false, // Using custom toast style
+        });
+    };
+
+    const handleSubmit = async () => {
+        setIsLoading(true);
         const patientData = {
-            patientNumber: Math.floor(Math.random() * 90000) + 10000,
-            bsn: formState.bsn,
-            firstName: formState.voornaam,
-            lastName: formState.achternaam,
-            dateOfBirth: new Date(formState.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
-            length: parseInt(formState.lengte, 10) || 0,
-            weight: parseFloat(formState.gewicht) || 0,
-            geslacht: formState.selectedGender?.name || '',
-            clinicalProfile: formState.selectedClinicalProfiles.map(cp => cp.clinicalProfile).join(', '),
-            diet: formState.foodAllergies,
-            medication: formState.selectedMedicines.map(med => med.atcCode),
-            rooms: formState.selectedRooms,
+            createPatientDto: {
+                patientNumber: Math.random() * 10000 + Math.random() * 2,
+                firstName: formState.voornaam,
+                lastName: formState.achternaam,
+                bsn: formState.bsn,
+                dateOfBirth: new Date(formState.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
+                length: parseInt(formState.lengte, 10) || 0,
+                weight: parseFloat(formState.gewicht) || 0,
+                gender: formState.selectedGender?.name || '',
+                diet: formState.foodAllergies,
+
+            },
+            roomNumber: parseInt(formState.selectedRooms[0]?.roomNumber), // Assuming single room selection
+            clinicalProfile: formState.selectedClinicalProfiles.map(cp => cp.clinicalProfile),
+            medicineAtcCodes: formState.selectedMedicines.map(med => med.atcCode),
         };
-        console.log(JSON.stringify(patientData, null, 2));
 
-        /*TODO Api request to create Patient*/
+        try {
+            const response = await fetch('https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(patientData),
+            });
 
-        // Optionally navigate to a success screen or previous screen
-        // navigation.navigate('SuccessScreen');
+            if (!response.ok) {
+                const errorData = await response.text();
+                console.error('Failed to create patient:', errorData);
+                showErrorToast(`Failed to create patient: ${errorData}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const responseData = await response.json();
+            console.log('Patient created successfully:', responseData);
+            showSuccessToast('Patient created successfully!');
+
+            // Optionally navigate to a success screen or previous screen
+            setTimeout(() => {
+                navigation.navigate('HomeScreen'); // Replace 'HomeMenu' with your actual home screen route
+            }, 1500); // Delay to allow the user to see the toast
+        } catch (error) {
+            console.error('Error during patient creation:', error);
+            showErrorToast(`Error during patient creation: ${error.message}`);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const goBack = () => {
-        navigation.navigate('IntakeOneScreen', {formData: formState});
+        navigation.navigate('IntakeOneScreen', { formData: formState });
     };
 
     return (
@@ -219,9 +265,9 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                     width="$3"
                     height="$3"
                     animation="bouncy"
-                    hoverStyle={{scale: 0.990, backgroundColor: "$primary_focus"}}
-                    pressStyle={{scale: 0.975, backgroundColor: "$primary_focus"}}
-                    icon={<ArrowLeft size="$2" color="white"/>}
+                    hoverStyle={{ scale: 0.990, backgroundColor: "$primary_focus" }}
+                    pressStyle={{ scale: 0.975, backgroundColor: "$primary_focus" }}
+                    icon={<ArrowLeft size="$2" color="white" />}
                     onPress={goBack}
                     position="absolute"
                     left={screenWidth * 0.05}
@@ -254,7 +300,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                                     {clinicalProfileDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
-                                    <ChevronDown size='$1'/>
+                                    <ChevronDown size='$1' />
                                 </DropdownIndicator>
                             </InputContainer>
                         </YStack>
@@ -272,7 +318,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                                     {medicinesDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
-                                    <ChevronDown size='$1'/>
+                                    <ChevronDown size='$1' />
                                 </DropdownIndicator>
                             </InputContainer>
                         </YStack>
@@ -290,7 +336,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                                     {roomsDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
-                                    <ChevronDown size='$1'/>
+                                    <ChevronDown size='$1' />
                                 </DropdownIndicator>
                             </InputContainer>
                         </YStack>
@@ -305,7 +351,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                                 borderWidth={1}
                                 borderRadius="$4"
                                 padding="$2"
-                                style={{textAlignVertical: 'top'}}
+                                style={{ textAlignVertical: 'top' }}
                                 value={formState.foodAllergies}
                                 onChangeText={(text) => setFieldValue('foodAllergies', text)}
                             />
@@ -314,7 +360,8 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
 
                     <Button
                         onPress={handleSubmit}
-                        pressStyle={{scale: 0.975, backgroundColor: "$accent_focus"}}
+                        disabled={isLoading}
+                        pressStyle={{ scale: 0.975, backgroundColor: "$accent_focus" }}
                         bg="$accent"
                         borderRadius="$10"
                         position="absolute"
@@ -322,9 +369,13 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                         bottom="$5"
                         right="$5"
                     >
-                        <SizableText fontSize="$4" color="$accent_content">
-                            Intake Voltooie
-                        </SizableText>
+                        {isLoading ? (
+                            <Spinner size="small" color="$accent_content" />
+                        ) : (
+                            <SizableText fontSize="$4" color="$accent_content">
+                                Intake Voltooien
+                            </SizableText>
+                        )}
                     </Button>
                 </YStack>
             </YStack>
