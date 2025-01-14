@@ -144,7 +144,7 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                     hoverStyle={{scale: 0.990, backgroundColor: "$primary_focus"}}
                     pressStyle={{scale: 0.975, backgroundColor: "$primary_focus"}}
                     icon={<ArrowLeft size="$2" color="white"/>}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => navigation.navigate('HomeScreen')}
                     position="absolute"
                     left={screenWidth * 0.05}
                     top="$5"
