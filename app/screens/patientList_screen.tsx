@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, SizableText, XStack, YStack } from 'tamagui';
-import { Dimensions } from 'react-native';
+import {Dimensions, ScrollView} from 'react-native';
 import { AlertCircle, Bed, FileHeart } from '@tamagui/lucide-icons';
 import TitleLayout from "./common/title_layout";
 import BackButton from "./common/back_button";
@@ -135,38 +135,39 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
     };
 
     return (
-        <TitleLayout
-            titleText='Kinder Overzicht'
-            topContent={<BackButton navigation={navigation} />}
-        >
-            <YStack ai="center">
-                <Input
-                    placeholder="Zoek een patiënt of kamer"
-                    bg="white"
-                    borderRadius="$6"
-                    width={(screenWidth * 90) / 100}
-                    px="$4"
-                    py="$4"
-                    h='auto'
-                    fontSize="$6"
-                    mb="$3"
-                    value={searchQuery}
-                    onChangeText={(text) => setSearchQuery(text)} // Update search query
-                />
-
-                <YStack space="$1" width={(screenWidth * 90) / 100}>
-                    {filteredPatients.map((patient) => (
-                        <PatientCard
-                            key={patient._id}
-                            name={`${patient.firstName} ${patient.lastName}`}
-                            room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
-                            hasAlert={patient.room?.isScaled || false}
-                            patient={patient}
-                            onPress={handlePatientPress}
-                        />
-                    ))}
-                </YStack>
+       <TitleLayout
+    titleText='Kinder Overzicht'
+    topContent={<BackButton navigation={navigation} />}
+>
+    <YStack ai="center" flex={1}>
+        <Input
+            placeholder="Zoek een patiënt of kamer"
+            bg="white"
+            borderRadius="$6"
+            width={(screenWidth * 90) / 100}
+            px="$4"
+            py="$4"
+            h='auto'
+            fontSize="$6"
+            mb="$3"
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)} // Update search query
+        />
+        <ScrollView style={{ flex: 1 }}>
+            <YStack space="$1" width={(screenWidth * 90) / 100}>
+                {filteredPatients.map((patient) => (
+                    <PatientCard
+                        key={patient._id}
+                        name={`${patient.firstName} ${patient.lastName}`}
+                        room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
+                        hasAlert={patient.room?.isScaled || false}
+                        patient={patient}
+                        onPress={handlePatientPress}
+                    />
+                ))}
             </YStack>
-        </TitleLayout>
+        </ScrollView>
+    </YStack>
+</TitleLayout>
     );
 }
