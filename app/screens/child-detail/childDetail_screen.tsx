@@ -1,9 +1,28 @@
-import React from 'react';
-import { ScrollView, Dimensions } from 'react-native';
-import {SizableText, YStack, XStack, Button, Separator, Circle, Accordion, Paragraph, Square,} from 'tamagui';
+import React, { useState } from 'react';
+import { ScrollView, Dimensions, Modal } from 'react-native';
+import {
+    SizableText,
+    YStack,
+    XStack,
+    Button,
+    Separator,
+    Circle,
+    Fieldset,
+    Label,
+    Input,
+    TooltipSimple,
+    Unspaced,
+    Accordion,
+    Square,
+    Paragraph,
+} from 'tamagui';
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
-import {ChevronDown} from "@tamagui/lucide-icons";
+import {ChevronDown, X } from "@tamagui/lucide-icons";
+import Svg, { Path } from "react-native-svg";
+import theme from "tailwindcss/defaultTheme";
+import MedicineDetailModal from "./medicineDetail_modal";
+/*import { DialogDemo } from './DialogDemo';*/
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -93,19 +112,52 @@ export function AccordionDemo() {
 export default function ChildDetailScreen({ route, navigation }: PatientDetailsScreenProps) {
     const { patient } = route.params;
 
+    const [selectedMedicine, setSelectedMedicine] = useState<string | null>(null);
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const openMedicineDetailModal = (medicine: string) => {
+        setSelectedMedicine(medicine);
+        setModalVisible(true);
+    };
+
+
+    const closeMedicineDetailModal = () => {
+        setSelectedMedicine(null);
+        setModalVisible(false);
+    };
+
+
+    const timelineItems = [
+        'Bloed Prikken',
+        'Hartslag Meten',
+        'Sonde Verwijderen',
+    ];
+
+    const [selectedTimelineItem, setSelectedTimelineItem] = useState<string | null>(null);
+
+    const openTimelineItemModal = (item: string) => {
+        setSelectedTimelineItem(item);
+        setModalVisible(true);
+    };
+
+    const closeTimelineItemModal = () => {
+        setSelectedTimelineItem(null);
+        setModalVisible(false);
+    };
+
     return (
         <TitleLayout
             titleText={`${patient.firstName} ${patient.lastName}`}
             topContent={<BackButton navigation={navigation} />}
         >
             <ScrollView>
-                {/* Header Section */}
                 <YStack
                     alignItems="center"
                     padding="$4"
                     bg="$background"
                     flexGrow={1}
                 >
+                    {/* Patient Header */}
                     <YStack
                         width={screenWidth * 0.9}
                         backgroundColor="white"
@@ -130,48 +182,7 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                         </SizableText>
                     </YStack>
 
-                    {/* Information Section */}
-                    <YStack
-                        width={screenWidth * 0.9}
-                        backgroundColor="white"
-                        borderRadius="$4"
-                        padding="$4"
-                        marginTop="$4"
-                        bg="$container_alt"
-                    >
-                        <SizableText size="$6" fontWeight="700">
-                            BSN:
-                        </SizableText>
-                        <SizableText size="$6" paddingBottom="$4">
-                            {patient.patientNumber}
-                        </SizableText>
-                        <SizableText size="$6" fontWeight="700">
-                            Leeftijd:
-                        </SizableText>
-                        <SizableText size="$6" paddingBottom="$4">
-                            {new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()} jaar
-                        </SizableText>
-                        <SizableText size="$6" fontWeight="700">
-                            Geboortedatum:
-                        </SizableText>
-                        <SizableText size="$6" paddingBottom="$4">
-                            {new Date(patient.dateOfBirth).toLocaleDateString()}
-                        </SizableText>
-                        <SizableText size="$6" fontWeight="700">
-                            Kamer:
-                        </SizableText>
-                        <SizableText size="$6" paddingBottom="$4">
-                            {patient.room.roomNumber} (Floor {patient.room.floor})
-                        </SizableText>
-                        <SizableText size="$6" fontWeight="700">
-                            Max. Capaciteit:
-                        </SizableText>
-                        <SizableText size="$6" paddingBottom="$4">
-                            {patient.room.maxCapacity}
-                        </SizableText>
-                    </YStack>
-
-                    {/* Medicijnen Section */}
+                    {/* Medicine Section */}
                     <YStack
                         width={screenWidth * 0.9}
                         backgroundColor="white"
@@ -183,44 +194,39 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                         <SizableText size="$6" fontWeight="700">
                             Medicijnen
                         </SizableText>
-                        <Button
-                            alignSelf="stretch"
-                            backgroundColor="#B9D6D6"
-                            borderRadius="$2"
-                            justifyContent="space-between"
-                            marginTop="$2"
-                        >
-                            <SizableText size="$6">Abacavir</SizableText>
-                            <SizableText size="$6" fontWeight="700">
-                                +
-                            </SizableText>
-                        </Button>
-                        <Button
-                            alignSelf="stretch"
-                            backgroundColor="#B9D6D6"
-                            borderRadius="$2"
-                            justifyContent="space-between"
-                            marginTop="$2"
-                        >
-                            <SizableText size="$6">Bezlotozumab</SizableText>
-                            <SizableText size="$6" fontWeight="700">
-                                +
-                            </SizableText>
-                        </Button>
-                        <Button
-                            alignSelf="stretch"
-                            backgroundColor="#B9D6D6"
-                            borderRadius="$2"
-                            justifyContent="space-between"
-                            marginTop="$2"
-                        >
-                            <SizableText size="$6">Desoximetason</SizableText>
-                            <SizableText size="$6" fontWeight="700">
-                                +
-                            </SizableText>
-                        </Button>
+                        {['Abacavir', 'Bezlotozumab', 'Desoximetason'].map((medicine, index) => (
+                            <Button
+                                key={index}
+                                alignSelf="stretch"
+                                backgroundColor="#B9D6D6"
+                                borderRadius="$2"
+                                justifyContent="space-between"
+                                marginTop="$2"
+                                onPress={() => openMedicineDetailModal(medicine)} // Open modal
+                            >
+                                <SizableText size="$6">{medicine}</SizableText>
+                                <SizableText size="$6" fontWeight="700">+</SizableText>
+                            </Button>
+                        ))}
                     </YStack>
 
+                    {/* Medicine Modal */}
+                    <Modal
+                        visible={isModalVisible}
+                        // onClose={() => setModalVisible(false)}
+                        animationType="slide"
+                        transparent={true}
+                        // onRequestClose={closeMedicineDetailModal}
+                        onRequestClose={closeMedicineDetailModal}
+                    >
+                        <MedicineDetailModal
+                            medicine={selectedMedicine}
+                            onClose={closeMedicineDetailModal}
+                            screenWidth={screenWidth}
+                        />
+
+
+                    </Modal>
 
                     {/* Afspraken Section */}
                     <YStack
@@ -245,11 +251,7 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                     padding="$4"
                                     marginTop="$2"
                                 >
-                                    {({
-                                          open,
-                                      }: {
-                                        open: boolean;
-                                    }) => (
+                                    {({ open }: { open: boolean }) => (
                                         <>
                                             <SizableText size="$6">Bloed Prikken</SizableText>
                                             <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
@@ -258,8 +260,22 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                         </>
                                     )}
                                 </Accordion.Trigger>
-                                <Accordion.HeightAnimator animation="medium">
-                                    <Accordion.Content animation="medium" exitStyle={{ opacity: 0 }}>
+                                <Accordion.HeightAnimator
+                                    animation="medium"
+                                    enterStyle={{
+                                        opacity: 0,
+                                        transform: [{ translateY: -20 }],
+                                    }}
+                                    exitStyle={{
+                                        opacity: 0,
+                                        transform: [{ translateY: -20 }],
+                                    }}
+                                    style={{
+                                        opacity: 1,
+                                        transform: [{ translateY: 0 }],
+                                    }}
+                                >
+                                    <Accordion.Content>
                                         <Paragraph>
                                             Details for "Bloed Prikken" go here, such as time and location.
                                         </Paragraph>
@@ -277,11 +293,7 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                     marginTop="$2"
                                     height={screenWidth * 0.15}
                                 >
-                                    {({
-                                          open,
-                                      }: {
-                                        open: boolean;
-                                    }) => (
+                                    {({ open }: { open: boolean }) => (
                                         <>
                                             <SizableText size="$6">Hartslag Meten</SizableText>
                                             <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
@@ -290,8 +302,22 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                         </>
                                     )}
                                 </Accordion.Trigger>
-                                <Accordion.HeightAnimator animation="medium">
-                                    <Accordion.Content animation="medium" exitStyle={{ opacity: 0 }}>
+                                <Accordion.HeightAnimator
+                                    animation="medium"
+                                    enterStyle={{
+                                        opacity: 0,
+                                        transform: [{ translateY: -20 }],
+                                    }}
+                                    exitStyle={{
+                                        opacity: 0,
+                                        transform: [{ translateY: -20 }],
+                                    }}
+                                    style={{
+                                        opacity: 1,
+                                        transform: [{ translateY: 0 }],
+                                    }}
+                                >
+                                    <Accordion.Content>
                                         <Paragraph>
                                             Details for "Hartslag Meten" go here, such as time and preparation instructions.
                                         </Paragraph>
@@ -308,11 +334,7 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                     padding="$4"
                                     marginTop="$2"
                                 >
-                                    {({
-                                          open,
-                                      }: {
-                                        open: boolean;
-                                    }) => (
+                                    {({ open }: { open: boolean }) => (
                                         <>
                                             <SizableText size="$6">Sonde Verwijderen</SizableText>
                                             <Square animation="quick" rotate={open ? '180deg' : '0deg'}>
@@ -321,8 +343,22 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                         </>
                                     )}
                                 </Accordion.Trigger>
-                                <Accordion.HeightAnimator animation="medium">
-                                    <Accordion.Content animation="medium" exitStyle={{ opacity: 0 }}>
+                                <Accordion.HeightAnimator
+                                    animation="medium"
+                                    enterStyle={{
+                                        opacity: 0,
+                                        transform: [{ translateY: -20 }],
+                                    }}
+                                    exitStyle={{
+                                        opacity: 0,
+                                        transform: [{ translateY: -20 }],
+                                    }}
+                                    style={{
+                                        opacity: 1,
+                                        transform: [{ translateY: 0 }],
+                                    }}
+                                >
+                                    <Accordion.Content>
                                         <Paragraph>
                                             Details for "Sonde Verwijderen" go here, such as required equipment.
                                         </Paragraph>
@@ -333,8 +369,7 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                     </YStack>
 
 
-
-                    {/* Checks Section */}
+                    {/* Timeline Section */}
                     <YStack
                         width={screenWidth * 0.9}
                         backgroundColor="white"
@@ -343,36 +378,88 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                         marginTop="$4"
                         bg="$container_alt"
                     >
-                        <SizableText size="$6" fontWeight="700">
-                            Checks
-                        </SizableText>
-                        <SizableText size="$5" marginTop="$2">
-                            Ma. 01-12-24 (09:30)
-                        </SizableText>
-                        <SizableText size="$5" marginTop="$2">
-                            Ma. 01-12-24 (15:00)
-                        </SizableText>
-                        <SizableText size="$5" marginTop="$2">
-                            Wo. 03-12-24 (10:00)
-                        </SizableText>
+                        {timelineItems.map((item, index) => (
+                            <YStack key={index} width="100%" alignItems="flex-start">
+                                {/* Line Separator */}
+                                {index !== 0 && (
+                                    <YStack
+                                        width={1}
+                                        height={20}
+                                        backgroundColor="$borderColor"
+                                        alignSelf="center"
+                                        marginLeft={15}
+                                    />
+                                )}
+                                <XStack space="$4" alignItems="center">
+                                    <Svg width="20" height="20" viewBox="0 0 20 20">
+                                        <Path
+                                            fillRule="evenodd"
+                                            clipRule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 101.061 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                            fill="#DF9D4D"
+                                        />
+                                    </Svg>
+                                    <YStack
+                                        backgroundColor="$backgroundStrong"
+                                        borderRadius="$4"
+                                        padding="$4"
+                                        flex={1}
+                                    >
+                                        <SizableText
+                                            fontSize="$6"
+                                            fontWeight="bold"
+                                            onPress={() => openTimelineItemModal(item)} // Open modal on press
+                                        >
+                                            {item}
+                                        </SizableText>
+                                    </YStack>
+                                </XStack>
+                            </YStack>
+                        ))}
                     </YStack>
 
-                    {/* Add Button */}
-                   {/* <TouchableOpacity
-                        padding="$4"
-                        borderRadius="$4"
-                        backgroundColor="#FF6B6B"
-                        alignItems="center"
-                        justifyContent="center"
-                        marginTop="$4"
-                        width="$10"
-                        height="$10"
+                    {/* Timeline Item Modal */}
+                    <Modal
+                        visible={!!selectedTimelineItem}
+                        animationType="slide"
+                        transparent={true}
+                        onRequestClose={closeTimelineItemModal}
                     >
-                        <SizableText size="$6" color="white" fontWeight="700">
-                            +
-                        </SizableText>
-                    </TouchableOpacity>*/}
-                </YStack>
+                        <YStack
+                            flex={1}
+                            justifyContent="center"
+                            alignItems="center"
+                            backgroundColor="rgba(0, 0, 0, 0.5)"
+                        >
+                            <YStack
+                                width={screenWidth * 0.9}
+                                backgroundColor="white"
+                                borderRadius="$4"
+                                padding="$4"
+                            >
+                                <SizableText size="$7" fontWeight="700" marginBottom="$4">
+                                    {selectedTimelineItem}
+                                </SizableText>
+                                <Paragraph size="$5" color="$textSecondary">
+                                    Details for "{selectedTimelineItem}" go here. Provide relevant information about the task.
+                                </Paragraph>
+                                <Button
+                                    marginTop="$4"
+                                    onPress={closeTimelineItemModal}
+                                    backgroundColor="$secondary"
+                                    borderRadius="$2"
+                                >
+                                    Close
+                                </Button>
+                            </YStack>
+                        </YStack>
+                    </Modal>
+
+
+
+
+                    </YStack>
+
             </ScrollView>
         </TitleLayout>
     );

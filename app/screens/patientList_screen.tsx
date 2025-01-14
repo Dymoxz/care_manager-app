@@ -41,7 +41,7 @@ async function ActivateDevice(
     setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
 ) {
     try {
-        const response = await fetch(`http://192.168.232.224:3000/api/patient`, {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
