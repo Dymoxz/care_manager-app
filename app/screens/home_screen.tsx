@@ -270,15 +270,15 @@ export function DemoCard({title, icon, onPress, ...props}: CardProps & {
     );
 }
 
-async function ActivateDevice(){
+async function ActivateDevice(): Promise<string> {
     try {
         const db = await SQLite.openDatabaseAsync('localdb');
         const result = await db.getFirstAsync<Caretaker>(
             'SELECT * FROM Caretakers LIMIT 1;'
         );
 
-        if (result && result.Initial && result.BirthSurname) {
-            return `${result.Initial} ${result.BirthSurname}`;
+        if (result && result.Big_Number ) {
+            return `${result.Big_Number}`;
         }
 
         throw new Error('No valid user data found');
@@ -287,14 +287,14 @@ async function ActivateDevice(){
         console.error('Error fetching user name:', error);
         return '79059994401';
     }
-
-
 }
 
 
 async function postDeletedShiftData() {
-    const bigNumber = ActivateDevice();
     try {
+        const bigNumber = await ActivateDevice();
+        console.log('Big number:', bigNumber);
+
         const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/endShift/${bigNumber}`, {
             method: 'DELETE',
             headers: {
@@ -303,14 +303,13 @@ async function postDeletedShiftData() {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch patient data');
+            throw new Error('Failed to delete shift data');
         }
 
     } catch (error: any) {
-        console.log(error.message || 'An error occurred while fetching patients');
+        console.log(error.message || 'An error occurred while deleting patients');
     }
 }
-
 
 
 export default function HomeScreen({navigation}) {
@@ -331,8 +330,9 @@ export default function HomeScreen({navigation}) {
     ];
 
     const handleSave = async () => {
+        await postDeletedShiftData()
         navigation.navigate('StartShiftScreen');
-        await postDeletedShiftData();
+
     };
 
     const cardSpacing = 16;

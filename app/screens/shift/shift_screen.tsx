@@ -9,7 +9,6 @@ import {Caretaker} from "../../caretaker.interface";
 
 const { width: screenWidth } = Dimensions.get('window');
 
-
 interface Room {
     _id: string;
     roomNumber: number;
@@ -18,31 +17,26 @@ interface Room {
     isScaled: boolean;
 }
 
-interface Patient {
-    _id?: string;
+interface PatientData {
     patientNumber: number;
     firstName: string;
     lastName: string;
     isQuarantined: boolean;
-    dateOfBirth?: string;
-    createdAt?: string;
-    updatedAt?: string;
-    __v?: number;
     room: Room;
 }
 
-let initialSelectedPatients : Patient[] = [];
+
+let initialSelectedPatients : PatientData[] = [];
 
 
 interface PatientCardProps {
     name: string;
     room: string;
     hasAlert: boolean;
-    patient: Patient;
+    patient: PatientData;
     isSelected: boolean;
-    onSelect: (patient: Patient) => void;
+    onSelect: (patient: PatientData) => void;
 }
-
 
 async function getBigNumber(): Promise<string> {
     try {
@@ -63,7 +57,7 @@ async function getBigNumber(): Promise<string> {
     }
 }
 
-async function postShiftData(patients: Patient[]) {
+async function postShiftData(patients: PatientData[]) {
     // Post shift data to the server
     const bigNumber = await getBigNumber();
     console.log(patients.length)
@@ -88,7 +82,7 @@ async function postShiftData(patients: Patient[]) {
     }
 }
 
-async function postDeletedShiftData(patients: Patient[]) {
+async function postDeletedShiftData(patients: PatientData[]) {
 
     const bigNumber = await getBigNumber();
     const patientNumbers = patients.map((patient) => patient.patientNumber.toString());
@@ -111,7 +105,7 @@ async function postDeletedShiftData(patients: Patient[]) {
     }
 }
 
-async function getAssignedPatients(): Promise<Patient[]> {
+async function getAssignedPatients(): Promise<PatientData[]> {
     const bigNumber = await getBigNumber();
     try {
         const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/careTaker/${bigNumber}`, {
@@ -124,7 +118,7 @@ async function getAssignedPatients(): Promise<Patient[]> {
         if (!response.ok) {
             throw new Error('Failed to fetch patient data');
         }
-        const data = await response.json(); //Store the json in data
+        const data: PatientData[] = await response.json(); //Store the json in data
         initialSelectedPatients = data; // Assign data to the global variable
         return data; // return the variables
     } catch (error: any) {
@@ -137,7 +131,7 @@ async function getAssignedPatients(): Promise<Patient[]> {
 async function ActivateDevice(
     showErrorToast: (message: string) => void,
     showSuccessToast: (message: string) => void,
-    setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
+    setPatients: React.Dispatch<React.SetStateAction<PatientData[]>>
 ) {
     try {
         const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/list`, {
@@ -151,7 +145,7 @@ async function ActivateDevice(
             throw new Error('Failed to fetch patient data');
         }
 
-        const data: Patient[] = await response.json();
+        const data: PatientData[] = await response.json();
 
         setPatients(data);
         showSuccessToast('Patients loaded successfully');
@@ -206,9 +200,9 @@ function PatientCard({ name, room, hasAlert, patient, isSelected, onSelect }: Pa
 }
 
 export default function ShiftScreen({ navigation }) {
-    const [patients, setPatients] = useState<Patient[]>([]);
+    const [patients, setPatients] = useState<PatientData[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedPatients, setSelectedPatients] = useState<Patient[]>([]);
+    const [selectedPatients, setSelectedPatients] = useState<PatientData[]>([]);
 
     useEffect(() => {
         ActivateDevice(
@@ -235,11 +229,12 @@ export default function ShiftScreen({ navigation }) {
         );
     });
 
-    const handlePatientSelect = (patient: Patient) => {
+    const handlePatientSelect = (patient: PatientData) => {
+        console.log('Selected patient:', patient);
         setSelectedPatients((prevSelected) => {
-            const isCurrentlySelected = prevSelected.some(p => p._id === patient._id);
+            const isCurrentlySelected = prevSelected.some(p => p.patientNumber === patient.patientNumber);
             if (isCurrentlySelected) {
-                return prevSelected.filter(p => p._id !== patient._id);  // New correct version
+                return prevSelected.filter(p => p.patientNumber !== patient.patientNumber);
             } else {
                 return [...prevSelected, patient];
             }
@@ -250,13 +245,12 @@ export default function ShiftScreen({ navigation }) {
     const handleSave = async () => {
         navigation.navigate('HomeScreen');
         await postShiftData(selectedPatients);
-        await postDeletedShiftData(initialSelectedPatients.filter(patient => !selectedPatients.some(selected => selected._id === patient._id)));
-
+        await postDeletedShiftData(initialSelectedPatients.filter(patient => !selectedPatients.some(selected => selected.patientNumber === patient.patientNumber)));
     };
 
     // Split selected and non-selected patients
-    const selected = filteredPatients.filter(patient => selectedPatients.some(selected => selected._id === patient._id));
-    const nonSelected = filteredPatients.filter(patient => !selectedPatients.some(selected => selected._id === patient._id));
+    const selected = filteredPatients.filter(patient => selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
+    const nonSelected = filteredPatients.filter(patient => !selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
 
 
     return (
@@ -278,35 +272,35 @@ export default function ShiftScreen({ navigation }) {
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
-<ScrollView>
-                <YStack space="$8" width={(screenWidth * 90) / 100}>
-                    {/* Render selected patients first */}
-                    {selected.map((patient) => (
-                        <PatientCard
-                            key={patient.patientNumber}
-                            name={`${patient.firstName} ${patient.lastName}`}
-                            room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
-                            hasAlert={patient.isQuarantined || false}
-                            patient={patient}
-                            isSelected={true}
-                            onSelect={handlePatientSelect}
-                        />
-                    ))}
+                <ScrollView>
+                    <YStack space="$8" width={(screenWidth * 90) / 100}>
+                        {/* Render selected patients first */}
+                        {selected.map((patient) => (
+                            <PatientCard
+                                key={patient.patientNumber}
+                                name={`${patient.firstName} ${patient.lastName}`}
+                                room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
+                                hasAlert={patient.isQuarantined || false}
+                                patient={patient}
+                                isSelected={true}
+                                onSelect={handlePatientSelect}
+                            />
+                        ))}
 
-                    {/* Render non-selected patients second */}
-                    {nonSelected.map((patient) => (
-                        <PatientCard
-                            key={patient.patientNumber}
-                            name={`${patient.firstName} ${patient.lastName}`}
-                            room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
-                            hasAlert={patient.isQuarantined || false}
-                            patient={patient}
-                            isSelected={false}
-                            onSelect={handlePatientSelect}
-                        />
-                    ))}
-                </YStack>
-</ScrollView>
+                        {/* Render non-selected patients second */}
+                        {nonSelected.map((patient) => (
+                            <PatientCard
+                                key={patient.patientNumber}
+                                name={`${patient.firstName} ${patient.lastName}`}
+                                room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
+                                hasAlert={patient.isQuarantined || false}
+                                patient={patient}
+                                isSelected={false}
+                                onSelect={handlePatientSelect}
+                            />
+                        ))}
+                    </YStack>
+                </ScrollView>
 
                 <XStack
                     ai="center"
