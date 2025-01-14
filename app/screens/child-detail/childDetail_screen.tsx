@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView, Dimensions, Modal } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { ScrollView, Dimensions, Modal, TouchableOpacity, Animated, Easing } from 'react-native';
 import {
     SizableText,
     YStack,
@@ -18,11 +18,10 @@ import {
 } from 'tamagui';
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
-import {ChevronDown, X } from "@tamagui/lucide-icons";
+import { ChevronDown, Edit3, Plus, Trash, X, Calendar, Pill } from "@tamagui/lucide-icons";
 import Svg, { Path } from "react-native-svg";
 import theme from "tailwindcss/defaultTheme";
 import MedicineDetailModal from "./medicineDetail_modal";
-/*import { DialogDemo } from './DialogDemo';*/
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -120,12 +119,10 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
         setModalVisible(true);
     };
 
-
     const closeMedicineDetailModal = () => {
         setSelectedMedicine(null);
         setModalVisible(false);
     };
-
 
     const timelineItems = [
         'Bloed Prikken',
@@ -143,6 +140,61 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
     const closeTimelineItemModal = () => {
         setSelectedTimelineItem(null);
         setModalVisible(false);
+    };
+
+    const [isFABOpen, setFABOpen] = useState(false);
+    const fabMenuAnimation = useRef(new Animated.Value(0)).current;
+    const iconRotationAnimation = useRef(new Animated.Value(0)).current;
+
+    const toggleFABMenu = () => {
+
+        const toValue = isFABOpen ? 0 : 1;
+
+        // Animate icon rotation
+        Animated.timing(iconRotationAnimation, {
+            toValue,
+            duration: 300,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+        }).start();
+
+        // Animate menu slide
+        Animated.timing(fabMenuAnimation, {
+            toValue,
+            duration: 300,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: false, // Cannot use native driver for 'opacity'
+        }).start();
+
+        // Update state after the animations
+        setFABOpen(!isFABOpen);
+
+    };
+
+    const iconRotateStyle = {
+        transform: [
+            {
+                rotate: iconRotationAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0deg', '45deg'],
+                }),
+            },
+        ],
+    };
+
+    const fabMenuStyle = {
+        transform: [
+            {
+                translateY: fabMenuAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -180],
+                }),
+            },
+        ],
+        opacity: fabMenuAnimation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1], // Fade in/out with the animation
+        }),
     };
 
     return (
@@ -203,6 +255,7 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                                 justifyContent="space-between"
                                 marginTop="$2"
                                 onPress={() => openMedicineDetailModal(medicine)} // Open modal
+                                animation="quick"
                             >
                                 <SizableText size="$6">{medicine}</SizableText>
                                 <SizableText size="$6" fontWeight="700">+</SizableText>
@@ -213,10 +266,8 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                     {/* Medicine Modal */}
                     <Modal
                         visible={isModalVisible}
-                        // onClose={() => setModalVisible(false)}
                         animationType="slide"
                         transparent={true}
-                        // onRequestClose={closeMedicineDetailModal}
                         onRequestClose={closeMedicineDetailModal}
                     >
                         <MedicineDetailModal
@@ -224,7 +275,6 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                             onClose={closeMedicineDetailModal}
                             screenWidth={screenWidth}
                         />
-
 
                     </Modal>
 
@@ -368,7 +418,6 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                         </Accordion>
                     </YStack>
 
-
                     {/* Timeline Section */}
                     <YStack
                         width={screenWidth * 0.9}
@@ -455,12 +504,142 @@ export default function ChildDetailScreen({ route, navigation }: PatientDetailsS
                         </YStack>
                     </Modal>
 
-
-
-
-                    </YStack>
+                </YStack>
 
             </ScrollView>
+            {/* Floating Action Button (FAB) */}
+            <YStack
+                position="absolute"
+                bottom={20}
+                right={20}
+                alignItems="flex-end"
+                space="$2"
+            >
+                <Animated.View style={fabMenuStyle}>
+                    {isFABOpen && (
+                        <>
+                            <TouchableOpacity
+                                onPress={() => console.log('Ontslag')}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: 'white',
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 15,
+                                    borderRadius: 10,
+                                    shadowColor: '#000',
+                                    shadowOpacity: 0.1,
+                                    shadowOffset: { width: 0, height: 2 },
+                                    shadowRadius: 4,
+                                    elevation: 3,
+                                    marginBottom: 8,
+                                }}
+                            >
+                                <Trash size={24} color="red" />
+                                <SizableText size="$5" color="red" marginLeft="$2">
+                                    Ontslag
+                                </SizableText>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => console.log('Afspraak maken')}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: 'white',
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 15,
+                                    borderRadius: 10,
+                                    shadowColor: '#000',
+                                    shadowOpacity: 0.1,
+                                    shadowOffset: { width: 0, height: 2 },
+                                    shadowRadius: 4,
+                                    elevation: 3,
+                                    marginBottom: 8,
+                                }}
+                            >
+                                <Calendar size={24} color="black" />
+                                <SizableText size="$5" color="black" marginLeft="$2">
+                                    Afspraak maken
+                                </SizableText>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => console.log('Med check')}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: 'white',
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 15,
+                                    borderRadius: 10,
+                                    shadowColor: '#000',
+                                    shadowOpacity: 0.1,
+                                    shadowOffset: { width: 0, height: 2 },
+                                    shadowRadius: 4,
+                                    elevation: 3,
+                                    marginBottom: 8,
+                                }}
+                            >
+                                <Pill size={24} color="black" />
+                                <SizableText size="$5" color="black" marginLeft="$2">
+                                    Med Check
+                                </SizableText>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                onPress={() => console.log('Edit')}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    backgroundColor: 'white',
+                                    paddingVertical: 10,
+                                    paddingHorizontal: 15,
+                                    borderRadius: 10,
+                                    shadowColor: '#000',
+                                    shadowOpacity: 0.1,
+                                    shadowOffset: { width: 0, height: 2 },
+                                    shadowRadius: 4,
+                                    elevation: 3,
+                                }}
+                            >
+                                <Edit3 size={24} color="#000" />
+                                <SizableText size="$5" color="#000" marginLeft="$2">
+                                    Edit
+                                </SizableText>
+                            </TouchableOpacity>
+                        </>
+                    )}
+                </Animated.View>
+
+                {/* Main FAB Button */}
+                <TouchableOpacity onPress={toggleFABMenu} activeOpacity={1}>
+                    <Animated.View
+                        style={[
+                            {
+                                width: 56,
+                                height: 56,
+                                backgroundColor: '#DF9D4D',
+                                borderRadius: 10,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                shadowColor: '#000',
+                                shadowOpacity: 0.3,
+                                shadowOffset: { width: 0, height: 3 },
+                                shadowRadius: 6,
+                                elevation: 5,
+                            },
+                            iconRotateStyle, // Apply rotation directly to the Animated.View
+                        ]}
+                    >
+                        {/* No need for conditional Animated.View, just render icon based on isFABOpen */}
+                        {isFABOpen ? (
+                            <X size={28} color="white" />
+                        ) : (
+                            <Plus size={28} color="white" />
+                        )}
+                    </Animated.View>
+                </TouchableOpacity>
+
+            </YStack>
         </TitleLayout>
     );
 }
