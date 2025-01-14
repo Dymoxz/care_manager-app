@@ -302,7 +302,7 @@ export default function HomeScreen({navigation}) {
 
     const pages = [
 
-        {title: 'Intake', navLink: 'IntakeScreen', icon: intakeIcon},
+        {title: 'Intake', navLink: 'IntakeOneScreen', icon: intakeIcon},
         {title: 'Afspraak', navLink: 'AgreementPickChildScreen', icon: agreementIcon},
         {title: 'Medcheck', navLink: 'MedcheckPickChildScreen', icon: medcheckIcon},
         {title: 'Patïenten', navLink: 'PatientListScreen', icon: listIcon},
