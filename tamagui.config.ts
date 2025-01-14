@@ -1,8 +1,39 @@
 import { config as configBase } from '@tamagui/config/v3';
 import { createTamagui } from 'tamagui';
+import { createAnimations } from "@tamagui/animations-moti";
+
+const animations = createAnimations({
+  bouncy: {
+    type: "spring",
+    damping: 14,
+    mass: 0.9,
+    stiffness: 150,
+  },
+  lazy: {
+    type: "spring",
+    damping: 18,
+    stiffness: 50,
+  },
+  slow: {
+    type: "spring",
+    damping: 15,
+    stiffness: 40,
+  },
+  quick: {
+    type: "spring",
+    damping: 20,
+    mass: 1.2,
+    stiffness: 250,
+  },
+  tooltip: {
+    type: "timing",
+    duration: 200
+  },
+});
 
 export const config = createTamagui({
   ...configBase,
+  animations, // Add the animations here
   themes: {
     ...configBase.themes,
     light: {
