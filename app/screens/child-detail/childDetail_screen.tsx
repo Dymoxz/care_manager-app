@@ -1,15 +1,16 @@
-import React, {useState} from 'react';
-import {Dimensions, ScrollView, Animated} from 'react-native';
-import {Accordion, Button, Circle, Paragraph, SizableText, Square, XStack, YStack,} from 'tamagui';
+import React, {useState, useRef} from 'react';
+import {Dimensions, ScrollView, Animated, Easing, TouchableOpacity} from 'react-native';
+import {Accordion, Button, Circle, Paragraph, SizableText, Square, View, XStack, YStack,} from 'tamagui';
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
-import { ChevronDown, Edit3, Plus, Trash, X, Calendar, Pill } from "@tamagui/lucide-icons";
+import { AlertCircle, BedSingle, ChevronDown, Edit3, Plus, Trash, X, Calendar, Pill } from "@tamagui/lucide-icons";
 import Svg, {Path} from "react-native-svg";
 import MedicineDetailModal from "./medicineDetail_modal";
 import MedicalCheckDetailModal from "./medicalCheckDetail_modal";
 import {format} from "date-fns";
 import {nl} from 'date-fns/locale';
 import DeleteModal from "./delete_modal";
+import { FloatingAction } from "react-native-floating-action";
 
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -78,6 +79,7 @@ function getMedicalChecksForUser() {
 
 // Fallback medicine
 const fallbackMedicine = {name: "No Medicine Selected"};
+
 
 export default function ChildDetailScreen({route, navigation}: PatientDetailsScreenProps) {
     const {patient} = route.params;
@@ -188,6 +190,38 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
         }),
     };
 
+    const actions = [
+        {
+            text: "Ontslaan",
+            icon: require("../../../assets/images/user-round-x.png"),
+            name: "bt_ontslaan",
+            position: 1,
+            color: '#EF4444'
+        },
+        {
+            text: "Afspraak maken",
+            icon: require("../../../assets/images/file-pen-line.png"),
+            name: "bt_afspraak",
+            position: 2,
+            color: '#F8AE56'
+        },
+        {
+            text: "Medische check",
+            icon: require("../../../assets/images/file-heart.png"),
+            name: "bt_medcheck",
+            position: 3,
+            color: '#F8AE56'
+        },
+
+        {
+            text: "Bewerken",
+            icon: require("../../../assets/images/user-round-pen.png"),
+            name: "bt_bewerken",
+            position: 4,
+            color: '#F8AE56',
+            iconColor: '#000'
+        }
+    ];
     return (
         <TitleLayout
             titleText={`${patient.firstName} ${patient.lastName}`}
@@ -432,140 +466,138 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                 </YStack>
             </ScrollView>
             {/* Floating Action Button (FAB) */}
-            <YStack
-                position="absolute"
-                bottom={20}
-                right={20}
-                alignItems="flex-end"
-                space="$2"
-            >
-                <Animated.View style={fabMenuStyle}>
-                    {isFABOpen && (
-                        <>
-                            <TouchableOpacity
-                                onPress={handleDischargePress}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 10,
-                                    shadowColor: '#000',
-                                    shadowOpacity: 0.1,
-                                    shadowOffset: { width: 0, height: 2 },
-                                    shadowRadius: 4,
-                                    elevation: 3,
-                                    marginBottom: 8,
-                                }}
-                            >
-                                <Trash size={24} color="red" />
-                                <SizableText size="$5" color="red" marginLeft="$2">
-                                    Ontslag
-                                </SizableText>
-                            </TouchableOpacity>
+            {/*<YStack*/}
+            {/*    position="absolute"*/}
+            {/*    bottom={20}*/}
+            {/*    right={20}*/}
+            {/*    alignItems="flex-end"*/}
+            {/*    space="$2"*/}
+            {/*>*/}
+            {/*    <Animated.View style={fabMenuStyle}>*/}
+            {/*        {isFABOpen && (*/}
+            {/*            <>*/}
+            {/*                <TouchableOpacity*/}
+            {/*                    onPress={handleDischargePress}*/}
+            {/*                    style={{*/}
+            {/*                        flexDirection: 'row',*/}
+            {/*                        alignItems: 'center',*/}
+            {/*                        backgroundColor: 'white',*/}
+            {/*                        paddingVertical: 10,*/}
+            {/*                        paddingHorizontal: 15,*/}
+            {/*                        borderRadius: 10,*/}
+            {/*                        shadowColor: '#000',*/}
+            {/*                        shadowOpacity: 0.1,*/}
+            {/*                        shadowOffset: { width: 0, height: 2 },*/}
+            {/*                        shadowRadius: 4,*/}
+            {/*                        elevation: 3,*/}
+            {/*                        marginBottom: 8,*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    <Trash size={24} color="red" />*/}
+            {/*                    <SizableText size="$5" color="red" marginLeft="$2">*/}
+            {/*                        Ontslag*/}
+            {/*                    </SizableText>*/}
+            {/*                </TouchableOpacity>*/}
 
 
-                            <TouchableOpacity
-                                onPress={() => console.log('Afspraak maken')}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 10,
-                                    shadowColor: '#000',
-                                    shadowOpacity: 0.1,
-                                    shadowOffset: { width: 0, height: 2 },
-                                    shadowRadius: 4,
-                                    elevation: 3,
-                                    marginBottom: 8,
-                                }}
-                            >
-                                <Calendar size={24} color="black" />
-                                <SizableText size="$5" color="black" marginLeft="$2">
-                                    Afspraak maken
-                                </SizableText>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => console.log('Med check')}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 10,
-                                    shadowColor: '#000',
-                                    shadowOpacity: 0.1,
-                                    shadowOffset: { width: 0, height: 2 },
-                                    shadowRadius: 4,
-                                    elevation: 3,
-                                    marginBottom: 8,
-                                }}
-                            >
-                                <Pill size={24} color="black" />
-                                <SizableText size="$5" color="black" marginLeft="$2">
-                                    Med Check
-                                </SizableText>
-                            </TouchableOpacity>
+            {/*                <TouchableOpacity*/}
+            {/*                    onPress={() => console.log('Afspraak maken')}*/}
+            {/*                    style={{*/}
+            {/*                        flexDirection: 'row',*/}
+            {/*                        alignItems: 'center',*/}
+            {/*                        backgroundColor: 'white',*/}
+            {/*                        paddingVertical: 10,*/}
+            {/*                        paddingHorizontal: 15,*/}
+            {/*                        borderRadius: 10,*/}
+            {/*                        shadowColor: '#000',*/}
+            {/*                        shadowOpacity: 0.1,*/}
+            {/*                        shadowOffset: { width: 0, height: 2 },*/}
+            {/*                        shadowRadius: 4,*/}
+            {/*                        elevation: 3,*/}
+            {/*                        marginBottom: 8,*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    <Calendar size={24} color="black" />*/}
+            {/*                    <SizableText size="$5" color="black" marginLeft="$2">*/}
+            {/*                        Afspraak maken*/}
+            {/*                    </SizableText>*/}
+            {/*                </TouchableOpacity>*/}
+            {/*                <TouchableOpacity*/}
+            {/*                    onPress={() => console.log('Med check')}*/}
+            {/*                    style={{*/}
+            {/*                        flexDirection: 'row',*/}
+            {/*                        alignItems: 'center',*/}
+            {/*                        backgroundColor: 'white',*/}
+            {/*                        paddingVertical: 10,*/}
+            {/*                        paddingHorizontal: 15,*/}
+            {/*                        borderRadius: 10,*/}
+            {/*                        shadowColor: '#000',*/}
+            {/*                        shadowOpacity: 0.1,*/}
+            {/*                        shadowOffset: { width: 0, height: 2 },*/}
+            {/*                        shadowRadius: 4,*/}
+            {/*                        elevation: 3,*/}
+            {/*                        marginBottom: 8,*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    <Pill size={24} color="black" />*/}
+            {/*                    <SizableText size="$5" color="black" marginLeft="$2">*/}
+            {/*                        Med Check*/}
+            {/*                    </SizableText>*/}
+            {/*                </TouchableOpacity>*/}
 
-                            <TouchableOpacity
-                                onPress={() => console.log('Edit')}
-                                style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 10,
-                                    shadowColor: '#000',
-                                    shadowOpacity: 0.1,
-                                    shadowOffset: { width: 0, height: 2 },
-                                    shadowRadius: 4,
-                                    elevation: 3,
-                                }}
-                            >
-                                <Edit3 size={24} color="#000" />
-                                <SizableText size="$5" color="#000" marginLeft="$2">
-                                    Edit
-                                </SizableText>
-                            </TouchableOpacity>
-                        </>
-                    )}
-                </Animated.View>
+            {/*                <TouchableOpacity*/}
+            {/*                    onPress={() => console.log('Edit')}*/}
+            {/*                    style={{*/}
+            {/*                        flexDirection: 'row',*/}
+            {/*                        alignItems: 'center',*/}
+            {/*                        backgroundColor: 'white',*/}
+            {/*                        paddingVertical: 10,*/}
+            {/*                        paddingHorizontal: 15,*/}
+            {/*                        borderRadius: 10,*/}
+            {/*                        shadowColor: '#000',*/}
+            {/*                        shadowOpacity: 0.1,*/}
+            {/*                        shadowOffset: { width: 0, height: 2 },*/}
+            {/*                        shadowRadius: 4,*/}
+            {/*                        elevation: 3,*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    <Edit3 size={24} color="#000" />*/}
+            {/*                    <SizableText size="$5" color="#000" marginLeft="$2">*/}
+            {/*                        Edit*/}
+            {/*                    </SizableText>*/}
+            {/*                </TouchableOpacity>*/}
+            {/*            </>*/}
+            {/*        )}*/}
+            {/*    </Animated.View>*/}
 
-                {/* Main FAB Button */}
-                <TouchableOpacity onPress={toggleFABMenu} activeOpacity={1}>
-                    <Animated.View
-                        style={[
-                            {
-                                width: 56,
-                                height: 56,
-                                backgroundColor: '#DF9D4D',
-                                borderRadius: 10,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                shadowColor: '#000',
-                                shadowOpacity: 0.3,
-                                shadowOffset: { width: 0, height: 3 },
-                                shadowRadius: 6,
-                                elevation: 5,
-                            },
-                            iconRotateStyle, // Apply rotation directly to the Animated.View
-                        ]}
-                    >
-                        {/* No need for conditional Animated.View, just render icon based on isFABOpen */}
-                        {isFABOpen ? (
-                            <X size={28} color="white" />
-                        ) : (
-                            <Plus size={28} color="white" />
-                        )}
-                    </Animated.View>
-                </TouchableOpacity>
+            {/*</YStack>*/}
 
-            </YStack>
+
+            <View>
+                <FloatingAction
+                    color='#F8AE56'
+                    actions={actions}
+                    onPressItem={name => {
+                        switch (name) {
+                            case "bt_ontslaan":
+                                handleDischargePress();
+                                break;
+                            case "bt_afspraak":
+                                console.log('Afspraak maken');
+                                break;
+                            case "bt_medcheck":
+                                console.log('Medische check');
+                                break;
+                            case "bt_bewerken":
+                                console.log('Bewerken');
+                                break;
+                            default:
+                                console.log(`Unknown action: ${name}`);
+                        }
+                    }}
+                />
+            </View>
+
             <DeleteModal
                 visible={isDischargeModalVisible}
                 onDone={handleDischargeConfirm}

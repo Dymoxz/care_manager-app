@@ -41,7 +41,7 @@ export default function MedicineDetailModal({visible, onClose, screenWidth, medi
                         {medicineToDisplay.name} {/* Use the name from medicineToDisplay */}
                     </Dialog.Title>
                     <SizableText textAlign='center' col="gray">
-                        Type de naam van het kind ter confirmatie
+                        Medijn informatie
                     </SizableText>
                     <Unspaced>
                         <Dialog.Close asChild>

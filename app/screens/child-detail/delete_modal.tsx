@@ -102,7 +102,7 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                     />
                     <Dialog.Content
                         elevate
-                        animation={['quicker', { opacity: { overshootClamping: true } }]}
+                        animation={['quick', { opacity: { overshootClamping: true } }]}
                         enterStyle={{ y: -20, opacity: 0, scale: 0.9 }}
                         exitStyle={{ y: 10, opacity: 0, scale: 0.95 }}
                         gap="$4"
@@ -134,6 +134,7 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                                 borderColor={isConfirmDisabled ? '$gray_focus' : '$danger_focus'}
                                 col='white'
                                 loading={isLoading}
+                                pressStyle={{ background: isConfirmDisabled ? '$gray' : '$danger_focus' }}
                             >
                                 Ja
                             </Button>
@@ -144,6 +145,7 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                                 borderRadius='$12'
                                 borderColor='$accent_focus'
                                 col='white'
+                                pressStyle={{ background: '$accent_focus' }}
                             >
                                 Nee
                             </Button>
@@ -151,15 +153,17 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                         <Unspaced>
                             <Dialog.Close asChild>
                                 <Button
-                                    bg='$secondary'
-                                    col='white'
+                                    bg='$accent'
+                                    borderColor='$accent_focus'
                                     position="absolute"
                                     top="$3"
                                     right="$3"
                                     size="$2"
                                     circular
-                                    icon={X}
-                                />
+                                    pressStyle={{bg: '$accent_focus'}}
+                                >
+                                    <X col='$accent_content' size='$1' />
+                                </Button>
                             </Dialog.Close>
                         </Unspaced>
                     </Dialog.Content>
