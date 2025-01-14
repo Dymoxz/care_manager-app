@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import {Dimensions, Modal, ScrollView} from 'react-native';
+import {Dimensions, ScrollView} from 'react-native';
 import {Accordion, Button, Circle, Paragraph, SizableText, Square, XStack, YStack,} from 'tamagui';
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
-import {ChevronDown} from "@tamagui/lucide-icons";
+import {AlertCircle, BedSingle, ChevronDown} from "@tamagui/lucide-icons";
 import Svg, {Path} from "react-native-svg";
 import MedicineDetailModal from "./medicineDetail_modal";
 import MedicalCheckDetailModal from "./medicalCheckDetail_modal";
 import {format} from "date-fns";
-import { nl } from 'date-fns/locale';
+import {nl} from 'date-fns/locale';
 
 const {width: screenWidth} = Dimensions.get('window');
 
@@ -58,23 +58,24 @@ function getMedicinesForUser() {
         {name: "Desoximetason"},
     ];
 }
+
 // Function to get medical checks for a user
 function getMedicalChecksForUser() {
     return [
-        { datetime: new Date('2024-12-01T09:30:00') },
-        { datetime: new Date('2024-12-01T18:30:00') },
-        { datetime: new Date('2024-12-02T07:45:00') },
-        { datetime: new Date('2024-12-01T18:30:00') },
-        { datetime: new Date('2024-12-02T07:45:00') },
-        { datetime: new Date('2024-12-01T18:30:00') },
-        { datetime: new Date('2024-12-02T07:45:00') },
-        { datetime: new Date('2024-12-01T18:30:00') },
-        { datetime: new Date('2024-12-02T07:45:00') },
+        {datetime: new Date('2024-12-01T09:30:00')},
+        {datetime: new Date('2024-12-01T18:30:00')},
+        {datetime: new Date('2024-12-02T07:45:00')},
+        {datetime: new Date('2024-12-01T18:30:00')},
+        {datetime: new Date('2024-12-02T07:45:00')},
+        {datetime: new Date('2024-12-01T18:30:00')},
+        {datetime: new Date('2024-12-02T07:45:00')},
+        {datetime: new Date('2024-12-01T18:30:00')},
+        {datetime: new Date('2024-12-02T07:45:00')},
     ].sort((a, b) => b.datetime.getTime() - a.datetime.getTime());
 }
 
 // Fallback medicine
-const fallbackMedicine = { name: "No Medicine Selected" };
+const fallbackMedicine = {name: "No Medicine Selected"};
 
 export default function ChildDetailScreen({route, navigation}: PatientDetailsScreenProps) {
     const {patient} = route.params;
@@ -105,7 +106,6 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
         setSelectedMedicalCheck(medicalCheck);
         setMedicalCheckDetailModalVisible(true);
     };
-
 
 
     const appointments = getAppointments();
@@ -144,12 +144,66 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                         <SizableText size="$7" fontWeight="700" color="$text">
                             {patient.firstName} {patient.lastName}
                         </SizableText>
-                        <SizableText size="$5" color="$danger">
-                            Quarantaine: Corona
-                        </SizableText>
-                        <SizableText size="$5" color="$text">
-                            Kamer {patient.room.roomNumber}
-                        </SizableText>
+
+                        <XStack alignItems="center" mt='$3'>
+                            <AlertCircle size="$1" color="$danger" mr='$2'/>
+                            <SizableText size="$5" color="$danger" fontWeight='700'>
+                                Quarantaine: Corona
+                            </SizableText>
+                        </XStack>
+
+                        <XStack alignItems="center" mt='$1'>
+                            <BedSingle size="$1" color="$accent_focus" mr='$2'/>
+                            <SizableText size="$5" color="$accent_focus" fontWeight='700'>
+                                Kamer 101
+                            </SizableText>
+                        </XStack>
+                    </YStack>
+
+
+                    {/*Personal information */}
+                    <YStack
+                        width={screenWidth * 0.9}
+                        backgroundColor="white"
+                        borderRadius="$8"
+                        padding="$6"
+                        alignItems="flex-start" // Align text to the left
+                        bg="$container_alt"
+                        marginTop="$4"
+                    >
+                        <YStack m='$2'>
+                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
+                                BSN:
+                            </SizableText>
+                            <SizableText size="$5" color="$text">
+                                123456789
+                            </SizableText>
+                        </YStack>
+                        <YStack m='$2'>
+                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
+                                Geboortedatum:
+                            </SizableText>
+                            <SizableText size="$5" color="$text">
+                                15-02-2009
+                            </SizableText>
+                        </YStack>
+                        <YStack m='$2'>
+                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
+                                Ziektebeeld:
+                            </SizableText>
+                            <SizableText size="$5" color="$text">
+                                Corona, Griep
+                            </SizableText>
+                        </YStack>
+                        <YStack m='$2'>
+                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
+                                Voeding / Allergieën:
+                            </SizableText>
+                            <SizableText size="$5" color="$text">
+                                Noten
+                            </SizableText>
+                        </YStack>
+
                     </YStack>
 
                     {/* Medicine Section */}
@@ -221,7 +275,8 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         >
                                             {({open}: { open: boolean }) => (
                                                 <>
-                                                    <Paragraph col='$text' size='$4' fontWeight='700'>{appointment.title}</Paragraph>
+                                                    <Paragraph col='$text' size='$4'
+                                                               fontWeight='700'>{appointment.title}</Paragraph>
                                                     <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
                                                         <ChevronDown size="$1" color="$text"/>
                                                     </Square>
@@ -291,7 +346,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                 fontSize="$6"
                                                 onPress={() => handleMedicalCheckPress(check)}
                                             >
-                                                { format(check.datetime, 'EEE dd-MM-yy (HH:mm)', { locale: nl }) }
+                                                {format(check.datetime, 'EEE dd-MM-yy (HH:mm)', {locale: nl})}
                                             </SizableText>
                                         </YStack>
                                     </XStack>
