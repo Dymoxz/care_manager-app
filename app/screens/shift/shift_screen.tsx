@@ -19,14 +19,15 @@ interface Room {
 }
 
 interface Patient {
-    _id: string;
+    _id?: string;
     patientNumber: number;
     firstName: string;
     lastName: string;
-    dateOfBirth: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
+    isQuarantined: boolean;
+    dateOfBirth?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
     room: Room;
 }
 
@@ -139,7 +140,7 @@ async function ActivateDevice(
     setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
 ) {
     try {
-        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient`, {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/list`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -282,10 +283,10 @@ export default function ShiftScreen({ navigation }) {
                     {/* Render selected patients first */}
                     {selected.map((patient) => (
                         <PatientCard
-                            key={patient._id}
+                            key={patient.patientNumber}
                             name={`${patient.firstName} ${patient.lastName}`}
                             room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
-                            hasAlert={patient.room?.isScaled || false}
+                            hasAlert={patient.isQuarantined || false}
                             patient={patient}
                             isSelected={true}
                             onSelect={handlePatientSelect}
@@ -295,10 +296,10 @@ export default function ShiftScreen({ navigation }) {
                     {/* Render non-selected patients second */}
                     {nonSelected.map((patient) => (
                         <PatientCard
-                            key={patient._id}
+                            key={patient.patientNumber}
                             name={`${patient.firstName} ${patient.lastName}`}
                             room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
-                            hasAlert={patient.room?.isScaled || false}
+                            hasAlert={patient.isQuarantined || false}
                             patient={patient}
                             isSelected={false}
                             onSelect={handlePatientSelect}

@@ -16,14 +16,15 @@ interface Room {
 }
 
 interface Patient {
-    _id: string;
+    _id?: string;
     patientNumber: number;
     firstName: string;
     lastName: string;
-    dateOfBirth: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
+    isQuarantined: boolean;
+    dateOfBirth?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
     room: Room;
 }
 
@@ -31,8 +32,8 @@ interface PatientCardProps {
     name: string;
     room: string;
     hasAlert: boolean;
-    patient: Patient; // Pass the whole patient object to the card
-    onPress: (patient: Patient) => void; // Callback to handle patient click
+    patient: Patient;
+    onPress: (patient: Patient) => void;
 }
 
 async function ActivateDevice(
@@ -41,7 +42,7 @@ async function ActivateDevice(
     setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
 ) {
     try {
-        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient`, {
+        const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/list`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -157,10 +158,10 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
             <YStack space="$1" width={(screenWidth * 90) / 100}>
                 {filteredPatients.map((patient) => (
                     <PatientCard
-                        key={patient._id}
+                        key={patient.patientNumber}
                         name={`${patient.firstName} ${patient.lastName}`}
                         room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
-                        hasAlert={patient.room?.isScaled || false}
+                        hasAlert={patient.isQuarantined || false}
                         patient={patient}
                         onPress={handlePatientPress}
                     />
