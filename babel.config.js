@@ -12,6 +12,7 @@ module.exports = (api) => {
           logTimings: true,
           disableExtraction: process.env.NODE_ENV === 'development',
         },
+        "react-native-reanimated/plugin"
       ],
 
       // NOTE: this is only necessary if you are using reanimated for animations

@@ -10,9 +10,10 @@ import Animated, {
     useAnimatedStyle,
     withTiming,
 } from "react-native-reanimated";
-import { TamaguiProvider, YStack, Button } from "tamagui";
+import {TamaguiProvider, YStack, Button, XStack, Separator} from "tamagui";
+import {X} from "@tamagui/lucide-icons";
 
-const { width, height } = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function MapScreen() {
     const [roomStatus, setRoomStatus] = useState({
@@ -38,7 +39,7 @@ export default function MapScreen() {
         ],
     }));
 
-    const handleZoom = (zoomIn: boolean) => {
+    const handleZoom = (zoomIn) => {
         // Adjust the zoom level
         const newScale = zoomIn ? scale.value + 0.2 : scale.value - 0.2;
         scale.value = withTiming(Math.min(Math.max(newScale, 0.5), 3), {
@@ -46,96 +47,193 @@ export default function MapScreen() {
         });
     };
 
-    const handleRoomClick = (room: string) => {
+    const handleRoomClick = (room) => {
         alert(`Clicked on ${room}`);
     };
 
-    const getRoomColor = (status: string) => {
+    const getRoomColor = (status) => {
         return status === "occupied" ? "red" : "green";
     };
 
     return (
-        <GestureHandlerRootView style={styles.container}>
-            <PanGestureHandler
-                onGestureEvent={(event) => {
-                    translateX.value =
-                        panOffsetX.value + event.nativeEvent.translationX;
-                    translateY.value =
-                        panOffsetY.value + event.nativeEvent.translationY;
-                }}
-                onEnded={(event) => {
-                    panOffsetX.value += event.nativeEvent.translationX;
-                    panOffsetY.value += event.nativeEvent.translationY;
-                }}
-                shouldCancelWhenOutside={false}
-            >
-                <Animated.View style={[styles.mapContainer, animatedStyle]}>
-                    <Svg height={height} width={width}>
-                        {/* Room 1 */}
-                        <Rect
-                            x="50"
-                            y="50"
-                            width="100"
-                            height="100"
-                            fill={getRoomColor(roomStatus.room1)}
-                            onPress={() => handleRoomClick("Room 1")}
-                        />
-                        <Text x="100" y="120" fontSize="14" fill="white" textAnchor="middle">
-                            Room 1
-                        </Text>
-
-                        {/* Room 2 */}
-                        <Rect
-                            x="150"
-                            y="50"
-                            width="100"
-                            height="100"
-                            fill={getRoomColor(roomStatus.room2)}
-                            onPress={() => handleRoomClick("Room 2")}
-                        />
-                        <Text x="200" y="120" fontSize="14" fill="white" textAnchor="middle">
-                            Room 2
-                        </Text>
-
-                        {/* Add more rooms dynamically */}
-                    </Svg>
-                </Animated.View>
-            </PanGestureHandler>
-
-            {/* Zoom Controls */}
+        <YStack f={1} ai="center" jc="center" px="$10" bg="$background">
             <YStack
-                position="absolute"
-                bottom={20}
-                right={20}
-                backgroundColor="white"
-                borderRadius={50}
-                padding={4}
-                elevation={5}
-                space={4}
+                bg="#E1F4F6"
+                width={(screenWidth * 80) / 100}
+                height={(screenHeight * 70) / 100}
+                borderRadius="$10"
+                elevation="$0.25"
+                p="$6"
+                ai="center"
+                overflow="hidden"
+                position="relative" // Important for absolute positioning of children
             >
+                <GestureHandlerRootView style={styles.container}>
+                    <PanGestureHandler
+                        onGestureEvent={(event) => {
+                            translateX.value =
+                                panOffsetX.value + event.nativeEvent.translationX;
+                            translateY.value =
+                                panOffsetY.value + event.nativeEvent.translationY;
+                        }}
+                        onEnded={(event) => {
+                            panOffsetX.value += event.nativeEvent.translationX;
+                            panOffsetY.value += event.nativeEvent.translationY;
+                        }}
+                        shouldCancelWhenOutside={false}
+                    >
+                        <Animated.View style={[styles.mapContainer, animatedStyle]}>
+                            <Svg height={screenHeight} width={screenWidth}>
+                                {/* Room 1 */}
+                                <Rect
+                                    x="50"
+                                    y="50"
+                                    width="100"
+                                    height="100"
+                                    fill={getRoomColor(roomStatus.room1)}
+                                    onPress={() => handleRoomClick("Room 1")}
+                                />
+                                <Text x="100" y="120" fontSize="14" fill="white" textAnchor="middle">
+                                    Room 1
+                                </Text>
+
+                                {/* Room 2 */}
+                                <Rect
+                                    x="150"
+                                    y="50"
+                                    width="100"
+                                    height="100"
+                                    fill={getRoomColor(roomStatus.room2)}
+                                    onPress={() => handleRoomClick("Room 2")}
+                                />
+                                <Text x="200" y="120" fontSize="14" fill="white" textAnchor="middle">
+                                    Room 2
+                                </Text>
+
+                                {/* Add more rooms dynamically */}
+                            </Svg>
+                        </Animated.View>
+                    </PanGestureHandler>
+                </GestureHandlerRootView>
+
+                {/*top left question mark*/}
                 <Button
+                    bg='$secondary'
+                    borderColor='$secondary_focus'
+                    position="absolute"
+                    top="$4"
+                    left="$4"
                     size="$4"
-                    onPress={() => handleZoom(true)}
-                    style={{ backgroundColor: "#4CAF50" }}
+                    circular
+                    pressStyle={{bg: '$secondary_focus'}}
+                    col='white'
                 >
-                    +
+                    ?
                 </Button>
-                <Button
-                    size="$4"
-                    onPress={() => handleZoom(false)}
-                    style={{ backgroundColor: "#f44336" }}
+
+                {/* top right floor selector*/}
+                <YStack
+                    position="absolute"
+                    top="$4"
+                    right="$4"
+                    w='$5'
+                    backgroundColor="$secondary"
+                    borderRadius={100}
+                    padding={1}
+                    elevation={5}
+                    borderColor="$secondary_focus"
+                    borderWidth={1}
                 >
-                    -
-                </Button>
+                    <Button
+                        size="$4"
+                        onPress={() => console.log("Floor 1 selected")}
+                        backgroundColor="$secondary"
+                        pressStyle={{backgroundColor: "$secondary_focus", borderColor: "$secondary_focus"}}
+                        focusStyle={{ borderColor: "$secondary_focus" }}
+                        borderWidth={1}
+                        borderStyle="solid"
+                        borderTopLeftRadius={100}
+                        borderTopRightRadius={100}
+                        padding={0}
+                        col='white'
+                    >
+                        1
+                    </Button>
+                    <Separator borderColor="$secondary_focus"/>
+                    <Button
+                        size="$4"
+                        onPress={() => console.log("Floor 0 selected")}
+                        pressStyle={{backgroundColor: "$secondary_focus", borderColor: "$secondary_focus"}}
+                        backgroundColor="$secondary_focus"
+                        focusStyle={{ borderColor: "$secondary_focus" }}
+                        borderWidth={1}
+                        borderStyle="solid"
+                        borderBottomLeftRadius={100}
+                        borderBottomRightRadius={100}
+                        padding={0}
+                        col='white'
+                    >
+                        0
+                    </Button>
+                </YStack>
+
+                {/* bottom right zoom controls */}
+                <YStack
+                    position="absolute"
+                    bottom="$4"
+                    right="$4"
+                    w='$5'
+                    backgroundColor="$accent"
+                    borderRadius={100}
+                    padding={1}
+                    elevation={5}
+                    borderColor="$accent_focus"
+                    borderWidth={1}
+                >
+                    <Button
+                        size="$4"
+                        onPress={() => handleZoom(true)}
+                        backgroundColor="$accent"
+                        pressStyle={{backgroundColor: "$accent_focus", borderColor: "$accent_focus"}}
+                        focusStyle={{ borderColor: "$accent_focus" }}
+                        borderWidth={1}
+                        borderStyle="solid"
+                        borderTopLeftRadius={100}
+                        borderTopRightRadius={100}
+                        padding={0}
+                        col='white'
+                    >
+                        +
+                    </Button>
+                    <Separator borderColor="$accent_focus"/>
+                    <Button
+                        size="$4"
+                        onPress={() => handleZoom(false)}
+                        pressStyle={{backgroundColor: "$accent_focus", borderColor: "$accent_focus"}}
+                        backgroundColor="$accent"
+                        focusStyle={{ borderColor: "$accent_focus" }}
+                        borderWidth={1}
+                        borderStyle="solid"
+                        borderBottomLeftRadius={100}
+                        borderBottomRightRadius={100}
+                        padding={0}
+                        col='white'
+                    >
+                        -
+                    </Button>
+                </YStack>
+
             </YStack>
-        </GestureHandlerRootView>
+        </YStack>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f5f5f5",
+        // Adjust width and height to match the parent container
+        width: (screenWidth * 80) / 100,
+        height: (screenHeight * 70) / 100,
     },
     mapContainer: {
         flex: 1,
