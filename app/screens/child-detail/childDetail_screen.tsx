@@ -269,310 +269,338 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
 
 
                     {/*Personal information */}
-                    <YStack
-                        width={screenWidth * 0.9}
-                        backgroundColor="white"
-                        borderRadius="$8"
-                        padding="$6"
-                        alignItems="flex-start" // Align text to the left
-                        bg="$container_alt"
-                        marginTop="$4"
+                    <Accordion
+                        overflow="hidden"
+                        value={openAccordionItems}
+                        type="multiple"
+                        backgroundColor={"$bg02"}
+                        onValueChange={handleAccordionChange}
                     >
-                        <YStack m='$2'>
-                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
-                                BSN:
-                            </SizableText>
-                            <SizableText size="$5" color="$text">
-                                123456789
-                            </SizableText>
-                        </YStack>
-                        <YStack m='$2'>
-                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
-                                Geboortedatum:
-                            </SizableText>
-                            <SizableText size="$5" color="$text">
-                                15-02-2009
-                            </SizableText>
-                        </YStack>
-                        <YStack m='$2'>
-                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
-                                Ziektebeeld:
-                            </SizableText>
-                            <SizableText size="$5" color="$text">
-                                Corona, Griep
-                            </SizableText>
-                        </YStack>
-                        <YStack m='$2'>
-                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1'>
-                                Voeding / Allergieën:
-                            </SizableText>
-                            <SizableText size="$5" color="$text">
-                                Noten
-                            </SizableText>
-                        </YStack>
-
-                    </YStack>
-
-                    {/* Medicine Section */}
-                    <YStack
-                        width={screenWidth * 0.9}
-                        backgroundColor="white"
-                        borderRadius="$8"
-                        padding="$5"
-                        marginTop="$4"
-                        bg="$container_alt"
-                    >
-                        <SizableText size="$6" fontWeight="700" mb='$3'>
-                            Medicijnen
-                        </SizableText>
-                        {medicines.map((medicine, index) => (
-                            <Button
-                                key={index}
-                                alignSelf="stretch"
-                                backgroundColor="#B9D6D6"
-                                borderRadius="$2"
-                                justifyContent="space-between"
-                                marginTop="$3"
-                                h='$5'
-                                pressStyle={{backgroundColor: '#B9D6D6'}}
-                                onPress={() => handleMedicinePress(medicine)} // Open modal
+                        <Accordion.Item value={`item-personal-info`}>
+                            <YStack
+                                width={screenWidth * 0.9}
+                                backgroundColor="white"
+                                borderRadius="$8"
+                                paddingVertical="$5"
+                                marginTop="$4"
+                                bg="$container_alt"
+                                onPress={() => {
+                                    const isOpen = openAccordionItems.includes('item-personal-info');
+                                    if (isOpen) {
+                                        setOpenAccordionItems(openAccordionItems.filter(item => item !== 'item-personal-info'));
+                                    } else {
+                                        setOpenAccordionItems([...openAccordionItems, 'item-personal-info']);
+                                    }
+                                }}
                             >
-                                <Paragraph size="$4" col='$text' fontWeight="700">{medicine.name}</Paragraph>
-                                <Paragraph size="$4" col='$text' fontWeight="700">+</Paragraph>
-                            </Button>
-                        ))}
-                    </YStack>
-
-                    {/* Afspraken Section */}
-                    <YStack
-                        width={screenWidth * 0.9}
-                        backgroundColor="white"
-                        borderRadius="$8"
-                        padding="$5"
-                        marginTop="$4"
-                        bg="$container_alt"
-                    >
-                        <SizableText size="$6" fontWeight="700" mb='$3'>
-                            Afspraken
-                        </SizableText>
-
-                        {/* Accordion here*/}
-                        <Accordion
-                            overflow="hidden"
-                            value={openAccordionItems}
-                            type="multiple"
-                            backgroundColor={"$bg02"}
-                            onValueChange={handleAccordionChange}
-
-                        >
-                            {appointments.map((appointment, index) => {
-                                const isOpen = openAccordionItems.includes(`item-${index}`);
-                                return (
-                                    <Accordion.Item key={index} value={`item-${index}`} mb='$3'>
-                                        <Accordion.Trigger
-                                            flexDirection="row"
-                                            justifyContent="space-between"
-                                            borderWidth={0}
-                                            backgroundColor={"#B9D6D6"}
-                                            borderRadius={isOpen ? '$3' : '$3'}
-                                            borderBottomLeftRadius={isOpen ? 0 : '$3'}
-                                            borderBottomRightRadius={isOpen ? 0 : '$3'}
-
-                                            pressStyle={{backgroundColor: '#B9D6D6'}}
-                                        >
-                                            {({open}: { open: boolean }) => (
-                                                <>
-                                                    <Paragraph col='$text' size='$4'
-                                                               fontWeight='700'>{appointment.title}</Paragraph>
-                                                    <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
-                                                        <ChevronDown size="$1" color="$text"/>
-                                                    </Square>
-                                                </>
-                                            )}
-                                        </Accordion.Trigger>
-                                        <Accordion.HeightAnimator animation={"bouncy"}>
-                                            <Accordion.Content
-
-                                                backgroundColor={"#B9D6D6"}
-                                                paddingTop={0}
-                                                animation={"bouncy"}
-                                                borderBottomLeftRadius={"$3"}
-                                                borderBottomRightRadius={"$3"}
-                                                borderTopLeftRadius={0}
-                                                borderTopRightRadius={0}
-                                            >
-                                                <SizableText col='$text'>
-                                                    {appointment.description}
-                                                </SizableText>
-                                            </Accordion.Content>
-                                        </Accordion.HeightAnimator>
-                                    </Accordion.Item>
-                                )
-                            })}
-                        </Accordion>
-
-                    </YStack>
-
-
-                    {/* Timeline Section */}
-                    <YStack
-                        width={screenWidth * 0.9}
-                        backgroundColor="white"
-                        borderRadius="$8"
-                        padding="$5"
-                        marginTop="$4"
-                        bg="$container_alt"
-                        maxHeight='400'
-                    >
-                        <SizableText size="$6" fontWeight="700" ml='$2' mb='$4'>
-                            Medische Checks
-                        </SizableText>
-                        <ScrollView nestedScrollEnabled={true}>
-                            {medicalChecks.map((check, index) => (
-                                <YStack key={index} width="100%" alignItems="flex-start">
-                                    {/* Top Line Separator (above the checkmark) */}
-
-                                    <XStack space="$4" alignItems="center" mb={'$3'}>
-                                        {/* Checkmark SVG */}
-                                        <Svg width="20" height="20" viewBox="0 0 20 20">
-                                            <Path
-                                                fillRule="evenodd"
-                                                clipRule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                                fill="#0E7490"
-                                            />
-                                        </Svg>
-
-                                        {/* Content */}
-                                        <YStack
-                                            backgroundColor="white"
-                                            borderRadius="$6"
-                                            padding="$4"
-                                            flex={1}
-                                        >
-                                            <SizableText
-                                                fontSize="$6"
-                                                onPress={() => handleMedicalCheckPress(check)}
-                                            >
-                                                {format(check.datetime, 'EEE dd-MM-yy (HH:mm)', {locale: nl})}
+                                <XStack justifyContent="space-between" marginHorizontal='$5' alignItems="center">
+                                    <SizableText size="$6" fontWeight="700" mb='$1' textAlign="left">
+                                        Persoonlijke Informatie
+                                    </SizableText>
+                                    <View>
+                                        <Square animation="bouncy" rotate={openAccordionItems.includes(`item-personal-info`) ? "180deg" : "0deg"}>
+                                            <ChevronDown size="$1" color="$text"/>
+                                        </Square>
+                                    </View>
+                                </XStack>
+                                <Accordion.HeightAnimator animation={"bouncy"}>
+                                    <Accordion.Content
+                                        animation={"bouncy"}
+                                        bg="$container_alt"
+                                        alignItems='flex-start'
+                                        width="100%"
+                                    >
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                BSN:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                123456789
                                             </SizableText>
                                         </YStack>
-                                    </XStack>
-                                </YStack>
-                            ))}
-                        </ScrollView>
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                Geboortedatum:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                15-02-2009
+                                            </SizableText>
+                                        </YStack>
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                Ziektebeeld:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                Corona, Griep
+                                            </SizableText>
+                                        </YStack>
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                Voeding / Allergieën:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                Noten
+                                            </SizableText>
+                                        </YStack>
+                                    </Accordion.Content>
+                                </Accordion.HeightAnimator>
+                            </YStack>
+                        </Accordion.Item>
+                    </Accordion>
 
-                    </YStack>
+                    <Accordion
+                        overflow="hidden"
+                        value={openAccordionItems}
+                        type="multiple"
+                        backgroundColor={"$bg02"}
+                        onValueChange={handleAccordionChange}
+                    >
+                        <Accordion.Item value={`item-medicines`}>
+                            <YStack
+                                width={screenWidth * 0.9}
+                                backgroundColor="white"
+                                borderRadius="$8"
+                                paddingVertical="$5"
+                                marginTop="$4"
+                                bg="$container_alt"
+                                onPress={() => {
+                                    const isOpen = openAccordionItems.includes('item-medicines');
+                                    if (isOpen) {
+                                        setOpenAccordionItems(openAccordionItems.filter(item => item !== 'item-medicines'));
+                                    } else {
+                                        setOpenAccordionItems([...openAccordionItems, 'item-medicines']);
+                                    }
+                                }}
+                            >
+                                <XStack justifyContent="space-between" marginHorizontal='$5' alignItems="center">
+                                    <SizableText size="$6" fontWeight="700" mb='$1'>
+                                        Medicijnen
+                                    </SizableText>
+                                    <View>
+                                        <Square animation="bouncy" rotate={openAccordionItems.includes(`item-medicines`) ? "180deg" : "0deg"}>
+                                            <ChevronDown size="$1" color="$text"/>
+                                        </Square>
+                                    </View>
+                                </XStack>
+
+                                <Accordion.HeightAnimator animation={"bouncy"}>
+                                    <Accordion.Content
+                                        animation={"bouncy"}
+                                        alignItems={"center"}
+                                        bg="$container_alt"
+                                    >
+                                        {medicines.map((medicine, index) => (
+                                            <View key={index}>
+                                                <Button
+                                                    alignSelf="stretch"
+                                                    backgroundColor="#B9D6D6"
+                                                    borderRadius="$2"
+                                                    justifyContent="space-between"
+                                                    h='$6'
+                                                    width={screenWidth * 0.8}
+                                                    mb='$3'
+                                                    paddingLeft="$4"
+                                                    paddingRight="$4"
+                                                    pressStyle={{backgroundColor: '#B9D6D6'}}
+                                                    onPress={() => handleMedicinePress(medicine)}
+                                                >
+                                                    <Paragraph size="$4" col='$text' fontWeight="700">{medicine.name}</Paragraph>
+                                                    <Paragraph size="$4" col='$text' fontWeight="700">+</Paragraph>
+                                                </Button>
+                                            </View>
+                                        ))}
+                                    </Accordion.Content>
+                                </Accordion.HeightAnimator>
+                            </YStack>
+                        </Accordion.Item>
+                    </Accordion>
+
+
+                    {/* Afspraken Section */}
+
+                    <Accordion
+                        overflow="hidden"
+                        value={openAccordionItems}
+                        type="multiple"
+                        backgroundColor={"$bg02"}
+                        onValueChange={handleAccordionChange}
+                    >
+                        <Accordion.Item value={`item-appointments`} >
+                            <YStack
+                                width={screenWidth * 0.9}
+                                backgroundColor="white"
+                                borderRadius="$8"
+                                paddingVertical="$5"
+                                marginTop="$4"
+                                bg="$container_alt"
+                                onPress={() => {
+                                    const isOpen = openAccordionItems.includes('item-appointments');
+                                    if (isOpen) {
+                                        setOpenAccordionItems(openAccordionItems.filter(item => item !== 'item-appointments'));
+                                    } else {
+                                        setOpenAccordionItems([...openAccordionItems, 'item-appointments']);
+                                    }
+                                }}
+                            >
+                                <XStack justifyContent="space-between" marginHorizontal="$5" alignItems="center">
+                                    <SizableText size="$6" fontWeight="700" mb='$1'>
+                                        Afspraken
+                                    </SizableText>
+                                    <View>
+                                        <Square animation="bouncy" rotate={openAccordionItems.includes(`item-appointments`) ? "180deg" : "0deg"}>
+                                            <ChevronDown size="$1" color="$text"/>
+                                        </Square>
+                                    </View>
+                                </XStack>
+                                <Accordion.HeightAnimator animation={"bouncy"}>
+                                    <Accordion.Content
+                                        animation={"bouncy"}
+                                        alignItems={"center"}
+                                        bg="$container_alt"
+                                    >
+                                        <Accordion
+                                            overflow="hidden"
+                                            value={openAccordionItems}
+                                            type="multiple"
+                                            bg="$container_alt"
+                                            onValueChange={handleAccordionChange}
+
+                                        >
+                                            {appointments.map((appointment, index) => {
+                                                const isOpen = openAccordionItems.includes(`item-appointment-${index}`);
+                                                return (
+                                                    <Accordion.Item key={index} value={`item-appointment-${index}`} mb='$3'>
+                                                        <Accordion.Trigger
+                                                            flexDirection="row"
+                                                            justifyContent="space-between"
+                                                            borderWidth={0}
+                                                            width={screenWidth * 0.8}
+                                                            backgroundColor={"#B9D6D6"}
+                                                            borderRadius={'$3'}
+                                                            borderBottomLeftRadius={isOpen ? 0 : '$3'}
+                                                            borderBottomRightRadius={isOpen ? 0 : '$3'}
+
+                                                            pressStyle={{backgroundColor: '#B9D6D6'}}
+                                                        >
+                                                            {({open}: { open: boolean }) => (
+                                                                <>
+                                                                    <Paragraph col='$text' size='$4'
+                                                                               fontWeight='700'>{appointment.title}</Paragraph>
+                                                                    <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
+                                                                        <ChevronDown size="$1" color="$text"/>
+                                                                    </Square>
+                                                                </>
+                                                            )}
+                                                        </Accordion.Trigger>
+                                                        <Accordion.HeightAnimator animation={"bouncy"}>
+                                                            <Accordion.Content
+                                                                backgroundColor={"#B9D6D6"}
+                                                                paddingTop={0}
+                                                                animation={"bouncy"}
+                                                                borderBottomLeftRadius={"$3"}
+                                                                borderBottomRightRadius={"$3"}
+                                                                borderTopLeftRadius={0}
+                                                                borderTopRightRadius={0}
+                                                            >
+                                                                <SizableText col='$text'>
+                                                                    {appointment.description}
+                                                                </SizableText>
+                                                            </Accordion.Content>
+                                                        </Accordion.HeightAnimator>
+                                                    </Accordion.Item>
+                                                )
+                                            })}
+                                        </Accordion>
+                                    </Accordion.Content>
+                                </Accordion.HeightAnimator>
+                            </YStack>
+                        </Accordion.Item>
+                    </Accordion>
+
+
+                    <Accordion
+                        overflow="hidden"
+                        value={openAccordionItems}
+                        type="multiple"
+                        mb="$10"
+                        backgroundColor={"$bg02"}
+                        onValueChange={handleAccordionChange}
+                    >
+                        <Accordion.Item value={`item-medical-checks`} mb='$3'>
+                            <YStack
+                                width={screenWidth * 0.9}
+                                backgroundColor="white"
+                                borderRadius="$8"
+                                padding="$5"
+                                marginTop="$4"
+                                bg="$container_alt"
+                                onPress={() => {
+                                    const isOpen = openAccordionItems.includes('item-medical-checks');
+                                    if (isOpen) {
+                                        setOpenAccordionItems(openAccordionItems.filter(item => item !== 'item-medical-checks'));
+                                    } else {
+                                        setOpenAccordionItems([...openAccordionItems, 'item-medical-checks']);
+                                    }
+                                }}
+                            >
+                                <XStack justifyContent="space-between" alignItems="center">
+                                    <SizableText size="$6" fontWeight="700" mb='$1'>
+                                        Medische Checks
+                                    </SizableText>
+                                    <View>
+                                        <Square animation="bouncy" rotate={openAccordionItems.includes(`item-medical-checks`) ? "180deg" : "0deg"}>
+                                            <ChevronDown size="$1" color="$text"/>
+                                        </Square>
+                                    </View>
+                                </XStack>
+                                <Accordion.HeightAnimator animation={"bouncy"}>
+                                    <Accordion.Content
+                                        bg="$container_alt"
+                                        paddingTop={0}
+                                        animation={"bouncy"}
+                                        marginTop={'$4'}
+                                    >
+                                        <ScrollView nestedScrollEnabled={true}>
+                                            {medicalChecks.map((check, index) => (
+                                                <YStack key={index} width="100%" alignItems="flex-start">
+                                                    {/* Top Line Separator (above the checkmark) */}
+
+                                                    <XStack space="$4" alignItems="center" mb={'$3'}>
+                                                        {/* Checkmark SVG */}
+                                                        <Svg width="20" height="20" viewBox="0 0 20 20">
+                                                            <Path
+                                                                fillRule="evenodd"
+                                                                clipRule="evenodd"
+                                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                                                fill="#0E7490"
+                                                            />
+                                                        </Svg>
+
+                                                        {/* Content */}
+                                                        <YStack
+                                                            backgroundColor="white"
+                                                            borderRadius="$6"
+                                                            padding="$4"
+                                                            flex={1}
+                                                        >
+                                                            <SizableText
+                                                                fontSize="$6"
+                                                                onPress={() => handleMedicalCheckPress(check)}
+                                                            >
+                                                                {format(check.datetime, 'EEE dd-MM-yy (HH:mm)', {locale: nl})}
+                                                            </SizableText>
+                                                        </YStack>
+                                                    </XStack>
+                                                </YStack>
+                                            ))}
+                                        </ScrollView>
+                                    </Accordion.Content>
+                                </Accordion.HeightAnimator>
+                            </YStack>
+                        </Accordion.Item>
+                    </Accordion>
                 </YStack>
             </ScrollView>
-            {/* Floating Action Button (FAB) */}
-            {/*<YStack*/}
-            {/*    position="absolute"*/}
-            {/*    bottom={20}*/}
-            {/*    right={20}*/}
-            {/*    alignItems="flex-end"*/}
-            {/*    space="$2"*/}
-            {/*>*/}
-            {/*    <Animated.View style={fabMenuStyle}>*/}
-            {/*        {isFABOpen && (*/}
-            {/*            <>*/}
-            {/*                <TouchableOpacity*/}
-            {/*                    onPress={handleDischargePress}*/}
-            {/*                    style={{*/}
-            {/*                        flexDirection: 'row',*/}
-            {/*                        alignItems: 'center',*/}
-            {/*                        backgroundColor: 'white',*/}
-            {/*                        paddingVertical: 10,*/}
-            {/*                        paddingHorizontal: 15,*/}
-            {/*                        borderRadius: 10,*/}
-            {/*                        shadowColor: '#000',*/}
-            {/*                        shadowOpacity: 0.1,*/}
-            {/*                        shadowOffset: { width: 0, height: 2 },*/}
-            {/*                        shadowRadius: 4,*/}
-            {/*                        elevation: 3,*/}
-            {/*                        marginBottom: 8,*/}
-            {/*                    }}*/}
-            {/*                >*/}
-            {/*                    <Trash size={24} color="red" />*/}
-            {/*                    <SizableText size="$5" color="red" marginLeft="$2">*/}
-            {/*                        Ontslag*/}
-            {/*                    </SizableText>*/}
-            {/*                </TouchableOpacity>*/}
-
-
-            {/*                <TouchableOpacity*/}
-            {/*                    onPress={() => console.log('Afspraak maken')}*/}
-            {/*                    style={{*/}
-            {/*                        flexDirection: 'row',*/}
-            {/*                        alignItems: 'center',*/}
-            {/*                        backgroundColor: 'white',*/}
-            {/*                        paddingVertical: 10,*/}
-            {/*                        paddingHorizontal: 15,*/}
-            {/*                        borderRadius: 10,*/}
-            {/*                        shadowColor: '#000',*/}
-            {/*                        shadowOpacity: 0.1,*/}
-            {/*                        shadowOffset: { width: 0, height: 2 },*/}
-            {/*                        shadowRadius: 4,*/}
-            {/*                        elevation: 3,*/}
-            {/*                        marginBottom: 8,*/}
-            {/*                    }}*/}
-            {/*                >*/}
-            {/*                    <Calendar size={24} color="black" />*/}
-            {/*                    <SizableText size="$5" color="black" marginLeft="$2">*/}
-            {/*                        Afspraak maken*/}
-            {/*                    </SizableText>*/}
-            {/*                </TouchableOpacity>*/}
-            {/*                <TouchableOpacity*/}
-            {/*                    onPress={() => console.log('Med check')}*/}
-            {/*                    style={{*/}
-            {/*                        flexDirection: 'row',*/}
-            {/*                        alignItems: 'center',*/}
-            {/*                        backgroundColor: 'white',*/}
-            {/*                        paddingVertical: 10,*/}
-            {/*                        paddingHorizontal: 15,*/}
-            {/*                        borderRadius: 10,*/}
-            {/*                        shadowColor: '#000',*/}
-            {/*                        shadowOpacity: 0.1,*/}
-            {/*                        shadowOffset: { width: 0, height: 2 },*/}
-            {/*                        shadowRadius: 4,*/}
-            {/*                        elevation: 3,*/}
-            {/*                        marginBottom: 8,*/}
-            {/*                    }}*/}
-            {/*                >*/}
-            {/*                    <Pill size={24} color="black" />*/}
-            {/*                    <SizableText size="$5" color="black" marginLeft="$2">*/}
-            {/*                        Med Check*/}
-            {/*                    </SizableText>*/}
-            {/*                </TouchableOpacity>*/}
-
-            {/*                <TouchableOpacity*/}
-            {/*                    onPress={() => console.log('Edit')}*/}
-            {/*                    style={{*/}
-            {/*                        flexDirection: 'row',*/}
-            {/*                        alignItems: 'center',*/}
-            {/*                        backgroundColor: 'white',*/}
-            {/*                        paddingVertical: 10,*/}
-            {/*                        paddingHorizontal: 15,*/}
-            {/*                        borderRadius: 10,*/}
-            {/*                        shadowColor: '#000',*/}
-            {/*                        shadowOpacity: 0.1,*/}
-            {/*                        shadowOffset: { width: 0, height: 2 },*/}
-            {/*                        shadowRadius: 4,*/}
-            {/*                        elevation: 3,*/}
-            {/*                    }}*/}
-            {/*                >*/}
-            {/*                    <Edit3 size={24} color="#000" />*/}
-            {/*                    <SizableText size="$5" color="#000" marginLeft="$2">*/}
-            {/*                        Edit*/}
-            {/*                    </SizableText>*/}
-            {/*                </TouchableOpacity>*/}
-            {/*            </>*/}
-            {/*        )}*/}
-            {/*    </Animated.View>*/}
-
-            {/*</YStack>*/}
-
-
             <View>
                 <FloatingAction
                     color='#F8AE56'
@@ -605,7 +633,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                 screenWidth={screenWidth}
                 patientName={patient.firstName + ' ' + patient.lastName}
                 patientNumber={patient.patientNumber}
-        />
+            />
             <MedicineDetailModal
                 visible={isMedicineDetailModalVisible}
                 onClose={handleCloseMedicineModal}
