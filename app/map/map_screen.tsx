@@ -1,48 +1,69 @@
-import React, { useState } from "react";
-import { StyleSheet, Dimensions } from "react-native";
-import Svg, { Rect, Text } from "react-native-svg";
-import {
-    PanGestureHandler,
-    GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withTiming,
-} from "react-native-reanimated";
-import {TamaguiProvider, YStack, Button, XStack, Separator} from "tamagui";
-import {X} from "@tamagui/lucide-icons";
+import React, {useEffect, useState} from "react";
+import {Dimensions, StyleSheet} from "react-native";
+import {GestureHandlerRootView, PanGestureHandler,} from "react-native-gesture-handler";
+import Animated, {useAnimatedStyle, useSharedValue, withTiming,} from "react-native-reanimated";
+import {ClipPath, G, Path, Rect, Svg, Text, TSpan, Circle} from "react-native-svg";
+import {Button, Separator, YStack} from "tamagui";
+import MapSvg from "./map_svg";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+const MAP_SCALE_FACTOR = 3; // Render at twice the resolution
+const MAX_SCALE = 5;   // Increased maximum zoom
+const MIN_SCALE = 2; // Decreased minimum zoom (less zoom out)
 
 export default function MapScreen() {
-    const [roomStatus, setRoomStatus] = useState({
-        room1: "occupied",
-        room2: "unoccupied",
-        room3: "occupied",
-        room4: "unoccupied",
-        room5: "occupied",
-    });
+    const [floor, setFloor] = useState(1);
 
-    const scale = useSharedValue(1);
+    const firstFloorRooms = [
+        {
+            'roomNumber': 1,
+            'maxOccupants': 2
+        }
+    ];
+
+    const secondFloorRooms = [
+        {
+            'roomNumber': 1,
+            'maxOccupants': 3
+        }
+    ];
+
+    const [rooms, setRooms] = useState(firstFloorRooms);
+
+    useEffect(() => {
+        if (floor === 1) {
+
+            setRooms(firstFloorRooms);
+        } else {
+            setRooms(secondFloorRooms);
+        }
+    }, [floor]); // Dependency array: only re-run when 'floor' changes
+
+
+    const scale = useSharedValue(MIN_SCALE); // Start at the minimum zoom level
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
 
     const panOffsetX = useSharedValue(0);
     const panOffsetY = useSharedValue(0);
 
+
+
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [
-            { scale: scale.value },
+            { scale: scale.value / MAP_SCALE_FACTOR }, // Initial scale down
             { translateX: translateX.value },
             { translateY: translateY.value },
         ],
     }));
 
     const handleZoom = (zoomIn) => {
-        // Adjust the zoom level
-        const newScale = zoomIn ? scale.value + 0.2 : scale.value - 0.2;
-        scale.value = withTiming(Math.min(Math.max(newScale, 0.5), 3), {
+        const newScale = zoomIn
+            ? scale.value + 0.8
+            : scale.value - 0.8;
+
+        // Use the updated MAX_SCALE and MIN_SCALE
+        scale.value = withTiming(Math.min(Math.max(newScale, MIN_SCALE), MAX_SCALE), {
             duration: 200,
         });
     };
@@ -52,7 +73,7 @@ export default function MapScreen() {
     };
 
     const getRoomColor = (status) => {
-        return status === "occupied" ? "red" : "green";
+        return status === "occupied" ? "red" : "#0891B2";
     };
 
     return (
@@ -83,35 +104,13 @@ export default function MapScreen() {
                         shouldCancelWhenOutside={false}
                     >
                         <Animated.View style={[styles.mapContainer, animatedStyle]}>
-                            <Svg height={screenHeight} width={screenWidth}>
-                                {/* Room 1 */}
-                                <Rect
-                                    x="50"
-                                    y="50"
-                                    width="100"
-                                    height="100"
-                                    fill={getRoomColor(roomStatus.room1)}
-                                    onPress={() => handleRoomClick("Room 1")}
-                                />
-                                <Text x="100" y="120" fontSize="14" fill="white" textAnchor="middle">
-                                    Room 1
-                                </Text>
 
-                                {/* Room 2 */}
-                                <Rect
-                                    x="150"
-                                    y="50"
-                                    width="100"
-                                    height="100"
-                                    fill={getRoomColor(roomStatus.room2)}
-                                    onPress={() => handleRoomClick("Room 2")}
-                                />
-                                <Text x="200" y="120" fontSize="14" fill="white" textAnchor="middle">
-                                    Room 2
-                                </Text>
+                            <MapSvg
+                                screenWidth={screenWidth}
+                                MAP_SCALE_FACTOR={MAP_SCALE_FACTOR}
+                                rooms={rooms}
+                            />
 
-                                {/* Add more rooms dynamically */}
-                            </Svg>
                         </Animated.View>
                     </PanGestureHandler>
                 </GestureHandlerRootView>
@@ -146,10 +145,10 @@ export default function MapScreen() {
                 >
                     <Button
                         size="$4"
-                        onPress={() => console.log("Floor 1 selected")}
-                        backgroundColor="$secondary"
+                        onPress={() => setFloor(2)}
                         pressStyle={{backgroundColor: "$secondary_focus", borderColor: "$secondary_focus"}}
-                        focusStyle={{ borderColor: "$secondary_focus" }}
+                        backgroundColor={floor === 2 ? "$secondary_focus" : "$secondary"}
+                        focusStyle={{borderColor: "$secondary_focus"}}
                         borderWidth={1}
                         borderStyle="solid"
                         borderTopLeftRadius={100}
@@ -157,15 +156,15 @@ export default function MapScreen() {
                         padding={0}
                         col='white'
                     >
-                        1
+                        2
                     </Button>
                     <Separator borderColor="$secondary_focus"/>
                     <Button
                         size="$4"
-                        onPress={() => console.log("Floor 0 selected")}
+                        onPress={() => setFloor(1)}
                         pressStyle={{backgroundColor: "$secondary_focus", borderColor: "$secondary_focus"}}
-                        backgroundColor="$secondary_focus"
-                        focusStyle={{ borderColor: "$secondary_focus" }}
+                        backgroundColor={floor === 2 ? "$secondary" : "$secondary_focus"}
+                        focusStyle={{borderColor: "$secondary_focus"}}
                         borderWidth={1}
                         borderStyle="solid"
                         borderBottomLeftRadius={100}
@@ -173,7 +172,7 @@ export default function MapScreen() {
                         padding={0}
                         col='white'
                     >
-                        0
+                        1
                     </Button>
                 </YStack>
 
@@ -195,7 +194,7 @@ export default function MapScreen() {
                         onPress={() => handleZoom(true)}
                         backgroundColor="$accent"
                         pressStyle={{backgroundColor: "$accent_focus", borderColor: "$accent_focus"}}
-                        focusStyle={{ borderColor: "$accent_focus" }}
+                        focusStyle={{borderColor: "$accent_focus"}}
                         borderWidth={1}
                         borderStyle="solid"
                         borderTopLeftRadius={100}
@@ -211,7 +210,7 @@ export default function MapScreen() {
                         onPress={() => handleZoom(false)}
                         pressStyle={{backgroundColor: "$accent_focus", borderColor: "$accent_focus"}}
                         backgroundColor="$accent"
-                        focusStyle={{ borderColor: "$accent_focus" }}
+                        focusStyle={{borderColor: "$accent_focus"}}
                         borderWidth={1}
                         borderStyle="solid"
                         borderBottomLeftRadius={100}
