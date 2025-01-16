@@ -1,7 +1,7 @@
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Input, SizableText, XStack, YStack} from "tamagui";
+import {Button, Checkbox, Input, SizableText, Spinner, XStack, YStack} from "tamagui";
 import {AlertCircle, Bed, Check} from "@tamagui/lucide-icons";
 import {Dimensions, ScrollView} from "react-native";
 import * as SQLite from "expo-sqlite";
@@ -203,20 +203,23 @@ export default function ShiftScreen({ navigation }) {
     const [patients, setPatients] = useState<PatientData[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPatients, setSelectedPatients] = useState<PatientData[]>([]);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
-        ActivateDevice(
-            (error) => console.error(error),
-            (success) => console.log(success),
-            setPatients
-        );
-    }, []);
-
-    useEffect(() => {
-        (async () => {
+        setLoading(true)
+        const fetchData = async () => {
+            await ActivateDevice(
+                (error) => console.error(error),
+                (success) => console.log(success),
+                setPatients
+            );
             const assignedPatients = await getAssignedPatients();
             setSelectedPatients(assignedPatients);
-        })();
+            setLoading(false)
+        }
+
+        fetchData();
     }, []);
 
 
@@ -251,7 +254,13 @@ export default function ShiftScreen({ navigation }) {
     // Split selected and non-selected patients
     const selected = filteredPatients.filter(patient => selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
     const nonSelected = filteredPatients.filter(patient => !selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
-
+    if(loading) return     <TitleLayout
+        titleText="Selecteer kinderen voor je dienst"
+        topContent={<BackButton navigation={navigation} />}
+    >
+        <YStack backgroundColor='$background' height={screenWidth *1.2} alignItems="center" justifyContent='center'>
+            <Spinner size="large" color="$primary" />
+        </YStack></TitleLayout>
 
     return (
         <TitleLayout
