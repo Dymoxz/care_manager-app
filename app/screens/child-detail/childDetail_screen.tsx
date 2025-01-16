@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {Dimensions, ScrollView, Animated, Easing, TouchableOpacity} from 'react-native';
-import {Accordion, Button, Circle, Paragraph, SizableText, Square, View, XStack, YStack,} from 'tamagui';
+import {Accordion, Button, Circle, Paragraph, SizableText, Spinner, Square, View, XStack, YStack,} from 'tamagui';
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
 import { AlertCircle, BedSingle, ChevronDown, Edit3, Plus, Trash, X, Calendar, Pill } from "@tamagui/lucide-icons";
@@ -259,7 +259,14 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
             iconColor: '#000'
         }
     ];
-    if(loading) return <SizableText>Loading...</SizableText>;
+
+    if(loading) return    <TitleLayout
+        titleText={`${patient.firstName} ${patient.lastName}`}
+        topContent={<BackButton navigation={navigation}/>}
+    >
+        <YStack backgroundColor='$background' height={screenWidth *1.2} alignItems="center" justifyContent='center'>
+        <Spinner size="large" color="$primary" />
+    </YStack></TitleLayout>
 
     if(error) return <SizableText>Error: {error}</SizableText>
     return (
