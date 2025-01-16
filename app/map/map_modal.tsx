@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Dialog, Input, SizableText, styled, Unspaced, XStack, YStack} from 'tamagui';
-import {X} from '@tamagui/lucide-icons';
+import {BriefcaseMedical, X} from '@tamagui/lucide-icons';
 import {useNavigation} from '@react-navigation/native';
 import {View} from 'react-native';
 import {useToastController} from "@tamagui/toast";
@@ -44,9 +44,12 @@ export function RoomDetailModal ({visible, onClose, screenWidth, roomNumber, use
                         style={{maxWidth: screenWidth * 0.9}}
                     >
                         <Dialog.Title fontSize='$7' mt="$5" marginHorizontal="$2" textAlign='center'>Kamer {roomNumber}</Dialog.Title>
-                        <YStack backgroundColor='#E0E7EC' borderRadius='$5' mb='$8' padding='$3' marginHorizontal="$2" alignItems='center'>
-                            <SizableText  fontWeight='700'  textAlign='center'>{userName}</SizableText>
-                            <SizableText textAlign='center'  col="gray">{clinicalprofile}</SizableText>
+                        <YStack backgroundColor='#E0E7EC' borderRadius='$5' mb='$8' padding='$3' marginHorizontal="$2" >
+                            <SizableText  fontWeight='700' fontSize='$7' >{userName}</SizableText>
+                            <XStack alignItems='center' >
+                                <BriefcaseMedical  size="$1" col="$accent" mr="$1" />
+                                <SizableText  col="gray">{clinicalprofile}</SizableText>
+                            </XStack>
                         </YStack>
                         <XStack ai="center" jc="center" marginHorizontal="auto" space="$4" mt='$4'>
                             <Button
@@ -59,9 +62,9 @@ export function RoomDetailModal ({visible, onClose, screenWidth, roomNumber, use
                                 Vergelijk
                             </Button>
                             <Button
-                                bg='$primary'
+                                bg='$danger'
                                 borderRadius='$12'
-                                borderColor='$primary_focus'
+                                borderColor='$danger_focus'
                                 col='white'
                                 pressStyle={{background: '$primary_focus'}}
                             >
