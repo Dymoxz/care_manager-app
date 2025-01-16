@@ -2,11 +2,11 @@ import React, {useEffect, useState} from "react";
 import {Dimensions, StyleSheet} from "react-native";
 import {GestureHandlerRootView, PanGestureHandler,} from "react-native-gesture-handler";
 import Animated, {useAnimatedStyle, useSharedValue, withTiming,} from "react-native-reanimated";
-import {ClipPath, G, Path, Rect, Svg, Text, TSpan, Circle} from "react-native-svg";
 import {Button, Separator, YStack} from "tamagui";
 import MapSvg from "./map_svg";
-import {Demo} from "./map_modal";
+import {Demo} from "./map_legend";
 import {CircleHelp} from "@tamagui/lucide-icons";
+import {RoomDetailModal} from "./map_modal";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const MAP_SCALE_FACTOR = 3; // Render at twice the resolution
@@ -14,6 +14,16 @@ const MAX_SCALE = 5;   // Increased maximum zoom
 const MIN_SCALE = 2; // Decreased minimum zoom (less zoom out)
 
 export default function MapScreen() {
+    const [isRoomDetailModalVisible, setIsRoomDetailModalVisible] = useState(false);
+
+    const handleOpenRoomModal = () => {
+        setIsRoomDetailModalVisible(true);
+    };
+
+    const handleCloseRoomModal = () => {
+        setIsRoomDetailModalVisible(false);
+    };
+
     const [shouldAdapt, setShouldAdapt] = useState(true)
 
     const [floor, setFloor] = useState(1);
@@ -52,12 +62,11 @@ export default function MapScreen() {
     const panOffsetY = useSharedValue(0);
 
 
-
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [
-            { scale: scale.value / MAP_SCALE_FACTOR }, // Initial scale down
-            { translateX: translateX.value },
-            { translateY: translateY.value },
+            {scale: scale.value / MAP_SCALE_FACTOR}, // Initial scale down
+            {translateX: translateX.value},
+            {translateY: translateY.value},
         ],
     }));
 
@@ -127,16 +136,19 @@ export default function MapScreen() {
                     left="$4"
                     size="$4"
                     circular
+                    onPress={handleOpenRoomModal}
 
                 >
-                    <Demo
+                    {/*<Demo
                         circular
                         shouldAdapt={false}
                         placement="right"
-                        Icon={    <CircleHelp />}
+                        Icon={<CircleHelp/>}
                         Name="left-popover"
                         col="$secondary"
-                    />
+                    />*/}
+
+
 
                 </Button>
 
@@ -233,7 +245,16 @@ export default function MapScreen() {
                 </YStack>
 
             </YStack>
+            <RoomDetailModal
+                visible={isRoomDetailModalVisible}
+                onClose={handleCloseRoomModal}
+                screenWidth={screenWidth}
+                roomNumber={101}
+                userName={"Jane Doe"}
+                clinicalprofile={"Corona, Griep"}
+            />
         </YStack>
+
     );
 }
 
