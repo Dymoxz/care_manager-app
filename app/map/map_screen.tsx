@@ -5,6 +5,8 @@ import Animated, {useAnimatedStyle, useSharedValue, withTiming,} from "react-nat
 import {ClipPath, G, Path, Rect, Svg, Text, TSpan, Circle} from "react-native-svg";
 import {Button, Separator, YStack} from "tamagui";
 import MapSvg from "./map_svg";
+import {Demo} from "./map_modal";
+import {CircleHelp} from "@tamagui/lucide-icons";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 const MAP_SCALE_FACTOR = 3; // Render at twice the resolution
@@ -12,6 +14,8 @@ const MAX_SCALE = 5;   // Increased maximum zoom
 const MIN_SCALE = 2; // Decreased minimum zoom (less zoom out)
 
 export default function MapScreen() {
+    const [shouldAdapt, setShouldAdapt] = useState(true)
+
     const [floor, setFloor] = useState(1);
 
     const firstFloorRooms = [
@@ -117,17 +121,23 @@ export default function MapScreen() {
 
                 {/*top left question mark*/}
                 <Button
-                    bg='$secondary'
-                    borderColor='$secondary_focus'
+
                     position="absolute"
                     top="$4"
                     left="$4"
                     size="$4"
                     circular
-                    pressStyle={{bg: '$secondary_focus'}}
-                    col='white'
+
                 >
-                    ?
+                    <Demo
+                        circular
+                        shouldAdapt={false}
+                        placement="right"
+                        Icon={    <CircleHelp />}
+                        Name="left-popover"
+                        col="$secondary"
+                    />
+
                 </Button>
 
                 {/* top right floor selector*/}
