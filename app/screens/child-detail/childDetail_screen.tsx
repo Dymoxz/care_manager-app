@@ -27,6 +27,12 @@ interface clinicalProfile{
     clinicalProfile: string
 }
 
+interface agreement{
+    _id: string
+    title: string
+    description: string
+}
+
 interface Patient {
     _id: string;
     firstName: string;
@@ -41,6 +47,7 @@ interface Patient {
     updatedAt: string;
     length: string
     weight: string
+    agreements: agreement[]
 }
 
 interface PatientDetailsScreenProps {
@@ -54,13 +61,14 @@ interface PatientDetailsScreenProps {
 
 // Function to get appointments (placeholder for now)
 function getAppointments() {
-    return [
+   /* return [
         {title: "Physical Therapy", description: "Routine physical therapy session"},
         {title: "Consultation with Dr. Smith", description: "Follow-up on recent blood test results"},
         {title: "Vaccination", description: "Administer flu vaccine"},
         {title: "Eye Exam", description: "Standard vision check-up"},
         {title: "Dental Checkup", description: "Teeth cleaning and cavity check"},
-    ];
+    ];*/
+
 }
 
 // Function to get medicines for a user (placeholder for now)
@@ -541,7 +549,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                             onValueChange={handleAccordionChange}
 
                                         >
-                                            {appointments.map((appointment, index) => {
+                                            {patient.agreements.map((agreement, index) => {
                                                 const isOpen = openAccordionItems.includes(`item-appointment-${index}`);
                                                 return (
                                                     <Accordion.Item key={index} value={`item-appointment-${index}`} mb='$3'>
@@ -560,7 +568,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                             {({open}: { open: boolean }) => (
                                                                 <>
                                                                     <Paragraph col='$text' size='$4'
-                                                                               fontWeight='700'>{appointment.title}</Paragraph>
+                                                                               fontWeight='700'>{agreement.title}</Paragraph>
                                                                     <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
                                                                         <ChevronDown size="$1" color="$text"/>
                                                                     </Square>
@@ -578,7 +586,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                                 borderTopRightRadius={0}
                                                             >
                                                                 <SizableText col='$text'>
-                                                                    {appointment.description}
+                                                                    {agreement.description}
                                                                 </SizableText>
                                                             </Accordion.Content>
                                                         </Accordion.HeightAnimator>

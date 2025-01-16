@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, SizableText, XStack, YStack } from 'tamagui';
+import { Button, Input, SizableText, XStack, YStack, Spinner } from 'tamagui';
 import {Dimensions, ScrollView} from 'react-native';
 import { AlertCircle, Bed, FileHeart } from '@tamagui/lucide-icons';
 import TitleLayout from "./common/title_layout";
@@ -26,6 +26,10 @@ interface Patient {
     updatedAt?: string;
     __v?: number;
     room: Room;
+    clinicalProfiles: Array<{
+        _id: string;
+        clinicalProfile: string;
+    }>;
 }
 
 interface PatientCardProps {
@@ -112,13 +116,21 @@ function PatientCard({ name, room, hasAlert, patient, onPress }: PatientCardProp
 export default function KinderOverzichtScreen({ navigation }: { navigation: any }) {
     const [patients, setPatients] = useState<Patient[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
-        ActivateDevice(
-            (error) => console.error(error),
-            (success) => console.log(success),
-            setPatients
-        );
+        setLoading(true)
+        const fetchData = async () => {
+            await ActivateDevice(
+                (error) => console.error(error),
+                (success) => console.log(success),
+                setPatients
+            );
+            setLoading(false)
+        };
+
+        fetchData()
     }, []);
 
     const filteredPatients = patients.filter((patient) => {
@@ -135,40 +147,48 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
         navigation.navigate('ChildDetailScreen', { patient });
     };
 
+    if(loading) return     <TitleLayout
+        titleText='Kinder Overzicht'
+        topContent={<BackButton navigation={navigation} />}
+    >
+        <YStack backgroundColor='$background' height={screenWidth *1.2} alignItems="center" justifyContent='center'>
+            <Spinner size="large" color="$primary" />
+        </YStack></TitleLayout>
+
     return (
-       <TitleLayout
-    titleText='Kinder Overzicht'
-    topContent={<BackButton navigation={navigation} />}
->
-    <YStack ai="center" flex={1}>
-        <Input
-            placeholder="Zoek een patiënt of kamer"
-            bg="white"
-            borderRadius="$6"
-            width={(screenWidth * 90) / 100}
-            px="$4"
-            py="$4"
-            h='auto'
-            fontSize="$6"
-            mb="$3"
-            value={searchQuery}
-            onChangeText={(text) => setSearchQuery(text)} // Update search query
-        />
-        <ScrollView style={{ flex: 1 }}>
-            <YStack space="$1" width={(screenWidth * 90) / 100}>
-                {filteredPatients.map((patient) => (
-                    <PatientCard
-                        key={patient.patientNumber}
-                        name={`${patient.firstName} ${patient.lastName}`}
-                        room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
-                        hasAlert={patient.isQuarantined || false}
-                        patient={patient}
-                        onPress={handlePatientPress}
-                    />
-                ))}
+        <TitleLayout
+            titleText='Kinder Overzicht'
+            topContent={<BackButton navigation={navigation} />}
+        >
+            <YStack ai="center" flex={1}>
+                <Input
+                    placeholder="Zoek een patiënt of kamer"
+                    bg="white"
+                    borderRadius="$6"
+                    width={(screenWidth * 90) / 100}
+                    px="$4"
+                    py="$4"
+                    h='auto'
+                    fontSize="$6"
+                    mb="$3"
+                    value={searchQuery}
+                    onChangeText={(text) => setSearchQuery(text)} // Update search query
+                />
+                <ScrollView style={{ flex: 1 }}>
+                    <YStack space="$1" width={(screenWidth * 90) / 100}>
+                        {filteredPatients.map((patient) => (
+                            <PatientCard
+                                key={patient.patientNumber}
+                                name={`${patient.firstName} ${patient.lastName}`}
+                                room={`${patient.room?.roomNumber || 'Onbekend'} (${patient.room?.floor || '?'})`}
+                                hasAlert={patient.isQuarantined || false}
+                                patient={patient}
+                                onPress={handlePatientPress}
+                            />
+                        ))}
+                    </YStack>
+                </ScrollView>
             </YStack>
-        </ScrollView>
-    </YStack>
-</TitleLayout>
+        </TitleLayout>
     );
 }
