@@ -1,9 +1,9 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {Dimensions, ScrollView, Animated, Easing, TouchableOpacity} from 'react-native';
+import {useState, useRef, useEffect} from 'react';
+import {Dimensions, ScrollView, Animated, Easing} from 'react-native';
 import {Accordion, Button, Circle, Paragraph, SizableText, Spinner, Square, View, XStack, YStack,} from 'tamagui';
 import TitleLayout from "../common/title_layout";
 import BackButton from "../common/back_button";
-import { AlertCircle, BedSingle, ChevronDown, Edit3, Plus, Trash, X, Calendar, Pill } from "@tamagui/lucide-icons";
+import { AlertCircle, BedSingle, ChevronDown } from "@tamagui/lucide-icons";
 import Svg, {Path} from "react-native-svg";
 import MedicineDetailModal from "./medicineDetail_modal";
 import MedicalCheckDetailModal from "./medicalCheckDetail_modal";
@@ -11,6 +11,7 @@ import {format, parseISO} from "date-fns";
 import {nl} from 'date-fns/locale';
 import DeleteModal from "./delete_modal";
 import { FloatingAction } from "react-native-floating-action";
+import CryptoJS from "react-native-crypto-js";
 
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -39,7 +40,7 @@ interface Patient {
     lastName: string;
     dateOfBirth: string;
     patientNumber: number;
-    bsn: number;
+    bsn: string;
     clinicalProfiles: clinicalProfile[]
     diet: string
     room: Room;
@@ -93,6 +94,12 @@ function getMedicalChecksForUser() {
         {datetime: new Date('2024-12-01T18:30:00')},
         {datetime: new Date('2024-12-02T07:45:00')},
     ].sort((a, b) => b.datetime.getTime() - a.datetime.getTime());
+}
+
+//Decrypt BSN number
+function decryptBSN(bsn: string):string {
+    let bytes  = CryptoJS.AES.decrypt(bsn, process.env.EXPO_PUBLIC_ENCRYPTION_KEY);
+    return bytes.toString(CryptoJS.enc.Utf8);
 }
 
 // Fallback medicine
@@ -370,7 +377,8 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                 BSN:
                                             </SizableText>
                                             <SizableText size="$5" color="$text" textAlign="left">
-                                                {patient.bsn}
+                                                {decryptBSN(patient.bsn)}
+                                                
                                             </SizableText>
                                         </YStack>
                                         <YStack m='$2' alignItems="flex-start" width="100%">
