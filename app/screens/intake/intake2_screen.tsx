@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Button, SizableText, Spinner, styled, Text, TextArea, XStack, YStack} from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
 import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
 import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
-import {useIntakeForm} from "./useIntakeForm"; // Import the hook
+import {useIntakeForm} from "./useIntakeForm";
 import {useToastController} from '@tamagui/toast';
+import CryptoJS from "react-native-crypto-js"; 
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
@@ -222,13 +223,22 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
         if (!isValid) {
             return;
         }
+        
+        //encrypt BSN
+        let bsnEncrypted;
+        try{
+            bsnEncrypted = CryptoJS.AES.encrypt(formState.bsn, process.env.EXPO_PUBLIC_ENCRYPTION_KEY).toString();
+        }catch{
+            throw new Error('Failed to encrypt BSN');
+        }
+
         setIsLoading(true);
         const patientData = {
             createPatientDto: {
                 patientNumber: Math.floor(Math.random() * 10000) + Math.floor(Math.random() * 2),
                 firstName: formState.voornaam,
                 lastName: formState.achternaam,
-                bsn: formState.bsn,
+                bsn: bsnEncrypted,
                 dateOfBirth: new Date(formState.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
                 length: parseInt(formState.lengte, 10) || 0,
                 weight: parseFloat(formState.gewicht) || 0,
@@ -237,9 +247,10 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
 
             },
             roomNumber: parseInt(formState.selectedRooms[0]?.roomNumber), // Assuming single room selection
-            clinicalProfile: formState.selectedClinicalProfiles.map(cp => cp.clinicalProfile),
+            clinicalProfiles: formState.selectedClinicalProfiles.map(cp => cp.clinicalProfile),
             medicineAtcCodes: formState.selectedMedicines.map(med => med.atcCode),
         };
+        console.log("Patient data to be created:", patientData);
 
         try {
             const response = await fetch('https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient', {
