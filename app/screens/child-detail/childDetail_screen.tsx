@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {Dimensions, ScrollView, Animated, Easing, TouchableOpacity} from 'react-native';
 import {Accordion, Button, Circle, Paragraph, SizableText, Square, View, XStack, YStack,} from 'tamagui';
 import TitleLayout from "../common/title_layout";
@@ -7,7 +7,7 @@ import { AlertCircle, BedSingle, ChevronDown, Edit3, Plus, Trash, X, Calendar, P
 import Svg, {Path} from "react-native-svg";
 import MedicineDetailModal from "./medicineDetail_modal";
 import MedicalCheckDetailModal from "./medicalCheckDetail_modal";
-import {format} from "date-fns";
+import {format, parseISO} from "date-fns";
 import {nl} from 'date-fns/locale';
 import DeleteModal from "./delete_modal";
 import { FloatingAction } from "react-native-floating-action";
@@ -22,15 +22,25 @@ interface Room {
     isScaled: boolean;
 }
 
+interface clinicalProfile{
+    _id: string
+    clinicalProfile: string
+}
+
 interface Patient {
     _id: string;
     firstName: string;
     lastName: string;
     dateOfBirth: string;
     patientNumber: number;
+    bsn: number;
+    clinicalProfiles: clinicalProfile[]
+    diet: string
     room: Room;
     createdAt: string;
     updatedAt: string;
+    length: string
+    weight: string
 }
 
 interface PatientDetailsScreenProps {
@@ -82,7 +92,34 @@ const fallbackMedicine = {name: "No Medicine Selected"};
 
 
 export default function ChildDetailScreen({route, navigation}: PatientDetailsScreenProps) {
-    const {patient} = route.params;
+    const {patient: initialPatient} = route.params;
+    const [patient, setPatient] = useState<Patient>(initialPatient);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setLoading(true)
+        const fetchPatient = async () => {
+            try {
+                const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/${initialPatient.patientNumber}`, {
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                setPatient(data)
+                setError(null);
+
+            } catch (error: any) {
+                console.error("Failed to fetch patient data:", error);
+                setError(error.message)
+            }finally {
+                setLoading(false)
+            }
+        }
+        fetchPatient();
+    }, [initialPatient.patientNumber]);
+
 
     const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([]);
     const [selectedMedicine, setSelectedMedicine] = useState<{ name: string } | null>(null);
@@ -222,6 +259,9 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
             iconColor: '#000'
         }
     ];
+    if(loading) return <SizableText>Loading...</SizableText>;
+
+    if(error) return <SizableText>Error: {error}</SizableText>
     return (
         <TitleLayout
             titleText={`${patient.firstName} ${patient.lastName}`}
@@ -262,7 +302,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                         <XStack alignItems="center" mt='$1'>
                             <BedSingle size="$1" color="$accent_focus" mr='$2'/>
                             <SizableText size="$5" color="$accent_focus" fontWeight='700'>
-                                Kamer 101
+                                Kamer {patient.room?.roomNumber || 0}
                             </SizableText>
                         </XStack>
                     </YStack>
@@ -315,7 +355,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                 BSN:
                                             </SizableText>
                                             <SizableText size="$5" color="$text" textAlign="left">
-                                                123456789
+                                                {patient.bsn}
                                             </SizableText>
                                         </YStack>
                                         <YStack m='$2' alignItems="flex-start" width="100%">
@@ -323,23 +363,51 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                 Geboortedatum:
                                             </SizableText>
                                             <SizableText size="$5" color="$text" textAlign="left">
-                                                15-02-2009
+                                                { patient.dateOfBirth ? format(parseISO(patient.dateOfBirth),'dd-MM-yyyy', {locale: nl}): "N/A"}
                                             </SizableText>
                                         </YStack>
                                         <YStack m='$2' alignItems="flex-start" width="100%">
                                             <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
                                                 Ziektebeeld:
                                             </SizableText>
-                                            <SizableText size="$5" color="$text" textAlign="left">
-                                                Corona, Griep
-                                            </SizableText>
+                                            <YStack>
+                                                {patient.clinicalProfiles && patient.clinicalProfiles.map((profile, index)=>
+                                                    <SizableText key={index} size="$5" color="$text" textAlign="left">
+                                                        {profile.clinicalProfile}
+                                                    </SizableText>
+                                                )}
+                                            </YStack>
                                         </YStack>
                                         <YStack m='$2' alignItems="flex-start" width="100%">
                                             <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
                                                 Voeding / Allergieën:
                                             </SizableText>
                                             <SizableText size="$5" color="$text" textAlign="left">
-                                                Noten
+                                                {patient.diet || 'Geen allergieen of dieët wensen'}
+                                            </SizableText>
+                                        </YStack>
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                Lengte:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                {patient.length} cm
+                                            </SizableText>
+                                        </YStack>
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                Weight:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                {patient.weight} kg
+                                            </SizableText>
+                                        </YStack>
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                Ingeschreven sinds:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                { patient.createdAt ? format(parseISO(patient.createdAt),'dd-MM-yyyy', {locale: nl}): "N/A"}
                                             </SizableText>
                                         </YStack>
                                     </Accordion.Content>
