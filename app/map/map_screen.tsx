@@ -4,6 +4,9 @@ import {GestureHandlerRootView, PanGestureHandler,} from "react-native-gesture-h
 import Animated, {useAnimatedStyle, useSharedValue, withTiming,} from "react-native-reanimated";
 import {Button, Separator, Spinner, YStack} from "tamagui";
 import MapSvg from "./map_svg";
+import {Demo} from "./map_legend";
+import {CircleHelp} from "@tamagui/lucide-icons";
+import {RoomDetailModal} from "./map_modal";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 const MAP_SCALE_FACTOR = 3;
@@ -73,6 +76,18 @@ async function fetchData<T>(
 }
 
 export default function MapScreen() {
+    const [isRoomDetailModalVisible, setIsRoomDetailModalVisible] = useState(false);
+
+    const handleOpenRoomModal = () => {
+        setIsRoomDetailModalVisible(true);
+    };
+
+    const handleCloseRoomModal = () => {
+        setIsRoomDetailModalVisible(false);
+    };
+
+    const [shouldAdapt, setShouldAdapt] = useState(true)
+
     const [floor, setFloor] = useState(1);
     const [mapData, setMapData] = useState<MapData>({rooms: [], patients: []});
     const [isLoading, setIsLoading] = useState(true);
@@ -221,8 +236,20 @@ export default function MapScreen() {
                     circular
                     pressStyle={{bg: "$secondary_focus"}}
                     color="white"
+                    onPress={handleOpenRoomModal}
+
                 >
-                    ?
+                    {/*<Demo
+                        circular
+                        shouldAdapt={false}
+                        placement="right"
+                        Icon={<CircleHelp/>}
+                        Name="left-popover"
+                        col="$secondary"
+                    />*/}
+
+
+
                 </Button>
 
                 {/* Top-right floor selector */}
@@ -329,7 +356,16 @@ export default function MapScreen() {
                     </Button>
                 </YStack>
             </YStack>
+            <RoomDetailModal
+                visible={isRoomDetailModalVisible}
+                onClose={handleCloseRoomModal}
+                screenWidth={screenWidth}
+                roomNumber={101}
+                userName={"Jane Doe"}
+                clinicalprofile={"Corona, Griep"}
+            />
         </YStack>
+
     );
 }
 
