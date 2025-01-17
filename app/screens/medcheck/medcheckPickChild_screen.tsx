@@ -272,7 +272,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                             bg="$container"
                                             pb="$2.5"
                                         >
-                                            <SquarePen size="$2" color="$accent_content" />
+                                            <SquarePen size="$1.5" color="$accent_content" />
                                         </Button>
                                     </XStack>
                                 </YStack>
@@ -280,7 +280,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                         )}
 
                         {/* Patient Selection Section */}
-                        <YStack width="100%" py="$2">
+                        <YStack width="100%" >
                             {!userSelected && (
                                 <SizableText fontSize="$4" color="$text" mb="$1">
                                     Patiënt
@@ -291,6 +291,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                     onPress={() => setIsPatientModalVisible(true)}
                                     h="$4"
                                     width="100%"
+                                    mb="$6"
                                 >
                                     <SelectedItemsText numberOfLines={1} ellipsizeMode="tail">
                                         {patientDisplayText}
@@ -306,8 +307,8 @@ export default function MedischeCheckScreen({ navigation, route }) {
                         </YStack>
 
                         <YStack
-                            mt="$4"
-                            mb="$5"
+                            mt="$2"
+                            mb="$3"
                             width="100%"
                             borderBottomWidth={1}
                             borderBottomColor="$gray"
@@ -323,7 +324,6 @@ export default function MedischeCheckScreen({ navigation, route }) {
                             <Input
                                 value={formState.omschrijving}
                                 onChangeText={(value) => setFieldValue("omschrijving", value)}
-                                placeholder="Vul hier in wat is waargenomen, gecontroleerd is en/of is afgesproken"
                                 multiline
                                 numberOfLines={4}
                                 textAlignVertical="top"
@@ -350,7 +350,6 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                     value={formState.hartslag}
                                     onChangeText={(value) => setFieldValue("hartslag", value)}
                                     keyboardType="numeric"
-                                    placeholder="bpm"
                                     bg="white"
                                     borderWidth={1}
                                     borderColor="#d3d3d3"
@@ -369,7 +368,6 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                 <Input
                                     value={formState.bloeddruk}
                                     onChangeText={(value) => setFieldValue("bloeddruk", value)}
-                                    placeholder="Bijv. 120/80"
                                     bg="white"
                                     borderWidth={1}
                                     borderColor="#d3d3d3"
@@ -386,7 +384,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                         {/* Save Button */}
                         <Button
                             onPress={handleSave}
-                            bg="#$accent"
+                            bg="$accent"
                             borderRadius="$8"
                             mt="$6"
                             alignSelf="flex-end"
