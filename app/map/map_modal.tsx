@@ -7,7 +7,7 @@ import {
     XStack,
     YStack,
 } from 'tamagui';
-import { BriefcaseMedical, X } from '@tamagui/lucide-icons';
+import {BriefcaseMedical, CircleAlert, X} from '@tamagui/lucide-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
 import { Patient } from './map_screen';
@@ -109,7 +109,7 @@ export function RoomDetailModal({
                         <YStack   mb="$8"  marginHorizontal="$2">
                             {patients && patients.map((patient) => (
                                     <YStack backgroundColor="#E0E7EC" borderRadius="$5" padding="$5" key={patient.patientNumber} mb='$5'>
-                                        <SizableText fontWeight="700" fontSize="$7">
+                                        <SizableText fontWeight="700" fontSize="$7" mb='$2'>
                                             {patient.firstName} {patient.lastName}
                                         </SizableText>
                                         <XStack>
@@ -120,7 +120,7 @@ export function RoomDetailModal({
                                             </SizableText>
                                         </XStack>
                                         <XStack alignItems="center">
-                                            <BriefcaseMedical size="$1" col="$accent" mr="$1" />
+                                            <CircleAlert  size="$1" col="$accent" mr="$1" />
                                             <SizableText col="gray">
                                                 {patient.isQuarantined ? "Quarantained" : "Not Quarantained"}
                                             </SizableText>
