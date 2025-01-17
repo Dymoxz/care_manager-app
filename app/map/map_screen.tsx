@@ -1,14 +1,18 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {Dimensions, StyleSheet} from "react-native";
-import {GestureHandlerRootView, PanGestureHandler,} from "react-native-gesture-handler";
-import Animated, {useAnimatedStyle, useSharedValue, withTiming,} from "react-native-reanimated";
-import {Button, Separator, Spinner, YStack} from "tamagui";
+import React, { useCallback, useEffect, useState } from "react";
+import { Dimensions, StyleSheet } from "react-native";
+import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
+} from "react-native-reanimated";
+import { Button, Separator, Spinner, YStack } from "tamagui";
 import MapSvg from "./map_svg";
-import {Demo} from "./map_legend";
-import {CircleHelp} from "@tamagui/lucide-icons";
-import {RoomDetailModal} from "./map_modal";
+import { Demo } from "./map_legend";
+import { CircleHelp } from "@tamagui/lucide-icons";
+import { RoomDetailModal } from "./map_modal";
 
-const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const MAP_SCALE_FACTOR = 3;
 const MAX_SCALE = 5;
 const MIN_SCALE = 1.2;
@@ -17,7 +21,7 @@ interface Room {
     _id?: string;
     roomNumber: number;
     floor: number;
-    isScaled: boolean;
+    isScaled?: boolean;
     maxCapacity: number;
     isQuarantined?: boolean;
     patientNumbers?: number[];
@@ -76,7 +80,9 @@ async function fetchData<T>(
 }
 
 export default function MapScreen() {
-    const [isRoomDetailModalVisible, setIsRoomDetailModalVisible] = useState(false);
+    const [isRoomDetailModalVisible, setIsRoomDetailModalVisible] =
+        useState(false);
+    const [selectedRoomNumber, setSelectedRoomNumber] = useState<number | null>(null);
 
     const handleOpenRoomModal = () => {
         setIsRoomDetailModalVisible(true);
@@ -84,14 +90,14 @@ export default function MapScreen() {
 
     const handleCloseRoomModal = () => {
         setIsRoomDetailModalVisible(false);
+        setSelectedRoomNumber(null);
     };
 
-    const [shouldAdapt, setShouldAdapt] = useState(true)
-
     const [floor, setFloor] = useState(1);
-    const [mapData, setMapData] = useState<MapData>({rooms: [], patients: []});
+    const [mapData, setMapData] = useState<MapData>({ rooms: [], patients: [] });
     const [isLoading, setIsLoading] = useState(true);
     const [currentFloorRooms, setCurrentFloorRooms] = useState<Room[]>([]);
+    const [processedRooms, setProcessedRooms] = useState<Room[]>([]);
 
     const showErrorToast = useCallback((message: string) => {
         console.error("Error toast:", message);
@@ -132,9 +138,9 @@ export default function MapScreen() {
                     ...room,
                     patientNumbers,
                     isQuarantined: hasQuarantinedPatient,
+                    isScaled: room.isScaled === undefined ? false : room.isScaled
                 };
             });
-
 
             const updatedMapData: MapData = {
                 rooms: roomsWithPatients,
@@ -142,6 +148,7 @@ export default function MapScreen() {
             };
 
             setMapData(updatedMapData);
+            setProcessedRooms(roomsWithPatients);
             setCurrentFloorRooms(
                 updatedMapData.rooms.filter((room) => room.floor === floor)
             );
@@ -166,9 +173,9 @@ export default function MapScreen() {
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [
-            {scale: scale.value / MAP_SCALE_FACTOR},
-            {translateX: translateX.value},
-            {translateY: translateY.value},
+            { scale: scale.value / MAP_SCALE_FACTOR },
+            { translateX: translateX.value },
+            { translateY: translateY.value },
         ],
     }));
 
@@ -180,6 +187,11 @@ export default function MapScreen() {
                 duration: 200,
             }
         );
+    };
+
+    const handleRoomPress = (room: Room) => {
+        setSelectedRoomNumber(room.roomNumber);
+        handleOpenRoomModal();
     };
 
 
@@ -197,7 +209,7 @@ export default function MapScreen() {
                 position="relative"
             >
                 {isLoading ? (
-                    <Spinner size="large" color="$blue10"/>
+                    <Spinner size="large" color="$blue10" />
                 ) : (
                     <GestureHandlerRootView style={styles.container}>
                         <PanGestureHandler
@@ -219,6 +231,7 @@ export default function MapScreen() {
                                     MAP_SCALE_FACTOR={MAP_SCALE_FACTOR}
                                     rooms={currentFloorRooms}
                                     patients={mapData.patients}
+                                    onRoomPress={handleRoomPress}
                                 />
                             </Animated.View>
                         </PanGestureHandler>
@@ -234,7 +247,7 @@ export default function MapScreen() {
                     left="$4"
                     size="$4"
                     circular
-                    pressStyle={{bg: "$secondary_focus"}}
+                    pressStyle={{ bg: "$secondary_focus" }}
                     color="white"
                     onPress={handleOpenRoomModal}
 
@@ -247,9 +260,6 @@ export default function MapScreen() {
                         Name="left-popover"
                         col="$secondary"
                     />*/}
-
-
-
                 </Button>
 
                 {/* Top-right floor selector */}
@@ -273,7 +283,7 @@ export default function MapScreen() {
                             borderColor: "$secondary_focus",
                         }}
                         backgroundColor={floor === 2 ? "$secondary_focus" : "$secondary"}
-                        focusStyle={{borderColor: "$secondary_focus"}}
+                        focusStyle={{ borderColor: "$secondary_focus" }}
                         borderWidth={1}
                         borderStyle="solid"
                         borderTopLeftRadius={100}
@@ -283,7 +293,7 @@ export default function MapScreen() {
                     >
                         2
                     </Button>
-                    <Separator borderColor="$secondary_focus"/>
+                    <Separator borderColor="$secondary_focus" />
                     <Button
                         size="$4"
                         onPress={() => setFloor(1)}
@@ -292,7 +302,7 @@ export default function MapScreen() {
                             borderColor: "$secondary_focus",
                         }}
                         backgroundColor={floor === 1 ? "$secondary_focus" : "$secondary"}
-                        focusStyle={{borderColor: "$secondary_focus"}}
+                        focusStyle={{ borderColor: "$secondary_focus" }}
                         borderWidth={1}
                         borderStyle="solid"
                         borderBottomLeftRadius={100}
@@ -325,7 +335,7 @@ export default function MapScreen() {
                             backgroundColor: "$accent_focus",
                             borderColor: "$accent_focus",
                         }}
-                        focusStyle={{borderColor: "$accent_focus"}}
+                        focusStyle={{ borderColor: "$accent_focus" }}
                         borderWidth={1}
                         borderStyle="solid"
                         borderTopLeftRadius={100}
@@ -335,7 +345,7 @@ export default function MapScreen() {
                     >
                         +
                     </Button>
-                    <Separator borderColor="$accent_focus"/>
+                    <Separator borderColor="$accent_focus" />
                     <Button
                         size="$4"
                         onPress={() => handleZoom(false)}
@@ -344,7 +354,7 @@ export default function MapScreen() {
                             borderColor: "$accent_focus",
                         }}
                         backgroundColor="$accent"
-                        focusStyle={{borderColor: "$accent_focus"}}
+                        focusStyle={{ borderColor: "$accent_focus" }}
                         borderWidth={1}
                         borderStyle="solid"
                         borderBottomLeftRadius={100}
@@ -360,7 +370,7 @@ export default function MapScreen() {
                 visible={isRoomDetailModalVisible}
                 onClose={handleCloseRoomModal}
                 screenWidth={screenWidth}
-                roomNumber={101}
+                roomNumber={selectedRoomNumber}
                 userName={"Jane Doe"}
                 clinicalprofile={"Corona, Griep"}
             />
