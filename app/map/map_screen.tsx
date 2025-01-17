@@ -82,7 +82,9 @@ async function fetchData<T>(
 export default function MapScreen() {
     const [isRoomDetailModalVisible, setIsRoomDetailModalVisible] =
         useState(false);
-    const [selectedRoomNumber, setSelectedRoomNumber] = useState<number | null>(null);
+    const [selectedRoom, setSelectedRoom] = useState<{ roomNumber: number, userName: string, clinicalprofile: string, floor: number} | null>(null);
+    const [refreshMap, setRefreshMap] = useState(false);
+
 
     const handleOpenRoomModal = () => {
         setIsRoomDetailModalVisible(true);
@@ -90,14 +92,22 @@ export default function MapScreen() {
 
     const handleCloseRoomModal = () => {
         setIsRoomDetailModalVisible(false);
-        setSelectedRoomNumber(null);
+        setSelectedRoom(null);
     };
+
+
+    const handleMapRefresh = () => {
+        console.log("Map refreshed");
+        setRefreshMap(!refreshMap)
+    };
+
 
     const [floor, setFloor] = useState(1);
     const [mapData, setMapData] = useState<MapData>({ rooms: [], patients: [] });
     const [isLoading, setIsLoading] = useState(true);
     const [currentFloorRooms, setCurrentFloorRooms] = useState<Room[]>([]);
     const [processedRooms, setProcessedRooms] = useState<Room[]>([]);
+
 
     const showErrorToast = useCallback((message: string) => {
         console.error("Error toast:", message);
@@ -150,20 +160,22 @@ export default function MapScreen() {
             setMapData(updatedMapData);
             setProcessedRooms(roomsWithPatients);
             setCurrentFloorRooms(
-                updatedMapData.rooms.filter((room) => room.floor === floor)
+                roomsWithPatients.filter((room) => room.floor === floor)
             );
             setIsLoading(false);
         };
 
         fetchAllData();
-    }, [floor, showErrorToast, showSuccessToast]);
+    }, [floor, showErrorToast, showSuccessToast, refreshMap]);
 
 
     useEffect(() => {
         if (mapData.rooms.length > 0) {
-            setCurrentFloorRooms(mapData.rooms.filter((room) => room.floor === floor));
+            setCurrentFloorRooms(
+                mapData.rooms.filter((room) => room.floor === floor)
+            );
         }
-    }, [floor, mapData.rooms]);
+    }, [floor, mapData, refreshMap]);
 
     const scale = useSharedValue(MIN_SCALE);
     const translateX = useSharedValue(0);
@@ -190,7 +202,12 @@ export default function MapScreen() {
     };
 
     const handleRoomPress = (room: Room) => {
-        setSelectedRoomNumber(room.roomNumber);
+        setSelectedRoom({
+            roomNumber: room.roomNumber,
+            userName: `User ${room.roomNumber}`,
+            clinicalprofile: "Cardio",
+            floor: room.floor,
+        });
         handleOpenRoomModal();
     };
 
@@ -249,17 +266,16 @@ export default function MapScreen() {
                     circular
                     pressStyle={{ bg: "$secondary_focus" }}
                     color="white"
-                    onPress={handleOpenRoomModal}
 
                 >
-                    {/*<Demo
+                    <Demo
                         circular
                         shouldAdapt={false}
                         placement="right"
                         Icon={<CircleHelp/>}
                         Name="left-popover"
                         col="$secondary"
-                    />*/}
+                    />
                 </Button>
 
                 {/* Top-right floor selector */}
@@ -370,9 +386,11 @@ export default function MapScreen() {
                 visible={isRoomDetailModalVisible}
                 onClose={handleCloseRoomModal}
                 screenWidth={screenWidth}
-                roomNumber={selectedRoomNumber}
-                userName={"Jane Doe"}
-                clinicalprofile={"Corona, Griep"}
+                roomNumber={selectedRoom?.roomNumber || 0}
+                floor={selectedRoom?.floor || 0}
+                userName={selectedRoom?.userName || ''}
+                clinicalprofile={selectedRoom?.clinicalprofile || ''}
+                onRoomScaled={handleMapRefresh}
             />
         </YStack>
 
