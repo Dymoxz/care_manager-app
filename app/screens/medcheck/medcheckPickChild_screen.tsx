@@ -1,15 +1,22 @@
-import React, {useEffect, useState} from "react";
-import {Button, Input, SizableText, styled, Text, XStack, YStack,} from "tamagui";
-import {Dimensions, Keyboard, TouchableWithoutFeedback,} from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    Button,
+    Input,
+    SizableText,
+    styled,
+    Text,
+    XStack,
+    YStack,
+} from "tamagui";
+import { Dimensions, Keyboard, TouchableWithoutFeedback } from "react-native";
 import TitleLayout from "../common/title_layout";
-import {ChevronDown, SquarePen} from "@tamagui/lucide-icons";
-import {useMedCheckForm} from "./useMedCheckForm";
+import { ChevronDown, SquarePen } from "@tamagui/lucide-icons";
+import { useMedCheckForm } from "./useMedCheckForm";
 import DropdownModal from "../common/multiselect_dropdown";
 import BackButton from "../common/back_button";
-import {useToastController} from '@tamagui/toast';
+import { useToastController } from "@tamagui/toast";
 
-
-const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 const InputContainer = styled(XStack, {
     borderWidth: 1,
@@ -47,7 +54,6 @@ interface Room {
     isScaled: boolean;
 }
 
-
 const ErrorText = styled(Text, {
     color: "red",
     fontSize: 12,
@@ -80,14 +86,10 @@ const SelectedItemsText = styled(Text, {
     },
 });
 
-export default function MedischeCheckScreen({navigation, route}) {
-    const [userSelected, setUserSelected] = useState(false); // Moved hook inside
-    const {
-        formState,
-        setFieldValue,
-        handleMedicalCheckSelect,
-        errors,
-    } = useMedCheckForm(route.params?.formData);
+export default function MedischeCheckScreen({ navigation, route }) {
+    const [userSelected, setUserSelected] = useState(false);
+    const { formState, setFieldValue, handleMedicalCheckSelect, errors } =
+        useMedCheckForm(route.params?.formData);
 
     const [isPatientModalVisible, setIsPatientModalVisible] = useState(false);
     const [availablePatients, setAvailablePatients] = useState<Patient[]>([]);
@@ -96,6 +98,7 @@ export default function MedischeCheckScreen({navigation, route}) {
     );
     const [isLoading, setIsLoading] = useState(false);
     const toast = useToastController();
+    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -116,69 +119,61 @@ export default function MedischeCheckScreen({navigation, route}) {
         fetchPatients();
     }, []);
 
-
-    const handleSave = () => {
-        if (selectedPatient) {
-            console.log("Selected patient details:");
-            console.log(`Name: ${selectedPatient.firstName} ${selectedPatient.lastName}`);
-            console.log(`Patient Number: ${selectedPatient.patientNumber}`);
-            console.log(`Room: ${selectedPatient.room.roomNumber}, Floor: ${selectedPatient.room.floor}`);
-            console.log(`Quarantined: ${selectedPatient.isQuarantined ? "Yes" : "No"}`);
-        } else {
-            console.warn("No patient selected!");
+    const handleSave = async () => {
+        if (!selectedPatient) {
+            showErrorToast("Please select a patient to save.");
+            return;
         }
 
-        // Log the form data as well
+        // Simple validation for required fields
+        if (!formState.omschrijving || !formState.hartslag || !formState.bloeddruk) {
+            showErrorToast('All form fields are required!');
+            return;
+        }
+        console.log("Selected patient details:");
+        console.log(
+            `Name: ${selectedPatient.firstName} ${selectedPatient.lastName}`
+        );
+        console.log(`Patient Number: ${selectedPatient.patientNumber}`);
+        console.log(
+            `Room: ${selectedPatient.room.roomNumber}, Floor: ${selectedPatient.room.floor}`
+        );
+        console.log(`Quarantined: ${selectedPatient.isQuarantined ? "Yes" : "No"}`);
         console.log("Formulier data:", formState);
-    };
 
+        await handleCreateMedicalCheck();
+    };
 
     const activeErrorCount = Object.keys(errors).length;
     const containerHeight = screenHeight * 0.65 + activeErrorCount * 20;
 
-    const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
-        null
-    );
-
     const handlePatientSelect = (selectedItems: Patient[]) => {
         if (selectedItems.length > 0) {
-            setUserSelected(true); // Mark a user as selected
-            setSelectedPatient(selectedItems[0]); // Use the first selected patient
-            setPatientDisplayText(selectedItems[0].firstName); // Update the displayed text
+            setUserSelected(true);
+            setSelectedPatient(selectedItems[0]);
+            setPatientDisplayText(selectedItems[0].firstName);
         } else {
             setUserSelected(false);
             setSelectedPatient(null);
-            setPatientDisplayText(patientDisplayText); // Reset display text
+            setPatientDisplayText(patientDisplayText);
         }
 
-        setIsPatientModalVisible(false); // Hiding dropdown when a patient is selected
+        setIsPatientModalVisible(false);
     };
 
     const showErrorToast = (message) => {
-        toast.show('Error', {
+        toast.show("Error", {
             message,
-            native: false, // Using custom toast style
+            native: false,
         });
     };
 
     const showSuccessToast = (message) => {
-        toast.show('Success', {
+        toast.show("Success", {
             message,
-            native: false, // Using custom toast style
+            native: false,
         });
     };
-
-    setIsLoading(true);
-    const medicalCheckData = {
-        createMedicalCheckDto: {
-            firstName: formState.firstName,
-            lastName: formState.lastName,
-            description: formState.omschrijving,
-            heartRate: formState.hartslag,
-            bloodPressure: formState.bloeddruk,
-        },
-    };
-    console.log("Patient data to be created:", medicalCheckData);
 
     const handleCreateMedicalCheck = async () => {
         if (!selectedPatient) {
@@ -190,22 +185,22 @@ export default function MedischeCheckScreen({navigation, route}) {
         try {
             const medicalCheckData = {
                 createMedicalCheckDto: {
-                    firstName: formState.firstName || "", // Provide default empty string
+                    firstName: formState.firstName || "",
                     lastName: formState.lastName || "",
                     description: formState.omschrijving || "",
                     heartRate: formState.hartslag || "",
                     bloodPressure: formState.bloeddruk || "",
                 },
             };
-
+            console.log("Patient data to be created:", medicalCheckData);
             const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/medcheck/${selectedPatient.patientNumber}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(medicalCheckData),
+                body: JSON.stringify(medicalCheckData.createMedicalCheckDto), // Send data in the correct shape
             });
 
             if (!response.ok) {
-                const errorText = await response.text(); // Get error text from response
+                const errorText = await response.text();
                 throw new Error(`HTTP error ${response.status}: ${errorText}`);
             }
 
@@ -213,12 +208,11 @@ export default function MedischeCheckScreen({navigation, route}) {
             navigation.navigate('HomeScreen');
         } catch (error) {
             console.error('Error creating medical check:', error);
-            showErrorToast(`Error: ${error.message}`); // Display the error message
+            showErrorToast(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
     };
-
 
     return (
         <TitleLayout
@@ -230,7 +224,7 @@ export default function MedischeCheckScreen({navigation, route}) {
                     <YStack
                         bg="$container"
                         width={(screenWidth * 90) / 100}
-                        height={containerHeight} // Adjusted height to accommodate button
+                        height={containerHeight}
                         borderRadius="$10"
                         elevation="$0.25"
                         px="$6"
@@ -242,23 +236,23 @@ export default function MedischeCheckScreen({navigation, route}) {
                         {userSelected && selectedPatient && (
                             <YStack ai="center" mb="$6" width="100%">
                                 {/* Horizontal layout for patient info and button */}
-                                    {/* Circle and Name */}
-                                    <YStack ai="center" alignItems="center" mb="$4">
-                                        <YStack
-                                            width={80}
-                                            height={80}
-                                            borderRadius={40}
-                                            bg="$accent_focus"
-                                            ai="center"
-                                            jc="center"
-                                            mb="$2"
-                                        >
-                                            <Text fontSize="$8" fontWeight="bold" color="$text">
-                                                {selectedPatient.firstName[0]}
-                                                {selectedPatient.lastName[0].charAt(0).toUpperCase()}
-                                            </Text>
-                                        </YStack>
-                                        <XStack ai='center' >
+                                {/* Circle and Name */}
+                                <YStack ai="center" alignItems="center" mb="$4">
+                                    <YStack
+                                        width={80}
+                                        height={80}
+                                        borderRadius={40}
+                                        bg="$accent_focus"
+                                        ai="center"
+                                        jc="center"
+                                        mb="$2"
+                                    >
+                                        <Text fontSize="$8" fontWeight="bold" color="$text">
+                                            {selectedPatient.firstName[0]}
+                                            {selectedPatient.lastName[0].charAt(0).toUpperCase()}
+                                        </Text>
+                                    </YStack>
+                                    <XStack ai="center">
                                         <SizableText
                                             fontSize="$9"
                                             pt="$4"
@@ -270,17 +264,17 @@ export default function MedischeCheckScreen({navigation, route}) {
                                             {selectedPatient.firstName} {selectedPatient.lastName}
                                         </SizableText>
 
-                                    {/* Update Button */}
-                                    <Button
-                                        px="$2"
-                                        onPress={() => setIsPatientModalVisible(true)}
-                                        pt="$4"
-                                        bg="$container"
-                                        pb="$2.5"
-                                    >
-                                        <SquarePen size="$2" color="$accent_content" />
-                                    </Button>
-                                        </XStack>
+                                        {/* Update Button */}
+                                        <Button
+                                            px="$2"
+                                            onPress={() => setIsPatientModalVisible(true)}
+                                            pt="$4"
+                                            bg="$container"
+                                            pb="$2.5"
+                                        >
+                                            <SquarePen size="$2" color="$accent_content" />
+                                        </Button>
+                                    </XStack>
                                 </YStack>
                             </YStack>
                         )}
@@ -298,10 +292,7 @@ export default function MedischeCheckScreen({navigation, route}) {
                                     h="$4"
                                     width="100%"
                                 >
-                                    <SelectedItemsText
-                                        numberOfLines={1}
-                                        ellipsizeMode="tail"
-                                    >
+                                    <SelectedItemsText numberOfLines={1} ellipsizeMode="tail">
                                         {patientDisplayText}
                                     </SelectedItemsText>
                                     <DropdownIndicator>
@@ -314,7 +305,13 @@ export default function MedischeCheckScreen({navigation, route}) {
                             )}
                         </YStack>
 
-                        <YStack mt="$4" mb='$5' width="100%" borderBottomWidth={1} borderBottomColor="$gray">
+                        <YStack
+                            mt="$4"
+                            mb="$5"
+                            width="100%"
+                            borderBottomWidth={1}
+                            borderBottomColor="$gray"
+                        >
                             {/* This is the separation line */}
                         </YStack>
 
@@ -389,7 +386,7 @@ export default function MedischeCheckScreen({navigation, route}) {
                         {/* Save Button */}
                         <Button
                             onPress={handleSave}
-                            bg="#ffb74d"
+                            bg="#$accent"
                             borderRadius="$8"
                             mt="$6"
                             alignSelf="flex-end"
