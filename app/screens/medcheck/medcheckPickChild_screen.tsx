@@ -1,26 +1,14 @@
-import React, { useState } from "react";
-import {
-    Button,
-    Input,
-    SizableText,
-    XStack,
-    YStack,
-    styled,
-    Text,
-} from "tamagui";
-import {
-    Dimensions,
-    Keyboard,
-    TouchableWithoutFeedback,
-} from "react-native";
+import React, {useEffect, useState} from "react";
+import {Button, Input, SizableText, styled, Text, XStack, YStack,} from "tamagui";
+import {Dimensions, Keyboard, TouchableWithoutFeedback,} from "react-native";
 import TitleLayout from "../common/title_layout";
-import { ArrowLeft, ChevronDown } from "@tamagui/lucide-icons";
-import { useMedCheckForm } from "./useMedCheckForm";
+import {ChevronDown} from "@tamagui/lucide-icons";
+import {useMedCheckForm} from "./useMedCheckForm";
 import DropdownModal from "../common/multiselect_dropdown";
+import BackButton from "../common/back_button";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-const [userSelected, setUserSelected] = useState(false);
+const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
 const InputContainer = styled(XStack, {
     borderWidth: 1,
@@ -34,9 +22,30 @@ const InputContainer = styled(XStack, {
 });
 
 interface Patient {
-    id: string;
-    patient: string;
+    _id: string;
+    patientNumber: number;
+    firstName: string;
+    lastName: string;
+    isQuarantined: boolean;
+    dateOfBirth?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    __v?: number;
+    room: Room;
+    clinicalProfiles: Array<{
+        _id: string;
+        clinicalProfile: string;
+    }>;
 }
+
+interface Room {
+    _id: string;
+    roomNumber: number;
+    floor: number;
+    maxCapacity: number;
+    isScaled: boolean;
+}
+
 
 const ErrorText = styled(Text, {
     color: "red",
@@ -70,7 +79,8 @@ const SelectedItemsText = styled(Text, {
     },
 });
 
-export default function MedischeCheckScreen({ navigation, route }) {
+export default function MedischeCheckScreen({navigation, route}) {
+    const [userSelected, setUserSelected] = useState(false); // Moved hook inside
     const {
         formState,
         setFieldValue,
@@ -84,6 +94,26 @@ export default function MedischeCheckScreen({ navigation, route }) {
     const [patientDisplayText, setPatientDisplayText] = useState(
         "Zoek of selecteer een patiënt"
     );
+
+    useEffect(() => {
+        const fetchPatients = async () => {
+            try {
+                const response = await fetch(
+                    "https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/list"
+                );
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                setAvailablePatients(data);
+            } catch (error) {
+                console.error("Failed to fetch patients:", error);
+            }
+        };
+
+        fetchPatients();
+    }, []);
+
 
     const handleSave = () => {
         // const isValid = validateForm(); // Controleer of het formulier geldig is
@@ -100,34 +130,12 @@ export default function MedischeCheckScreen({ navigation, route }) {
     return (
         <TitleLayout
             titleText="Medische Check"
-            topContent={
-                <Button
-                    bg="$primary"
-                    borderRadius="$10"
-                    width="$3"
-                    height="$3"
-                    animation="bouncy"
-                    hoverStyle={{
-                        scale: 0.99,
-                        backgroundColor: "$primary_focus",
-                    }}
-                    pressStyle={{
-                        scale: 0.975,
-                        backgroundColor: "$primary_focus",
-                    }}
-                    icon={<ArrowLeft size="$2" color="white" />}
-                    onPress={() => navigation.navigate("HomeScreen")}
-                    position="absolute"
-                    left={screenWidth * 0.05}
-                    top="$5"
-                >
-                    Terug
-                </Button>
-            }
+            topContent={<BackButton navigation={navigation}/>}
         >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <YStack ai="center" flex={1}>
+            <TouchableWithoutFeedback  onPress={Keyboard.dismiss}>
+                <YStack ai="center"  flex={1}>
                     <YStack
+
                         bg="$container"
                         width={(screenWidth * 90) / 100}
                         height={containerHeight} // Gebruik berekende hoogte
@@ -155,7 +163,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                     {patientDisplayText}
                                 </SelectedItemsText>
                                 <DropdownIndicator>
-                                    <ChevronDown size="$1" />
+                                    <ChevronDown size="$1"/>
                                 </DropdownIndicator>
                             </InputContainer>
                             {errors.selectedPatients && (
@@ -258,8 +266,8 @@ export default function MedischeCheckScreen({ navigation, route }) {
                 title="Selecteer patient"
                 hasSearch={true}
                 isMultiSelect={true}
-                getItemKey={(item) => item.patient}
-                getTextForItem={(item) => item.patient}
+                getItemKey={(item) => item.patientNumber.toString()}
+                getTextForItem={(item) => `${item.firstName} ${item.lastName}`}
             />
 
         </TitleLayout>

@@ -36,7 +36,7 @@ interface PatientCardProps {
     onPress: (patient: Patient) => void;
 }
 
-async function ActivateDevice(
+async function fetchData(
     showErrorToast: (message: string) => void,
     showSuccessToast: (message: string) => void,
     setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
@@ -114,7 +114,7 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        ActivateDevice(
+        fetchData(
             (error) => console.error(error),
             (success) => console.log(success),
             setPatients
