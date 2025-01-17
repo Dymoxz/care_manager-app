@@ -10,16 +10,16 @@ import {
 import { BriefcaseMedical, X } from '@tamagui/lucide-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
+import { Patient } from './map_screen';
 
 interface RoomDetailModalProps {
     visible: boolean;
     onClose: () => void;
     screenWidth: number;
     roomNumber: number;
-    userName: string;
-    clinicalprofile: string;
+    patients: Patient[];
     floor: number;
-    onRoomScaled: () => void; // Added callback prop
+    onRoomScaled: () => void;
 }
 
 export function RoomDetailModal({
@@ -27,10 +27,9 @@ export function RoomDetailModal({
                                     onClose,
                                     screenWidth,
                                     roomNumber,
-                                    userName,
-                                    clinicalprofile,
+                                    patients,
                                     floor,
-                                    onRoomScaled, // Added callback prop
+                                    onRoomScaled,
                                 }: RoomDetailModalProps) {
     const navigation = useNavigation();
     const toast = useToastController();
@@ -71,7 +70,7 @@ export function RoomDetailModal({
                 throw new Error(`HTTP error ${response.status}: ${errorText}`);
             }
             showSuccessToast('Room scaled successfully!');
-            onRoomScaled(); // Call the callback after successfully scaling the room
+            onRoomScaled();
             onClose();
         } catch (error) {
             console.error('Error scaling room:', error);
@@ -107,20 +106,29 @@ export function RoomDetailModal({
                         <Dialog.Title fontSize="$7" mt="$5" marginHorizontal="$2" textAlign="center">
                             Kamer {roomNumber}
                         </Dialog.Title>
-                        <YStack
-                            backgroundColor="#E0E7EC"
-                            borderRadius="$5"
-                            mb="$8"
-                            padding="$3"
-                            marginHorizontal="$2"
-                        >
-                            <SizableText fontWeight="700" fontSize="$7">
-                                {userName}
-                            </SizableText>
-                            <XStack alignItems="center">
-                                <BriefcaseMedical size="$1" col="$accent" mr="$1" />
-                                <SizableText col="gray">{clinicalprofile}</SizableText>
-                            </XStack>
+                        <YStack   mb="$8"  marginHorizontal="$2">
+                            {patients && patients.map((patient) => (
+                                    <YStack backgroundColor="#E0E7EC" borderRadius="$5" padding="$5" key={patient.patientNumber} mb='$5'>
+                                        <SizableText fontWeight="700" fontSize="$7">
+                                            {patient.firstName} {patient.lastName}
+                                        </SizableText>
+                                        <XStack>
+                                        <XStack alignItems="center" mr='$4'>
+                                            <BriefcaseMedical size="$1" col="$accent_focus" mr="$1" />
+                                            <SizableText col="gray">
+                                                {patient.clinicalProfiles.map((profile) => profile.clinicalProfile)}
+                                            </SizableText>
+                                        </XStack>
+                                        <XStack alignItems="center">
+                                            <BriefcaseMedical size="$1" col="$accent" mr="$1" />
+                                            <SizableText col="gray">
+                                                {patient.isQuarantined ? "Quarantained" : "Not Quarantained"}
+                                            </SizableText>
+                                        </XStack>
+                                        </XStack>
+                                    </YStack>
+                                )
+                            )}
                         </YStack>
                         <XStack ai="center" jc="center" marginHorizontal="auto" space="$4" mt="$4">
                             <Button

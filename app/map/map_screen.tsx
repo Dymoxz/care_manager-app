@@ -45,6 +45,12 @@ interface MapData {
     patients: Patient[];
 }
 
+interface selectedRoomType {
+    roomNumber: number,
+    patients: Patient[],
+    floor: number
+}
+
 async function fetchData<T>(
     url: string,
     showErrorToast: (message: string) => void,
@@ -82,7 +88,7 @@ async function fetchData<T>(
 export default function MapScreen() {
     const [isRoomDetailModalVisible, setIsRoomDetailModalVisible] =
         useState(false);
-    const [selectedRoom, setSelectedRoom] = useState<{ roomNumber: number, userName: string, clinicalprofile: string, floor: number} | null>(null);
+    const [selectedRoom, setSelectedRoom] = useState<selectedRoomType | null>(null);
     const [refreshMap, setRefreshMap] = useState(false);
 
 
@@ -202,10 +208,12 @@ export default function MapScreen() {
     };
 
     const handleRoomPress = (room: Room) => {
+        const patientsInRoom = mapData.patients.filter(
+            (patient) => patient.room?._id === room._id
+        );
         setSelectedRoom({
             roomNumber: room.roomNumber,
-            userName: `User ${room.roomNumber}`,
-            clinicalprofile: "Cardio",
+            patients: patientsInRoom,
             floor: room.floor,
         });
         handleOpenRoomModal();
@@ -388,8 +396,7 @@ export default function MapScreen() {
                 screenWidth={screenWidth}
                 roomNumber={selectedRoom?.roomNumber || 0}
                 floor={selectedRoom?.floor || 0}
-                userName={selectedRoom?.userName || ''}
-                clinicalprofile={selectedRoom?.clinicalprofile || ''}
+                patients={selectedRoom?.patients || []}
                 onRoomScaled={handleMapRefresh}
             />
         </YStack>
