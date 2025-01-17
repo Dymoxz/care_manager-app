@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Input, SizableText, styled, Text, XStack, YStack,} from "tamagui";
 import {Dimensions, Keyboard, TouchableWithoutFeedback,} from "react-native";
 import TitleLayout from "../common/title_layout";
-import {ChevronDown} from "@tamagui/lucide-icons";
+import {ChevronDown, SquarePen} from "@tamagui/lucide-icons";
 import {useMedCheckForm} from "./useMedCheckForm";
 import DropdownModal from "../common/multiselect_dropdown";
 import BackButton from "../common/back_button";
@@ -86,7 +86,6 @@ export default function MedischeCheckScreen({navigation, route}) {
         setFieldValue,
         handleMedicalCheckSelect,
         errors,
-        // validateForm,
     } = useMedCheckForm(route.params?.formData);
 
     const [isPatientModalVisible, setIsPatientModalVisible] = useState(false);
@@ -132,38 +131,38 @@ export default function MedischeCheckScreen({navigation, route}) {
 
 
     const activeErrorCount = Object.keys(errors).length;
-    const containerHeight = screenHeight * 0.55 + activeErrorCount * 20;
+    const containerHeight = screenHeight * 0.65 + activeErrorCount * 20;
 
-    // const [userSelected, setUserSelected] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
         null
     );
 
     const handlePatientSelect = (selectedItems: Patient[]) => {
         if (selectedItems.length > 0) {
-            setUserSelected(true);
+            setUserSelected(true); // Mark a user as selected
             setSelectedPatient(selectedItems[0]); // Use the first selected patient
             setPatientDisplayText(selectedItems[0].firstName); // Update the displayed text
         } else {
             setUserSelected(false);
             setSelectedPatient(null);
-            setPatientDisplayText(patientDisplayText);
+            setPatientDisplayText(patientDisplayText); // Reset display text
         }
-        setIsPatientModalVisible(false);
+
+        setIsPatientModalVisible(false); // Hiding dropdown when a patient is selected
     };
+
 
     return (
         <TitleLayout
             titleText="Medische Check"
-            topContent={<BackButton navigation={navigation}/>}
+            topContent={<BackButton navigation={navigation} />}
         >
-            <TouchableWithoutFeedback  onPress={Keyboard.dismiss}>
-                <YStack ai="center"  flex={1}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <YStack ai="center" flex={1}>
                     <YStack
-
                         bg="$container"
                         width={(screenWidth * 90) / 100}
-                        height={containerHeight} // Gebruik berekende hoogte
+                        height={containerHeight} // Adjusted height to accommodate button
                         borderRadius="$10"
                         elevation="$0.25"
                         px="$6"
@@ -171,70 +170,87 @@ export default function MedischeCheckScreen({navigation, route}) {
                         ai="center"
                         position="relative"
                     >
-                        {/* Patiënt gekozen veld */}
+                        {/* Patient Info Section */}
                         {userSelected && selectedPatient && (
-                            <YStack ai="center" mb="$6">
-                                {/* Display selected patient info */}
-                                <YStack
-                                    width={80}
-                                    height={80}
-                                    borderRadius={40}
-                                    bg="#e0e0e0"
-                                    ai="center"
-                                    jc="center"
-                                    mb="$2"
-                                >
-                                    <Text fontSize="$6" fontWeight="bold">
-                                        {selectedPatient.firstName
-                                            .charAt(0)
-                                            .toUpperCase()}
-                                    </Text>
+                            <YStack ai="center" mb="$6" width="100%">
+                                {/* Horizontal layout for patient info and button */}
+                                    {/* Circle and Name */}
+                                    <YStack ai="center" alignItems="center" mb="$4">
+                                        <YStack
+                                            width={80}
+                                            height={80}
+                                            borderRadius={40}
+                                            bg="$accent_focus"
+                                            ai="center"
+                                            jc="center"
+                                            mb="$2"
+                                        >
+                                            <Text fontSize="$8" fontWeight="bold" color="$text">
+                                                {selectedPatient.firstName[0]}
+                                                {selectedPatient.lastName[0].charAt(0).toUpperCase()}
+                                            </Text>
+                                        </YStack>
+                                        <XStack ai='center' >
+                                        <SizableText
+                                            fontSize="$9"
+                                            pt="$4"
+                                            fontWeight="bold"
+                                            color="$text"
+                                            textAlign="center"
+                                            px="$2"
+                                        >
+                                            {selectedPatient.firstName} {selectedPatient.lastName}
+                                        </SizableText>
+
+                                    {/* Update Button */}
+                                    <Button
+                                        px="$2"
+                                        onPress={() => setIsPatientModalVisible(true)}
+                                        pt="$4"
+                                        bg="$container"
+                                        pb="$2.5"
+                                    >
+                                        <SquarePen size="$2" color="$accent_content" />
+                                    </Button>
+                                        </XStack>
                                 </YStack>
-                                <SizableText
-                                    fontSize="$6"
-                                    fontWeight="bold"
-                                    color="$text"
-                                >
-                                    {selectedPatient.firstName}
-                                </SizableText>
-                                <Button
-                                    size="$2"
-                                    onPress={() =>
-                                        setIsPatientModalVisible(true)
-                                    }
-                                >
-                                    Wijzig patiënt
-                                </Button>
                             </YStack>
                         )}
 
-
-                        {/* Patiënt veld */}
+                        {/* Patient Selection Section */}
                         <YStack width="100%" py="$2">
-                            <SizableText fontSize="$4" color="$text" mb="$1">
-                                Ziektebeeld
-                            </SizableText>
-                            <InputContainer
-                                onPress={() => setIsPatientModalVisible(true)}
-                                h="$4"
-                                width="100%"
-                            >
-                                <SelectedItemsText
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail"
+                            {!userSelected && (
+                                <SizableText fontSize="$4" color="$text" mb="$1">
+                                    Patiënt
+                                </SizableText>
+                            )}
+                            {!userSelected && (
+                                <InputContainer
+                                    onPress={() => setIsPatientModalVisible(true)}
+                                    h="$4"
+                                    width="100%"
                                 >
-                                    {patientDisplayText}
-                                </SelectedItemsText>
-                                <DropdownIndicator>
-                                    <ChevronDown size="$1"/>
-                                </DropdownIndicator>
-                            </InputContainer>
+                                    <SelectedItemsText
+                                        numberOfLines={1}
+                                        ellipsizeMode="tail"
+                                    >
+                                        {patientDisplayText}
+                                    </SelectedItemsText>
+                                    <DropdownIndicator>
+                                        <ChevronDown size="$1" />
+                                    </DropdownIndicator>
+                                </InputContainer>
+                            )}
                             {errors.selectedPatients && (
                                 <ErrorText>{errors.selectedPatients}</ErrorText>
                             )}
                         </YStack>
 
-                        {/* Omschrijving veld */}
+                        <YStack mt="$4" mb='$5' width="100%" borderBottomWidth={1} borderBottomColor="$gray">
+                            {/* This is the separation line */}
+                        </YStack>
+
+                        {/* Omschrijving field */}
                         <YStack width="100%" py="$2">
                             <SizableText fontSize="$4" color="$text" mb="$2">
                                 Omschrijving
@@ -259,7 +275,7 @@ export default function MedischeCheckScreen({navigation, route}) {
                             )}
                         </YStack>
 
-                        {/* Hartslag en Bloeddruk */}
+                        {/* Vital Signs Section */}
                         <XStack space="$4" width="100%" py="$2">
                             <YStack f={1}>
                                 <SizableText fontSize="$4" color="$text" mb="$2">
@@ -302,7 +318,7 @@ export default function MedischeCheckScreen({navigation, route}) {
                             </YStack>
                         </XStack>
 
-                        {/* Opslaan knop */}
+                        {/* Save Button */}
                         <Button
                             onPress={handleSave}
                             bg="#ffb74d"
@@ -332,7 +348,6 @@ export default function MedischeCheckScreen({navigation, route}) {
                 getItemKey={(item) => item.patientNumber.toString()}
                 getTextForItem={(item) => `${item.firstName} ${item.lastName}`}
             />
-
         </TitleLayout>
     );
 }
