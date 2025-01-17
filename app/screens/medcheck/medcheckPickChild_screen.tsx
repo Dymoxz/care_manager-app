@@ -7,8 +7,9 @@ import {
     Text,
     XStack,
     YStack,
+
 } from "tamagui";
-import { Dimensions, Keyboard, TouchableWithoutFeedback } from "react-native";
+import {Dimensions, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform} from "react-native";
 import TitleLayout from "../common/title_layout";
 import { ChevronDown, SquarePen } from "@tamagui/lucide-icons";
 import { useMedCheckForm } from "./useMedCheckForm";
@@ -221,6 +222,8 @@ export default function MedischeCheckScreen({ navigation, route }) {
             titleText="Medische Check"
             topContent={<BackButton navigation={navigation}/>}
         >
+            <KeyboardAvoidingView
+            behavior={Platform.OS==='ios' ? 'padding' : 'height'}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView // Added ScrollView here
                     contentContainerStyle={{flexGrow: 1}} // Important for flexible content height
@@ -410,6 +413,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                     </YStack>
                 </ScrollView>
             </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
 
             <DropdownModal<Patient>
                 visible={isPatientModalVisible}

@@ -3,7 +3,7 @@ import {Button, SizableText, Spinner, styled, Text, TextArea, XStack, YStack} fr
 import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
 import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
-import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
+import {Dimensions, Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback} from "react-native";
 import {useIntakeForm} from "./useIntakeForm"; // Import the hook
 import {useToastController} from '@tamagui/toast';
 
@@ -297,7 +297,9 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                 />
             }
         >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView            behavior={Platform.OS==='ios' ? 'padding' : 'height'}>
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <YStack ai="center">
                     <YStack
                         bg="$container"
@@ -408,6 +410,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                     </YStack>
                 </YStack>
             </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
 
 
             <DropdownModal<ClinicalProfile>
