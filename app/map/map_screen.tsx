@@ -234,7 +234,7 @@ export default function MapScreen() {
                 position="relative"
             >
                 {isLoading ? (
-                    <Spinner size="large" color="$blue10" />
+                    <Spinner size="large" color="$primary_focus" />
                 ) : (
                     <GestureHandlerRootView style={styles.container}>
                         <PanGestureHandler
@@ -264,27 +264,30 @@ export default function MapScreen() {
                 )}
 
                 {/* Top-left question mark */}
-                <Button
-                    bg="$secondary"
-                    borderColor="$secondary_focus"
-                    position="absolute"
-                    top="$4"
-                    left="$4"
-                    size="$4"
-                    circular
-                    pressStyle={{ bg: "$secondary_focus" }}
-                    color="white"
+                {/*<Button*/}
+                {/*    bg="$secondary"*/}
+                {/*    borderColor="$secondary_focus"*/}
+                {/*    position="absolute"*/}
+                {/*    top="$4"*/}
+                {/*    left="$4"*/}
+                {/*    size="$4"*/}
+                {/*    circular*/}
+                {/*    pressStyle={{ bg: "$secondary_focus" }}*/}
+                {/*    color="white"*/}
+                {/*    onPress={handleOpenRoomModal}*/}
 
-                >
-                    <Demo
-                        circular
-                        shouldAdapt={false}
-                        placement="right"
-                        Icon={<CircleHelp/>}
-                        Name="left-popover"
-                        col="$secondary"
-                    />
-                </Button>
+                {/*>*/}
+                {/*    ?*/}
+
+                {/*</Button>*/}
+                <Demo
+                    circular
+                    shouldAdapt={false}
+                    placement="right"
+                    Icon={<CircleHelp/>}
+                    Name="left-popover"
+                    col="$secondary"
+                />
 
                 {/* Top-right floor selector */}
                 <YStack

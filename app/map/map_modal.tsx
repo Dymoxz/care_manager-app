@@ -134,18 +134,18 @@ export function RoomDetailModal({
                             <Button
                                 borderRadius="$12"
                                 borderColor="$accent_focus"
-                                col="white"
+                                color='white'
                                 bg="$accent"
-                                pressStyle={{ background: '$accent_focus' }}
+                                pressStyle={{bg: '$accent_focus'}}
                             >
                                 Vergelijk
                             </Button>
                             <Button
-                                bg="$danger"
-                                borderRadius="$12"
-                                borderColor="$danger_focus"
-                                col="white"
-                                pressStyle={{ background: '$primary_focus' }}
+                                bg='$danger'
+                                borderRadius='$12'
+                                borderColor='$danger_focus'
+                                color='white'
+                                pressStyle={{bg: '$danger_focus'}}
                                 onPress={handleScaleRoom}
                             >
                                 {isLoading ? 'Scaling...' : 'Opschalen'}
