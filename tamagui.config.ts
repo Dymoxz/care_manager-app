@@ -45,6 +45,7 @@ export const config = createTamagui({
       primary: '#0891B2',
       primary_focus: '#0E7490',
       secondary: '#0D8F83',
+      secondary_focus: '#0B6F63',
       accent: '#F8AE56',
       accent_focus: '#DF9D4D',
       accent_content: '#634622',

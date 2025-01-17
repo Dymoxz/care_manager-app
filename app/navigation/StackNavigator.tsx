@@ -9,7 +9,7 @@ import IntakeOneScreen from "../screens/intake/intake1_screen";
 import IntakeTwoScreen from "../screens/intake/intake2_screen";
 import PatientListScreen from "../screens/patientList_screen";
 import ChildDetailScreen from "../screens/child-detail/childDetail_screen";
-import MapScreen from "../screens/map_screen";
+import MapScreen from "../map/map_screen";
 import AgreementPickChildScreen from "../screens/agreement/agreementPickChild_screen";
 import MedcheckPickChildScreen from "../screens/medcheck/medcheckPickChild_screen";
 import ShiftScreen from "../screens/shift/shift_screen";
