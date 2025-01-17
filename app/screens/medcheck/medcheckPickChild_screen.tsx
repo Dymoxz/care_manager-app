@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
     Button,
-    Input,
+    Input, ScrollView,
     SizableText,
     styled,
     Text,
@@ -88,7 +88,7 @@ const SelectedItemsText = styled(Text, {
 
 export default function MedischeCheckScreen({ navigation, route }) {
     const [userSelected, setUserSelected] = useState(false);
-    const { formState, setFieldValue, handleMedicalCheckSelect, errors } =
+    const {formState, setFieldValue, handleMedicalCheckSelect, errors} =
         useMedCheckForm(route.params?.formData);
 
     const [isPatientModalVisible, setIsPatientModalVisible] = useState(false);
@@ -121,13 +121,13 @@ export default function MedischeCheckScreen({ navigation, route }) {
 
     const handleSave = async () => {
         if (!selectedPatient) {
-            showErrorToast("Please select a patient to save.");
+            showErrorToast("Kies alstublieft een patient.");
             return;
         }
 
         // Simple validation for required fields
         if (!formState.omschrijving || !formState.hartslag || !formState.bloeddruk) {
-            showErrorToast('All form fields are required!');
+            showErrorToast('Alle velden zijn verplicht in te vullen!');
             return;
         }
         console.log("Selected patient details:");
@@ -177,7 +177,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
 
     const handleCreateMedicalCheck = async () => {
         if (!selectedPatient) {
-            showErrorToast("Please select a patient.");
+            showErrorToast("Kies alstublieft een patient.");
             return;
         }
 
@@ -195,7 +195,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
             console.log("Patient data to be created:", medicalCheckData);
             const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/medcheck/${selectedPatient.patientNumber}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(medicalCheckData.createMedicalCheckDto), // Send data in the correct shape
             });
 
@@ -204,199 +204,211 @@ export default function MedischeCheckScreen({ navigation, route }) {
                 throw new Error(`HTTP error ${response.status}: ${errorText}`);
             }
 
-            showSuccessToast('Medical check created successfully!');
+            showSuccessToast('Succesvol een medische check gemaakt!');
             navigation.navigate('HomeScreen');
         } catch (error) {
-            console.error('Error creating medical check:', error);
+            console.error('Error bij het maken van een medische check:', error);
             showErrorToast(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
     };
 
+
+
     return (
         <TitleLayout
             titleText="Medische Check"
-            topContent={<BackButton navigation={navigation} />}
+            topContent={<BackButton navigation={navigation}/>}
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <YStack ai="center" flex={1}>
-                    <YStack
-                        bg="$container"
-                        width={(screenWidth * 90) / 100}
-                        height={containerHeight}
-                        borderRadius="$10"
-                        elevation="$0.25"
-                        px="$6"
-                        py="$6"
-                        ai="center"
-                        position="relative"
-                    >
-                        {/* Patient Info Section */}
-                        {userSelected && selectedPatient && (
-                            <YStack ai="center" mb="$6" width="100%">
-                                {/* Horizontal layout for patient info and button */}
-                                {/* Circle and Name */}
-                                <YStack ai="center" alignItems="center" mb="$4">
-                                    <YStack
-                                        width={80}
-                                        height={80}
-                                        borderRadius={40}
-                                        bg="$accent_focus"
-                                        ai="center"
-                                        jc="center"
-                                        mb="$2"
-                                    >
-                                        <Text fontSize="$8" fontWeight="bold" color="$text">
-                                            {selectedPatient.firstName[0]}
-                                            {selectedPatient.lastName[0].charAt(0).toUpperCase()}
-                                        </Text>
-                                    </YStack>
-                                    <XStack ai="center">
-                                        <SizableText
-                                            fontSize="$9"
-                                            pt="$4"
-                                            fontWeight="bold"
-                                            color="$text"
-                                            textAlign="center"
-                                            px="$2"
-                                        >
-                                            {selectedPatient.firstName} {selectedPatient.lastName}
-                                        </SizableText>
-
-                                        {/* Update Button */}
-                                        <Button
-                                            px="$2"
-                                            onPress={() => setIsPatientModalVisible(true)}
-                                            pt="$4"
-                                            bg="$container"
-                                            pb="$2.5"
-                                        >
-                                            <SquarePen size="$1.5" color="$accent_content" />
-                                        </Button>
-                                    </XStack>
-                                </YStack>
-                            </YStack>
-                        )}
-
-                        {/* Patient Selection Section */}
-                        <YStack width="100%" >
-                            {!userSelected && (
-                                <SizableText fontSize="$4" color="$text" mb="$1">
-                                    Patiënt
-                                </SizableText>
-                            )}
-                            {!userSelected && (
-                                <InputContainer
-                                    onPress={() => setIsPatientModalVisible(true)}
-                                    h="$4"
-                                    width="100%"
-                                    mb="$6"
-                                >
-                                    <SelectedItemsText numberOfLines={1} ellipsizeMode="tail">
-                                        {patientDisplayText}
-                                    </SelectedItemsText>
-                                    <DropdownIndicator>
-                                        <ChevronDown size="$1" />
-                                    </DropdownIndicator>
-                                </InputContainer>
-                            )}
-                            {errors.selectedPatients && (
-                                <ErrorText>{errors.selectedPatients}</ErrorText>
-                            )}
-                        </YStack>
-
+                <ScrollView // Added ScrollView here
+                    contentContainerStyle={{flexGrow: 1}} // Important for flexible content height
+                    keyboardShouldPersistTaps="handled"  // Allow taps on inputs inside ScrollView
+                >
+                    <YStack ai="center" flex={1}>
                         <YStack
-                            mt="$2"
-                            mb="$3"
-                            width="100%"
-                            borderBottomWidth={1}
-                            borderBottomColor="$gray"
+                            bg="$container"
+                            width={(screenWidth * 90) / 100}
+                            minHeight={containerHeight} // Use minHeight instead of height
+                            borderRadius="$10"
+                            elevation="$0.25"
+                            px="$6"
+                            py="$6"
+                            ai="center"
+                            position="relative"
                         >
-                            {/* This is the separation line */}
-                        </YStack>
+                            {/* Patient Info Section */}
+                            {userSelected && selectedPatient && (
+                                <YStack ai="center" mb="$6" width="100%">
+                                    {/* Horizontal layout for patient info and button */}
+                                    {/* Circle and Name */}
+                                    <YStack ai="center" alignItems="center" mb="$4">
+                                        <YStack
+                                            width={80}
+                                            height={80}
+                                            borderRadius={40}
+                                            bg="$accent_focus"
+                                            ai="center"
+                                            jc="center"
+                                            mb="$2"
+                                        >
+                                            <Text fontSize="$8" fontWeight="bold" color="$text">
+                                                {selectedPatient.firstName[0]}
+                                                {selectedPatient.lastName[0].charAt(0).toUpperCase()}
+                                            </Text>
+                                        </YStack>
+                                        <XStack ai="center">
+                                            <YStack ai="center" ml='$7'>
+                                                <SizableText
+                                                    fontSize="$9"
+                                                    pt="$4"
+                                                    fontWeight="bold"
+                                                    color="$text"
+                                                    textAlign="center"
+                                                    px="$2"
+                                                >
+                                                    {selectedPatient.firstName} {selectedPatient.lastName}
+                                                </SizableText>
+                                                <SizableText mt="$1">
+                                                    {`Kamer ${selectedPatient.room.roomNumber}`}
+                                                </SizableText>
+                                            </YStack>
 
-                        {/* Omschrijving field */}
-                        <YStack width="100%" py="$2">
-                            <SizableText fontSize="$4" color="$text" mb="$2">
-                                Omschrijving
-                            </SizableText>
-                            <Input
-                                value={formState.omschrijving}
-                                onChangeText={(value) => setFieldValue("omschrijving", value)}
-                                multiline
-                                numberOfLines={4}
-                                textAlignVertical="top"
-                                bg="white"
-                                borderWidth={1}
-                                borderColor="#d3d3d3"
-                                borderRadius="$4"
-                                px="$4"
-                                py="$3"
-                                width="100%"
-                            />
-                            {errors.omschrijving && (
-                                <ErrorText>{errors.omschrijving}</ErrorText>
+                                            {/* Update Button */}
+                                            <Button
+                                                px="$2"
+                                                onPress={() => setIsPatientModalVisible(true)}
+                                                pt="$4"
+                                                bg="$container"
+                                                pb="$6"
+                                            >
+                                                <SquarePen size="$1.5" color="$accent_content"/>
+                                            </Button>
+                                        </XStack>
+                                    </YStack>
+                                </YStack>
                             )}
+
+                            {/* Patient Selection Section */}
+                            <YStack width="100%">
+                                {!userSelected && (
+                                    <SizableText fontSize="$4" color="$text" mb="$1">
+                                        Patiënt
+                                    </SizableText>
+                                )}
+                                {!userSelected && (
+                                    <InputContainer
+                                        onPress={() => setIsPatientModalVisible(true)}
+                                        h="$4"
+                                        width="100%"
+                                        mb="$6"
+                                    >
+                                        <SelectedItemsText numberOfLines={1} ellipsizeMode="tail">
+                                            {patientDisplayText}
+                                        </SelectedItemsText>
+                                        <DropdownIndicator>
+                                            <ChevronDown size="$1"/>
+                                        </DropdownIndicator>
+                                    </InputContainer>
+                                )}
+                                {errors.selectedPatients && (
+                                    <ErrorText>{errors.selectedPatients}</ErrorText>
+                                )}
+                            </YStack>
+
+                            <YStack
+                                mt="$2"
+                                mb="$3"
+                                width="100%"
+                                borderBottomWidth={1}
+                                borderBottomColor="$gray"
+                            >
+                                {/* This is the separation line */}
+                            </YStack>
+
+                            {/* Omschrijving field */}
+                            <YStack width="100%" py="$2">
+                                <SizableText fontSize="$4" color="$text" mb="$2">
+                                    Omschrijving
+                                </SizableText>
+                                <Input
+                                    value={formState.omschrijving}
+                                    onChangeText={(value) => setFieldValue("omschrijving", value)}
+                                    multiline
+                                    numberOfLines={4}
+                                    textAlignVertical="top"
+                                    bg="white"
+                                    borderWidth={1}
+                                    borderColor="#d3d3d3"
+                                    borderRadius="$4"
+                                    px="$4"
+                                    py="$3"
+                                    width="100%"
+                                />
+                                {errors.omschrijving && (
+                                    <ErrorText>{errors.omschrijving}</ErrorText>
+                                )}
+                            </YStack>
+
+                            {/* Vital Signs Section */}
+                            <XStack space="$4" width="100%" py="$2">
+                                <YStack f={1}>
+                                    <SizableText fontSize="$4" color="$text" mb="$2">
+                                        Hartslag
+                                    </SizableText>
+                                    <Input
+                                        value={formState.hartslag}
+                                        onChangeText={(value) => setFieldValue("hartslag", value)}
+                                        keyboardType="numeric"
+                                        bg="white"
+                                        borderWidth={1}
+                                        borderColor="#d3d3d3"
+                                        borderRadius="$4"
+                                        px="$3"
+                                        width="100%"
+                                    />
+                                    {errors.hartslag && (
+                                        <ErrorText>{errors.hartslag}</ErrorText>
+                                    )}
+                                </YStack>
+                                <YStack f={1}>
+                                    <SizableText fontSize="$4" color="$text" mb="$2">
+                                        Bloeddruk
+                                    </SizableText>
+                                    <Input
+                                        value={formState.bloeddruk}
+                                        onChangeText={(value) => setFieldValue("bloeddruk", value)}
+                                        bg="white"
+                                        borderWidth={1}
+                                        borderColor="#d3d3d3"
+                                        borderRadius="$4"
+                                        px="$3"
+                                        width="100%"
+                                    />
+                                    {errors.bloeddruk && (
+                                        <ErrorText>{errors.bloeddruk}</ErrorText>
+                                    )}
+                                </YStack>
+                            </XStack>
+
+                            {/* Save Button */}
+                            <Button
+                                onPress={handleSave}
+                                bg="$accent"
+                                borderRadius="$8"
+                                mt="$6"
+                                alignSelf="flex-end"
+                                px="$4"
+                                py="$2"
+                            >
+                                <SizableText fontSize="$5" color="white">
+                                    Opslaan
+                                </SizableText>
+                            </Button>
                         </YStack>
-
-                        {/* Vital Signs Section */}
-                        <XStack space="$4" width="100%" py="$2">
-                            <YStack f={1}>
-                                <SizableText fontSize="$4" color="$text" mb="$2">
-                                    Hartslag
-                                </SizableText>
-                                <Input
-                                    value={formState.hartslag}
-                                    onChangeText={(value) => setFieldValue("hartslag", value)}
-                                    keyboardType="numeric"
-                                    bg="white"
-                                    borderWidth={1}
-                                    borderColor="#d3d3d3"
-                                    borderRadius="$4"
-                                    px="$3"
-                                    width="100%"
-                                />
-                                {errors.hartslag && (
-                                    <ErrorText>{errors.hartslag}</ErrorText>
-                                )}
-                            </YStack>
-                            <YStack f={1}>
-                                <SizableText fontSize="$4" color="$text" mb="$2">
-                                    Bloeddruk
-                                </SizableText>
-                                <Input
-                                    value={formState.bloeddruk}
-                                    onChangeText={(value) => setFieldValue("bloeddruk", value)}
-                                    bg="white"
-                                    borderWidth={1}
-                                    borderColor="#d3d3d3"
-                                    borderRadius="$4"
-                                    px="$3"
-                                    width="100%"
-                                />
-                                {errors.bloeddruk && (
-                                    <ErrorText>{errors.bloeddruk}</ErrorText>
-                                )}
-                            </YStack>
-                        </XStack>
-
-                        {/* Save Button */}
-                        <Button
-                            onPress={handleSave}
-                            bg="$accent"
-                            borderRadius="$8"
-                            mt="$6"
-                            alignSelf="flex-end"
-                            px="$4"
-                            py="$2"
-                        >
-                            <SizableText fontSize="$5" color="white">
-                                Opslaan
-                            </SizableText>
-                        </Button>
                     </YStack>
-                </YStack>
+                </ScrollView>
             </TouchableWithoutFeedback>
 
             <DropdownModal<Patient>
@@ -407,10 +419,22 @@ export default function MedischeCheckScreen({ navigation, route }) {
                 screenWidth={screenWidth}
                 title="Selecteer patient"
                 hasSearch={true}
-                isMultiSelect={true}
+                isMultiSelect={false}
                 getItemKey={(item) => item.patientNumber.toString()}
-                getTextForItem={(item) => `${item.firstName} ${item.lastName}`}
+                getTextForItem={(item) => (
+                    <XStack
+                        justifyContent="space-between"
+                        width="100%"
+                        pr="$2"
+
+
+                    >
+                        <Text>{`${item.firstName} ${item.lastName}`}</Text>
+                        <Text textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
+                    </XStack>
+                )}
             />
         </TitleLayout>
+
     );
 }
