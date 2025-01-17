@@ -11,7 +11,7 @@ import {RoomDetailModal} from "./map_modal";
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 const MAP_SCALE_FACTOR = 3;
 const MAX_SCALE = 5;
-const MIN_SCALE = 2;
+const MIN_SCALE = 1.2;
 
 interface Room {
     _id?: string;
@@ -63,7 +63,7 @@ async function fetchData<T>(
         }
 
         const data: T[] = await response.json();
-        console.log(`Data fetched successfully from ${url}:`, data);
+        console.log(`Data fetched successfully from ${url}:`);
         showSuccessToast(`Data loaded successfully from ${url}`);
         return data;
     } catch (error: any) {
