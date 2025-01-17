@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
+import { Home } from "@tamagui/lucide-icons";
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
@@ -15,7 +16,7 @@ import { RoomDetailModal } from "./map_modal";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const MAP_SCALE_FACTOR = 3;
 const MAX_SCALE = 5;
-const MIN_SCALE = 1.2;
+const MIN_SCALE = 1.6;
 
 interface Room {
     _id?: string;
@@ -85,7 +86,7 @@ async function fetchData<T>(
     }
 }
 
-export default function MapScreen() {
+export default function MapScreen({ navigation }) {
     const [isRoomDetailModalVisible, setIsRoomDetailModalVisible] =
         useState(false);
     const [selectedRoom, setSelectedRoom] = useState<selectedRoomType | null>(null);
@@ -183,7 +184,7 @@ export default function MapScreen() {
         }
     }, [floor, mapData, refreshMap]);
 
-    const scale = useSharedValue(MIN_SCALE);
+    const scale = useSharedValue(MIN_SCALE); // Set initial value to MIN_SCALE
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
     const panOffsetX = useSharedValue(0);
@@ -393,6 +394,28 @@ export default function MapScreen() {
                     </Button>
                 </YStack>
             </YStack>
+
+            <YStack
+                ai="center"
+                jc="center"
+                position="absolute"
+                bottom={0}
+                width="100%"
+                height={(screenHeight - (screenHeight * 70) / 100) /2} // adjust for spacing if needed
+            >
+                <Button
+                    borderRadius="$10"
+                    bg="$secondary"
+                    size="$6"
+                    px="$8"
+                    onPress={() => navigation.navigate('HomeScreen')}
+                    pressStyle={{bg: '$secondary_focus'}}
+                >
+                    <Home color="white" size="$2"/>
+                </Button>
+            </YStack>
+
+
             <RoomDetailModal
                 visible={isRoomDetailModalVisible}
                 onClose={handleCloseRoomModal}
