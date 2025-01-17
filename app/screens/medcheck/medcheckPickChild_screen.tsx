@@ -6,6 +6,7 @@ import {ChevronDown, SquarePen} from "@tamagui/lucide-icons";
 import {useMedCheckForm} from "./useMedCheckForm";
 import DropdownModal from "../common/multiselect_dropdown";
 import BackButton from "../common/back_button";
+import {useToastController} from '@tamagui/toast';
 
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
@@ -93,6 +94,8 @@ export default function MedischeCheckScreen({navigation, route}) {
     const [patientDisplayText, setPatientDisplayText] = useState(
         "Zoek of selecteer een patiënt"
     );
+    const [isLoading, setIsLoading] = useState(false);
+    const toast = useToastController();
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -149,6 +152,71 @@ export default function MedischeCheckScreen({navigation, route}) {
         }
 
         setIsPatientModalVisible(false); // Hiding dropdown when a patient is selected
+    };
+
+    const showErrorToast = (message) => {
+        toast.show('Error', {
+            message,
+            native: false, // Using custom toast style
+        });
+    };
+
+    const showSuccessToast = (message) => {
+        toast.show('Success', {
+            message,
+            native: false, // Using custom toast style
+        });
+    };
+
+    setIsLoading(true);
+    const medicalCheckData = {
+        createMedicalCheckDto: {
+            firstName: formState.firstName,
+            lastName: formState.lastName,
+            description: formState.omschrijving,
+            heartRate: formState.hartslag,
+            bloodPressure: formState.bloeddruk,
+        },
+    };
+    console.log("Patient data to be created:", medicalCheckData);
+
+    const handleCreateMedicalCheck = async () => {
+        if (!selectedPatient) {
+            showErrorToast("Please select a patient.");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const medicalCheckData = {
+                createMedicalCheckDto: {
+                    firstName: formState.firstName || "", // Provide default empty string
+                    lastName: formState.lastName || "",
+                    description: formState.omschrijving || "",
+                    heartRate: formState.hartslag || "",
+                    bloodPressure: formState.bloeddruk || "",
+                },
+            };
+
+            const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/medcheck/${selectedPatient.patientNumber}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(medicalCheckData),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text(); // Get error text from response
+                throw new Error(`HTTP error ${response.status}: ${errorText}`);
+            }
+
+            showSuccessToast('Medical check created successfully!');
+            navigation.navigate('HomeScreen');
+        } catch (error) {
+            console.error('Error creating medical check:', error);
+            showErrorToast(`Error: ${error.message}`); // Display the error message
+        } finally {
+            setIsLoading(false);
+        }
     };
 
 

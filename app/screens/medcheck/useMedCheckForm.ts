@@ -6,12 +6,12 @@ interface MedicalCheck {
 }
 
 interface MedicalCheckFormState {
+    firstName: string;
+    lastName: string;
     selectedPatients: string;
     bloeddruk: string;
     omschrijving: string;
     hartslag: string;
-    patientName: string;
-    medicalChecks: MedicalCheck[];
 }
 
 interface Errors {
@@ -20,16 +20,15 @@ interface Errors {
     bloeddruk: string;
     omschrijving: string;
     patientName?: string;
-    medicalChecks?: string;
 }
 
 const initialMedicalCheckFormState: MedicalCheckFormState = {
-    patientName: "",
+   firstName: "",
+    lastName: "",
     selectedPatients: "",
     bloeddruk: "",
     omschrijving: "",
     hartslag: "",
-    medicalChecks: [],
 };
 
 interface UseMedicalCheckFormResult {
