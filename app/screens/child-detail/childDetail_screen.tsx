@@ -13,7 +13,6 @@ import DeleteModal from "./delete_modal";
 import { FloatingAction } from "react-native-floating-action";
 import CryptoJS from "react-native-crypto-js";
 
-
 const {width: screenWidth} = Dimensions.get('window');
 
 interface Room {
@@ -34,6 +33,23 @@ interface agreement{
     description: string
 }
 
+interface MedCheck{
+    _id: string;
+    description: string;
+    heartBeat: number;
+    bloodPressure: string;
+    createdAt: string; // assuming there is a date in the form of string
+}
+
+interface Medicine {
+    _id: string;
+    name: string;
+    brandName: string;
+    atcCode: string;
+    dosageGoals: any[]; // You can create a more specific interface if needed
+}
+
+
 interface Patient {
     _id: string;
     firstName: string;
@@ -49,6 +65,8 @@ interface Patient {
     length: string
     weight: string
     agreements: agreement[]
+    medChecks: MedCheck[];
+    medicines: Medicine[];
 }
 
 interface PatientDetailsScreenProps {
@@ -60,50 +78,12 @@ interface PatientDetailsScreenProps {
     navigation: any;
 }
 
-// Function to get appointments (placeholder for now)
-function getAppointments() {
-   /* return [
-        {title: "Physical Therapy", description: "Routine physical therapy session"},
-        {title: "Consultation with Dr. Smith", description: "Follow-up on recent blood test results"},
-        {title: "Vaccination", description: "Administer flu vaccine"},
-        {title: "Eye Exam", description: "Standard vision check-up"},
-        {title: "Dental Checkup", description: "Teeth cleaning and cavity check"},
-    ];*/
-
-}
-
-// Function to get medicines for a user (placeholder for now)
-function getMedicinesForUser() {
-    return [
-        {name: "Abacavir"},
-        {name: "Bezlotozumab"},
-        {name: "Desoximetason"},
-    ];
-}
-
-// Function to get medical checks for a user
-function getMedicalChecksForUser() {
-    return [
-        {datetime: new Date('2024-12-01T09:30:00')},
-        {datetime: new Date('2024-12-01T18:30:00')},
-        {datetime: new Date('2024-12-02T07:45:00')},
-        {datetime: new Date('2024-12-01T18:30:00')},
-        {datetime: new Date('2024-12-02T07:45:00')},
-        {datetime: new Date('2024-12-01T18:30:00')},
-        {datetime: new Date('2024-12-02T07:45:00')},
-        {datetime: new Date('2024-12-01T18:30:00')},
-        {datetime: new Date('2024-12-02T07:45:00')},
-    ].sort((a, b) => b.datetime.getTime() - a.datetime.getTime());
-}
 
 //Decrypt BSN number
 function decryptBSN(bsn: string):string {
     let bytes  = CryptoJS.AES.decrypt(bsn, process.env.EXPO_PUBLIC_ENCRYPTION_KEY);
     return bytes.toString(CryptoJS.enc.Utf8);
 }
-
-// Fallback medicine
-const fallbackMedicine = {name: "No Medicine Selected"};
 
 
 export default function ChildDetailScreen({route, navigation}: PatientDetailsScreenProps) {
@@ -135,20 +115,20 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
         fetchPatient();
     }, [initialPatient.patientNumber]);
 
-
     const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([]);
-    const [selectedMedicine, setSelectedMedicine] = useState<{ name: string } | null>(null);
+    const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
     const [isMedicineDetailModalVisible, setMedicineDetailModalVisible] = useState(false);
-    const [selectedMedicalCheck, setSelectedMedicalCheck] = useState<{ datetime: Date } | null>(null);
+    const [selectedMedicalCheck, setSelectedMedicalCheck] = useState<MedCheck | null>(null);
     const [isMedicalCheckDetailModalVisible, setMedicalCheckDetailModalVisible] = useState(false);
+
+
     const handleCloseMedicineModal = () => {
         setMedicineDetailModalVisible(false);
         setSelectedMedicine(null)
     };
 
-    const handleMedicinePress = (medicine: { name: string }) => {
+    const handleMedicinePress = (medicine: Medicine) => {
         setSelectedMedicine(medicine);
-        console.log(medicine)
         setMedicineDetailModalVisible(true);
     };
     const [isModalVisible, setModalVisible] = useState(false);
@@ -173,19 +153,40 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
         setSelectedMedicalCheck(null);
     };
 
-    const handleMedicalCheckPress = (medicalCheck: { datetime: Date }) => {
+    const handleMedicalCheckPress = (medicalCheck: MedCheck) => {
         setSelectedMedicalCheck(medicalCheck);
         setMedicalCheckDetailModalVisible(true);
     };
 
 
-    const appointments = getAppointments();
-    const medicines = getMedicinesForUser();
-    const medicalChecks = getMedicalChecksForUser()
-
     const handleAccordionChange = (value: string[]) => {
         setOpenAccordionItems(value)
     }
+
+      const [innerAccordionHeights, setInnerAccordionHeights] = useState<{ [key: string]: number }>({});
+    const innerAccordionRefs = useRef<{ [key: string]: React.RefObject<View> }>({});
+
+
+    useEffect(() => {
+        const updateInnerHeights = () => {
+            const newHeights: { [key: string]: number } = {};
+            Object.keys(innerAccordionRefs.current).forEach(key => {
+                const ref = innerAccordionRefs.current[key];
+                if(ref && ref.current)
+                {
+                    // Measure the content
+                    ref.current.measure((fx, fy, width, height) => {
+                        newHeights[key] = height;
+                    });
+                }
+
+            });
+            setInnerAccordionHeights(newHeights)
+
+        }
+        updateInnerHeights();
+
+    }, [openAccordionItems, patient.agreements])
 
     const [isFABOpen, setFABOpen] = useState(false);
     const fabMenuAnimation = useRef(new Animated.Value(0)).current;
@@ -274,6 +275,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
             iconColor: '#000'
         }
     ];
+
 
     if(loading) return    <TitleLayout
         titleText={`${patient.firstName} ${patient.lastName}`}
@@ -378,7 +380,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                             </SizableText>
                                             <SizableText size="$5" color="$text" textAlign="left">
                                                 {decryptBSN(patient.bsn)}
-                                                
+
                                             </SizableText>
                                         </YStack>
                                         <YStack m='$2' alignItems="flex-start" width="100%">
@@ -480,7 +482,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         alignItems={"center"}
                                         bg="$container_alt"
                                     >
-                                        {medicines.map((medicine, index) => (
+                                        {patient.medicines.map((medicine, index) => (
                                             <View key={index}>
                                                 <Button
                                                     alignSelf="stretch"
@@ -559,6 +561,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         >
                                             {patient.agreements.map((agreement, index) => {
                                                 const isOpen = openAccordionItems.includes(`item-appointment-${index}`);
+
                                                 return (
                                                     <Accordion.Item key={index} value={`item-appointment-${index}`} mb='$3'>
                                                         <Accordion.Trigger
@@ -570,7 +573,6 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                             borderRadius={'$3'}
                                                             borderBottomLeftRadius={isOpen ? 0 : '$3'}
                                                             borderBottomRightRadius={isOpen ? 0 : '$3'}
-
                                                             pressStyle={{backgroundColor: '#B9D6D6'}}
                                                         >
                                                             {({open}: { open: boolean }) => (
@@ -583,21 +585,23 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                                 </>
                                                             )}
                                                         </Accordion.Trigger>
-                                                        <Accordion.HeightAnimator animation={"bouncy"}>
-                                                            <Accordion.Content
-                                                                backgroundColor={"#B9D6D6"}
-                                                                paddingTop={0}
-                                                                animation={"bouncy"}
-                                                                borderBottomLeftRadius={"$3"}
-                                                                borderBottomRightRadius={"$3"}
-                                                                borderTopLeftRadius={0}
-                                                                borderTopRightRadius={0}
-                                                            >
+                                                      <Accordion.HeightAnimator animation={"bouncy"}>
+                                                          <Accordion.Content
+                                                              backgroundColor={"#B9D6D6"}
+                                                              paddingTop={0}
+                                                              animation={"bouncy"}
+                                                              borderBottomLeftRadius={"$3"}
+                                                              borderBottomRightRadius={"$3"}
+                                                              borderTopLeftRadius={0}
+                                                              borderTopRightRadius={0}
+                                                          >
+                                                               <View ref={el => innerAccordionRefs.current[`item-appointment-${index}`] = el} style={{overflow:'hidden'}}>
                                                                 <SizableText col='$text'>
                                                                     {agreement.description}
                                                                 </SizableText>
-                                                            </Accordion.Content>
-                                                        </Accordion.HeightAnimator>
+                                                               </View>
+                                                          </Accordion.Content>
+                                                      </Accordion.HeightAnimator>
                                                     </Accordion.Item>
                                                 )
                                             })}
@@ -652,7 +656,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         marginTop={'$4'}
                                     >
                                         <ScrollView nestedScrollEnabled={true}>
-                                            {medicalChecks.map((check, index) => (
+                                            {patient.medChecks.map((check, index) => (
                                                 <YStack key={index} width="100%" alignItems="flex-start">
                                                     {/* Top Line Separator (above the checkmark) */}
 
@@ -678,8 +682,12 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                                 fontSize="$6"
                                                                 onPress={() => handleMedicalCheckPress(check)}
                                                             >
-                                                                {format(check.datetime, 'EEE dd-MM-yy (HH:mm)', {locale: nl})}
+                                                                { check.createdAt ? format(parseISO(check.createdAt), 'EEE dd-MM-yy (HH:mm)', { locale: nl })
+                                                                : "Datum niet beschikbaar"}
                                                             </SizableText>
+                                                             <SizableText>
+                                                                {`Hartslag: ${check.heartBeat}, Bloeddruk: ${check.bloodPressure}`}
+                                                             </SizableText>
                                                         </YStack>
                                                     </XStack>
                                                 </YStack>
