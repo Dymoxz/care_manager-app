@@ -482,26 +482,31 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         alignItems={"center"}
                                         bg="$container_alt"
                                     >
-                                        {patient.medicines.map((medicine, index) => (
-                                            <View key={index}>
-                                                <Button
-                                                    alignSelf="stretch"
-                                                    backgroundColor="#B9D6D6"
-                                                    borderRadius="$2"
-                                                    justifyContent="space-between"
-                                                    h='$6'
-                                                    width={screenWidth * 0.8}
-                                                    mb='$3'
-                                                    paddingLeft="$4"
-                                                    paddingRight="$4"
-                                                    pressStyle={{backgroundColor: '#B9D6D6'}}
-                                                    onPress={() => handleMedicinePress(medicine)}
-                                                >
-                                                    <Paragraph size="$4" col='$text' fontWeight="700">{medicine.name}</Paragraph>
-                                                    <Paragraph size="$4" col='$text' fontWeight="700">+</Paragraph>
-                                                </Button>
-                                            </View>
-                                        ))}
+                                        {patient.medicines && patient.medicines.length > 0 ? (
+                                            patient.medicines.map((medicine, index) => (
+                                                <View key={index}>
+                                                    <Button
+                                                        alignSelf="stretch"
+                                                        backgroundColor="#B9D6D6"
+                                                        borderRadius="$2"
+                                                        justifyContent="space-between"
+                                                        h='$6'
+                                                        width={screenWidth * 0.8}
+                                                        mb='$3'
+                                                        paddingLeft="$4"
+                                                        paddingRight="$4"
+                                                        pressStyle={{backgroundColor: '#B9D6D6'}}
+                                                        onPress={() => handleMedicinePress(medicine)}
+                                                    >
+                                                        <Paragraph size="$4" col='$text' fontWeight="700">{medicine.name}</Paragraph>
+                                                        <Paragraph size="$4" col='$text' fontWeight="700">+</Paragraph>
+                                                    </Button>
+                                                </View>
+                                            ))
+                                        ) : (
+                                            <SizableText color="$text" size="$5">Geen medicijnen toegewezen</SizableText>
+                                        )}
+
                                     </Accordion.Content>
                                 </Accordion.HeightAnimator>
                             </YStack>
@@ -551,7 +556,8 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         alignItems={"center"}
                                         bg="$container_alt"
                                     >
-                                        <Accordion
+                                       {patient.agreements && patient.agreements.length > 0 ? (
+                                         <Accordion
                                             overflow="hidden"
                                             value={openAccordionItems}
                                             type="multiple"
@@ -606,6 +612,9 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                 )
                                             })}
                                         </Accordion>
+                                        ): (
+                                          <SizableText color="$text" size="$5">Geen afspraken toegewezen</SizableText>
+                                        )}
                                     </Accordion.Content>
                                 </Accordion.HeightAnimator>
                             </YStack>
@@ -655,6 +664,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         animation={"bouncy"}
                                         marginTop={'$4'}
                                     >
+                                         {patient.medChecks && patient.medChecks.length > 0 ? (
                                         <ScrollView nestedScrollEnabled={true}>
                                             {patient.medChecks.map((check, index) => (
                                                 <YStack key={index} width="100%" alignItems="flex-start">
@@ -693,6 +703,9 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                 </YStack>
                                             ))}
                                         </ScrollView>
+                                           ) : (
+                                            <SizableText color="$text" size="$5">Geen medische checks gedaan</SizableText>
+                                        )}
                                     </Accordion.Content>
                                 </Accordion.HeightAnimator>
                             </YStack>
