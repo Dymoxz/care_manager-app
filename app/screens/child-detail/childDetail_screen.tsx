@@ -163,7 +163,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
         setOpenAccordionItems(value)
     }
 
-      const [innerAccordionHeights, setInnerAccordionHeights] = useState<{ [key: string]: number }>({});
+    const [innerAccordionHeights, setInnerAccordionHeights] = useState<{ [key: string]: number }>({});
     const innerAccordionRefs = useRef<{ [key: string]: React.RefObject<View> }>({});
 
 
@@ -729,7 +729,15 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                 console.log('Medische check');
                                 break;
                             case "bt_bewerken":
-                                console.log('Bewerken');
+                                navigation.navigate("IntakeOneScreen", {formData: {
+                                            voornaam: patient.firstName,
+                                            achternaam: patient.lastName,
+                                             geboortedatumRaw: patient.dateOfBirth,
+                                            bsn: decryptBSN(patient.bsn),
+                                            lengte: patient.length,
+                                            gewicht: patient.weight,
+                                            selectedGender: null, // You might need to map the gender somehow if available
+                                        }});
                                 break;
                             default:
                                 console.log(`Unknown action: ${name}`);
