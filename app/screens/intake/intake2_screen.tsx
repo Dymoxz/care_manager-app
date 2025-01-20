@@ -6,7 +6,7 @@ import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
 import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
 import {useIntakeForm} from "./useIntakeForm";
 import {useToastController} from '@tamagui/toast';
-import CryptoJS from "react-native-crypto-js"; 
+import CryptoJS from "react-native-crypto-js";
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get("window");
 
@@ -223,7 +223,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
         if (!isValid) {
             return;
         }
-        
+
         //encrypt BSN
         let bsnEncrypted;
         try{
@@ -308,7 +308,9 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                 />
             }
         >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView            behavior={Platform.OS==='ios' ? 'padding' : 'height'}>
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <YStack ai="center">
                     <YStack
                         bg="$container"
@@ -419,6 +421,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                     </YStack>
                 </YStack>
             </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
 
 
             <DropdownModal<ClinicalProfile>
