@@ -108,21 +108,21 @@ export default function MedicalCheckDetailModal({
                         </XStack>
 
 
-                        <SizableText ml="$3" mt="$2">
+                        <SizableText ml="$3" mt="$5">
                             {medicalCheckToDisplay.description}
                         </SizableText>
-                        <XStack  mt="$3"  justifyContent="flex-start">
+                        <XStack  mt="$6"  justifyContent="flex-start">
                             <HeartPulse size="$2" color="$danger" mr="$1" />
-                            <StyledText >
+                            <SizableText >
                                 Hartslag: {medicalCheckToDisplay.heartRate} bpm
-                            </StyledText>
+                            </SizableText>
                         </XStack>
 
-                        <XStack mt="$1" justifyContent="flex-start" alignItems="center">
+                        <XStack mt="$2" justifyContent="flex-start" alignItems="center">
                             <Droplet size="$2" color="$accent_focus" mr="$1" />
-                            <StyledText>
+                            <SizableText>
                                 Bloeddruk: {medicalCheckToDisplay.bloodPressure}
-                            </StyledText>
+                            </SizableText>
                         </XStack>
                     </ScrollView>
                     <Unspaced>
