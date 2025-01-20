@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {Dimensions, ScrollView, Animated, Easing} from 'react-native';
 import {Accordion, Button, Circle, Paragraph, SizableText, Spinner, Square, View, XStack, YStack,} from 'tamagui';
 import TitleLayout from "../common/title_layout";
@@ -11,7 +11,7 @@ import {format, parseISO} from "date-fns";
 import {nl} from 'date-fns/locale';
 import DeleteModal from "./delete_modal";
 import { FloatingAction } from "react-native-floating-action";
-import CryptoJS from "react-native-crypto-js";
+import CryptoJS from 'react-native-crypto-js';
 
 const {width: screenWidth} = Dimensions.get('window');
 
@@ -36,7 +36,7 @@ interface agreement{
 interface MedCheck{
     _id: string;
     description: string;
-    heartBeat: number;
+    heartRate: number; // Corrected heartBeat
     bloodPressure: string;
     createdAt: string; // assuming there is a date in the form of string
 }
@@ -282,8 +282,8 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
         topContent={<BackButton navigation={navigation}/>}
     >
         <YStack backgroundColor='$background' height={screenWidth *1.2} alignItems="center" justifyContent='center'>
-        <Spinner size="large" color="$primary" />
-    </YStack></TitleLayout>
+            <Spinner size="large" color="$primary" />
+        </YStack></TitleLayout>
 
     if(error) return <SizableText>Error: {error}</SizableText>
     return (
@@ -556,64 +556,64 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         alignItems={"center"}
                                         bg="$container_alt"
                                     >
-                                       {patient.agreements && patient.agreements.length > 0 ? (
-                                         <Accordion
-                                            overflow="hidden"
-                                            value={openAccordionItems}
-                                            type="multiple"
-                                            bg="$container_alt"
-                                            onValueChange={handleAccordionChange}
+                                        {patient.agreements && patient.agreements.length > 0 ? (
+                                            <Accordion
+                                                overflow="hidden"
+                                                value={openAccordionItems}
+                                                type="multiple"
+                                                bg="$container_alt"
+                                                onValueChange={handleAccordionChange}
 
-                                        >
-                                            {patient.agreements.map((agreement, index) => {
-                                                const isOpen = openAccordionItems.includes(`item-appointment-${index}`);
+                                            >
+                                                {patient.agreements.map((agreement, index) => {
+                                                    const isOpen = openAccordionItems.includes(`item-appointment-${index}`);
 
-                                                return (
-                                                    <Accordion.Item key={index} value={`item-appointment-${index}`} mb='$3'>
-                                                        <Accordion.Trigger
-                                                            flexDirection="row"
-                                                            justifyContent="space-between"
-                                                            borderWidth={0}
-                                                            width={screenWidth * 0.8}
-                                                            backgroundColor={"#B9D6D6"}
-                                                            borderRadius={'$3'}
-                                                            borderBottomLeftRadius={isOpen ? 0 : '$3'}
-                                                            borderBottomRightRadius={isOpen ? 0 : '$3'}
-                                                            pressStyle={{backgroundColor: '#B9D6D6'}}
-                                                        >
-                                                            {({open}: { open: boolean }) => (
-                                                                <>
-                                                                    <Paragraph col='$text' size='$4'
-                                                                               fontWeight='700'>{agreement.title}</Paragraph>
-                                                                    <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
-                                                                        <ChevronDown size="$1" color="$text"/>
-                                                                    </Square>
-                                                                </>
-                                                            )}
-                                                        </Accordion.Trigger>
-                                                      <Accordion.HeightAnimator animation={"bouncy"}>
-                                                          <Accordion.Content
-                                                              backgroundColor={"#B9D6D6"}
-                                                              paddingTop={0}
-                                                              animation={"bouncy"}
-                                                              borderBottomLeftRadius={"$3"}
-                                                              borderBottomRightRadius={"$3"}
-                                                              borderTopLeftRadius={0}
-                                                              borderTopRightRadius={0}
-                                                          >
-                                                               <View ref={el => innerAccordionRefs.current[`item-appointment-${index}`] = el} style={{overflow:'hidden'}}>
-                                                                <SizableText col='$text'>
-                                                                    {agreement.description}
-                                                                </SizableText>
-                                                               </View>
-                                                          </Accordion.Content>
-                                                      </Accordion.HeightAnimator>
-                                                    </Accordion.Item>
-                                                )
-                                            })}
-                                        </Accordion>
+                                                    return (
+                                                        <Accordion.Item key={index} value={`item-appointment-${index}`} mb='$3'>
+                                                            <Accordion.Trigger
+                                                                flexDirection="row"
+                                                                justifyContent="space-between"
+                                                                borderWidth={0}
+                                                                width={screenWidth * 0.8}
+                                                                backgroundColor={"#B9D6D6"}
+                                                                borderRadius={'$3'}
+                                                                borderBottomLeftRadius={isOpen ? 0 : '$3'}
+                                                                borderBottomRightRadius={isOpen ? 0 : '$3'}
+                                                                pressStyle={{backgroundColor: '#B9D6D6'}}
+                                                            >
+                                                                {({open}: { open: boolean }) => (
+                                                                    <>
+                                                                        <Paragraph col='$text' size='$4'
+                                                                                   fontWeight='700'>{agreement.title}</Paragraph>
+                                                                        <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
+                                                                            <ChevronDown size="$1" color="$text"/>
+                                                                        </Square>
+                                                                    </>
+                                                                )}
+                                                            </Accordion.Trigger>
+                                                            <Accordion.HeightAnimator animation={"bouncy"}>
+                                                                <Accordion.Content
+                                                                    backgroundColor={"#B9D6D6"}
+                                                                    paddingTop={0}
+                                                                    animation={"bouncy"}
+                                                                    borderBottomLeftRadius={"$3"}
+                                                                    borderBottomRightRadius={"$3"}
+                                                                    borderTopLeftRadius={0}
+                                                                    borderTopRightRadius={0}
+                                                                >
+                                                                    <View ref={el => innerAccordionRefs.current[`item-appointment-${index}`] = el} style={{overflow:'hidden'}}>
+                                                                        <SizableText col='$text'>
+                                                                            {agreement.description}
+                                                                        </SizableText>
+                                                                    </View>
+                                                                </Accordion.Content>
+                                                            </Accordion.HeightAnimator>
+                                                        </Accordion.Item>
+                                                    )
+                                                })}
+                                            </Accordion>
                                         ): (
-                                          <SizableText color="$text" size="$5">Geen afspraken toegewezen</SizableText>
+                                            <SizableText color="$text" size="$5">Geen afspraken toegewezen</SizableText>
                                         )}
                                     </Accordion.Content>
                                 </Accordion.HeightAnimator>
@@ -664,46 +664,49 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                         animation={"bouncy"}
                                         marginTop={'$4'}
                                     >
-                                         {patient.medChecks && patient.medChecks.length > 0 ? (
-                                        <ScrollView nestedScrollEnabled={true}>
-                                            {patient.medChecks.map((check, index) => (
-                                                <YStack key={index} width="100%" alignItems="flex-start">
-                                                    {/* Top Line Separator (above the checkmark) */}
+                                        {patient.medChecks && patient.medChecks.length > 0 ? (
+                                            <ScrollView nestedScrollEnabled={true}>
+                                                {patient.medChecks.map((check, index) => (
 
-                                                    <XStack space="$4" alignItems="center" mb={'$3'}>
-                                                        {/* Checkmark SVG */}
-                                                        <Svg width="20" height="20" viewBox="0 0 20 20">
-                                                            <Path
-                                                                fillRule="evenodd"
-                                                                clipRule="evenodd"
-                                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                                                fill="#0E7490"
-                                                            />
-                                                        </Svg>
+                                                    <YStack key={index} width="100%" alignItems="flex-start"                                                                     onPress={() => handleMedicalCheckPress(check)}
+                                                    >
+                                                        {/* Top Line Separator (above the checkmark) */}
 
-                                                        {/* Content */}
-                                                        <YStack
-                                                            backgroundColor="white"
-                                                            borderRadius="$6"
-                                                            padding="$4"
-                                                            flex={1}
-                                                        >
-                                                            <SizableText
-                                                                fontSize="$6"
+                                                        <XStack space="$4" alignItems="center" mb={'$3'}                                                                     onPress={() => handleMedicalCheckPress(check)}
                                                                 onPress={() => handleMedicalCheckPress(check)}
+                                                        >
+                                                            {/* Checkmark SVG */}
+                                                            <Svg width="20" height="20" viewBox="0 0 20 20">
+                                                                <Path
+                                                                    fillRule="evenodd"
+                                                                    clipRule="evenodd"
+                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                                                    fill="#0E7490"
+                                                                />
+                                                            </Svg>
+
+                                                            {/* Content */}
+                                                            <YStack
+                                                                backgroundColor="white"
+                                                                borderRadius="$6"
+                                                                padding="$4"
+                                                                flex={1}
                                                             >
-                                                                { check.createdAt ? format(parseISO(check.createdAt), 'EEE dd-MM-yy (HH:mm)', { locale: nl })
-                                                                : "Datum niet beschikbaar"}
-                                                            </SizableText>
-                                                             <SizableText>
-                                                                {`Hartslag: ${check.heartBeat}, Bloeddruk: ${check.bloodPressure}`}
-                                                             </SizableText>
-                                                        </YStack>
-                                                    </XStack>
-                                                </YStack>
-                                            ))}
-                                        </ScrollView>
-                                           ) : (
+                                                                <SizableText
+                                                                    fontSize="$6"
+                                                                >
+                                                                    { check.createdAt ? format(parseISO(check.createdAt), 'EEE dd-MM-yy (HH:mm)', { locale: nl })
+                                                                        : "Datum niet beschikbaar"}
+                                                                </SizableText>
+                                                                <SizableText>
+                                                                    {`Hartslag: ${check.heartRate}, Bloeddruk: ${check.bloodPressure}`}
+                                                                </SizableText>
+                                                            </YStack>
+                                                        </XStack>
+                                                    </YStack>
+                                                ))}
+                                            </ScrollView>
+                                        ) : (
                                             <SizableText color="$text" size="$5">Geen medische checks gedaan</SizableText>
                                         )}
                                     </Accordion.Content>
@@ -730,14 +733,14 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                 break;
                             case "bt_bewerken":
                                 navigation.navigate("IntakeOneScreen", {formData: {
-                                            voornaam: patient.firstName,
-                                            achternaam: patient.lastName,
-                                             geboortedatumRaw: patient.dateOfBirth,
-                                            bsn: decryptBSN(patient.bsn),
-                                            lengte: patient.length,
-                                            gewicht: patient.weight,
-                                            selectedGender: null, // You might need to map the gender somehow if available
-                                        }});
+                                        voornaam: patient.firstName,
+                                        achternaam: patient.lastName,
+                                        geboortedatumRaw: patient.dateOfBirth,
+                                        bsn: decryptBSN(patient.bsn),
+                                        lengte: patient.length,
+                                        gewicht: patient.weight,
+                                        selectedGender: null, // You might need to map the gender somehow if available
+                                    }});
                                 break;
                             default:
                                 console.log(`Unknown action: ${name}`);

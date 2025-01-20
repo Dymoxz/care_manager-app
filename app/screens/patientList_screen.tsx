@@ -121,7 +121,7 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
 
     useEffect(() => {
         setLoading(true)
-        const fetchData = async () => {
+        const f = async () => {
             await fetchData(
                 (error) => console.error(error),
                 (success) => console.log(success),
@@ -130,7 +130,7 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
             setLoading(false)
         };
 
-        fetchData()
+        f()
     }, []);
 
     const filteredPatients = patients.filter((patient) => {
