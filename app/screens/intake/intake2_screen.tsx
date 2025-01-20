@@ -308,9 +308,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                 />
             }
         >
-        <KeyboardAvoidingView            behavior={Platform.OS==='ios' ? 'padding' : 'height'}>
-
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <YStack ai="center">
                     <YStack
                         bg="$container"
@@ -421,7 +419,6 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                     </YStack>
                 </YStack>
             </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
 
 
             <DropdownModal<ClinicalProfile>

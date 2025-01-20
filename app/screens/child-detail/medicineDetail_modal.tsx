@@ -1,6 +1,6 @@
-import { Button, Dialog, SizableText, Unspaced, YStack, View, ScrollView } from 'tamagui';
-import React from "react";
-import { X } from "@tamagui/lucide-icons";
+import { Button, Dialog, SizableText, Unspaced, YStack, View, ScrollView, Accordion, Square } from 'tamagui';
+import React, {useState} from "react";
+import { X, ChevronDown } from "@tamagui/lucide-icons";
 import Markdown from 'react-native-markdown-display';
 
 interface DosageGoal {
@@ -36,7 +36,11 @@ export default function MedicineDetailModal({visible, onClose, screenWidth, medi
         dosageGoals: [],
     };
     const medicineToDisplay = medicine || fallbackMedicine;
+    const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([]);
 
+    const handleAccordionChange = (value: string[]) => {
+        setOpenAccordionItems(value)
+    }
     return (
         <Dialog modal open={visible} onOpenChange={onClose}>
             <Dialog.Portal>
@@ -77,49 +81,87 @@ export default function MedicineDetailModal({visible, onClose, screenWidth, medi
                             <SizableText size="$5" fontWeight="bold" color="$text" mt="$2">
                                 ATC Code:
                             </SizableText>
-                            <SizableText size="$5"  color="$text" >
+                            <SizableText size="$5"  mb='$4' color="$text" >
                                 {medicineToDisplay.atcCode}
                             </SizableText>
+                            <Accordion
+                                overflow="hidden"
+                                value={openAccordionItems}
+                                type="multiple"
+                                onValueChange={handleAccordionChange}
 
-                            {medicineToDisplay.dosageGoals.map((dosageGoal, index) => (
-                                <YStack key={index} mt="$2" mb="$3" width="100%">
-                                    <SizableText size="$5" fontWeight="bold" color="$text">
-                                        Dosering advies:
-                                    </SizableText>
-                                    <SizableText size="$5" color="$text">
-                                        {dosageGoal.dosageGoal}
-                                    </SizableText>
-                                    {dosageGoal.ingestType.map((ingestType, typeIndex) => (
-                                        <YStack  key={typeIndex} ml="$2">
-                                            <SizableText  size="$5" fontWeight="bold" color="$text" mt="$1">
-                                                Inname type:
-                                            </SizableText>
-                                            <SizableText  size="$5"  color="$text">
-                                                {ingestType.ingestType}
-                                            </SizableText>
-                                            {ingestType.ageAndWeight && ingestType.ageAndWeight.map((ageWeight, ageIndex) => (
-                                                <YStack key={ageIndex}  ml="$2">
-                                                    <SizableText  size="$5" fontWeight="bold" color="$text"  mt="$1">
-                                                        Leeftijd en Gewicht:
+                            >
+                                {medicineToDisplay.dosageGoals.map((dosageGoal, index) => (
+                                    <Accordion.Item key={index} value={`item-dosageGoal-${index}`} mb="$3">
+                                        <Accordion.Trigger
+                                            flexDirection="row"
+                                            justifyContent="space-between"
+                                            borderWidth={0}
+                                            backgroundColor={"#B9D6D6"}
+                                            borderRadius={'$3'}
+                                            pressStyle={{backgroundColor: '#B9D6D6'}}
+                                        >
+                                            {({open}: { open: boolean }) => (
+                                                <>
+                                                    <YStack>
+                                                    <SizableText size="$5" fontWeight="bold" color="$text">
+                                                        Dosering advies:
                                                     </SizableText>
-                                                    <SizableText  size="$5" color="$text" >
-                                                        {ageWeight.ageAndWeight}
+                                                    <SizableText size="$5" color="$text">
+                                                        {dosageGoal.dosageGoal}
                                                     </SizableText>
-                                                    <View  ml="$2">
-                                                        <Markdown
-                                                            style={{fontSize: 16, fontWeight: 'normal'}}
+                                                    </YStack>
+                                                    <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
+                                                        <ChevronDown size="$1" color="$text"/>
+                                                    </Square>
+                                                </>
+                                            )}
+                                        </Accordion.Trigger>
+                                        <Accordion.HeightAnimator animation={"bouncy"}>
+                                            <Accordion.Content
+                                                paddingTop={0}
+                                                animation={"bouncy"}
+                                                backgroundColor="#B9D6D6"
+                                                borderBottomLeftRadius={"$3"}
+                                                borderBottomRightRadius={"$3"}
+                                                borderTopLeftRadius={0}
+                                                borderTopRightRadius={0}
 
-                                                        >
-                                                            {ageWeight.description}
-                                                        </Markdown>
-                                                    </View>
-                                                </YStack>
+                                            >
+                                                {dosageGoal.ingestType.map((ingestType, typeIndex) => (
+                                                    <YStack key={typeIndex} ml="$2">
+                                                        <SizableText  size="$5" fontWeight="bold" color="$text" mt="$1">
+                                                            Inname type:
+                                                        </SizableText>
+                                                        <SizableText  size="$5"  color="$text">
+                                                            {ingestType.ingestType}
+                                                        </SizableText>
+                                                        {ingestType.ageAndWeight && ingestType.ageAndWeight.map((ageWeight, ageIndex) => (
+                                                            <YStack key={ageIndex}  ml="$2">
+                                                                <SizableText  size="$5" fontWeight="bold" color="$text"  mt="$1">
+                                                                    Leeftijd en Gewicht:
+                                                                </SizableText>
+                                                                <SizableText  size="$5" color="$text" >
+                                                                    {ageWeight.ageAndWeight}
+                                                                </SizableText>
+                                                                <View  ml="$2">
+                                                                    <Markdown
+                                                                        style={{fontSize: 16, fontWeight: 'normal'}}
 
-                                            ))}
-                                        </YStack>
-                                    ))}
-                                </YStack>
-                            ))}
+                                                                    >
+                                                                        {ageWeight.description}
+                                                                    </Markdown>
+                                                                </View>
+                                                            </YStack>
+
+                                                        ))}
+                                                    </YStack>
+                                                ))}
+                                            </Accordion.Content>
+                                        </Accordion.HeightAnimator>
+                                    </Accordion.Item>
+                                ))}
+                            </Accordion>
                         </YStack>
                     </ScrollView>
                     <Unspaced>
