@@ -133,11 +133,11 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
         setIsLoading(true);
         try {
             const data = {
-                actie: formState.actie,
-                omschrijving: formState.omschrijving,
+                title: formState.actie,
+                description: formState.omschrijving,
             };
             console.log("Patient data to be created:", data);
-            const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/medcheck/${selectedPatient.patientNumber}`, {
+            const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/agreement/${selectedPatient.patientNumber}`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
