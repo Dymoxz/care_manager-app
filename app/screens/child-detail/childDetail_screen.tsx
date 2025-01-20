@@ -698,9 +698,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                                                     { check.createdAt ? format(parseISO(check.createdAt), 'EEE dd-MM-yy (HH:mm)', { locale: nl })
                                                                         : "Datum niet beschikbaar"}
                                                                 </SizableText>
-                                                                <SizableText>
-                                                                    {`Hartslag: ${check.heartRate}, Bloeddruk: ${check.bloodPressure}`}
-                                                                </SizableText>
+
                                                             </YStack>
                                                         </XStack>
                                                     </YStack>
