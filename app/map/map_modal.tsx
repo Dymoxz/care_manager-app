@@ -7,7 +7,7 @@ import {
     XStack,
     YStack,
 } from 'tamagui';
-import {BriefcaseMedical, CircleAlert, X} from '@tamagui/lucide-icons';
+import {Bed, BriefcaseMedical, CircleAlert, X} from '@tamagui/lucide-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useToastController } from '@tamagui/toast';
 import { Patient } from './map_screen';
@@ -197,9 +197,17 @@ export function RoomDetailModal({
                                     {similarPatients.length > 0 ? (
                                         similarPatients.map((patient) => (
                                             <YStack key={patient.patientNumber} backgroundColor="#E0E7EC" borderRadius="$5" padding="$5" mb='$5'>
+                                                <XStack ai='center' jc='space-between'>
                                                 <SizableText fontWeight="700" fontSize="$7" mb='$2'>
                                                     {patient.firstName} {patient.lastName}
                                                 </SizableText>
+                                                    <XStack>
+                                                        <Bed size='$1' mr='$2' />
+                                                        <SizableText  mb='$2'>
+                                                            {patient.room.floor}-{patient.room.roomNumber}
+                                                        </SizableText>
+                                                    </XStack>
+                                                </XStack>
                                                 <XStack>
                                                     <XStack alignItems="center" mr='$4'>
                                                         <BriefcaseMedical size="$1" col="$accent_focus" mr="$1" />
@@ -208,9 +216,13 @@ export function RoomDetailModal({
                                                         </SizableText>
                                                     </XStack>
                                                     <XStack alignItems="center">
-                                                        <CircleAlert size="$1" col="$accent" mr="$1" />
+                                                        {patient.isQuarantined ? (
+                                                            <CircleAlert size="$1" col="$accent" mr="$1" />
+                                                        ) : (
+                                                            <CircleAlert size="$1" col="$container" mr="$1" />
+                                                        )}
                                                         <SizableText col="gray">
-                                                            {patient.isQuarantined ? "Quarantained" : "Not Quarantained"}
+                                                            {patient.isQuarantined ? "Quarantaine" : "Geen quarantaine"}
                                                         </SizableText>
                                                     </XStack>
                                                 </XStack>
