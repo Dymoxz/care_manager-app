@@ -117,6 +117,7 @@ export default function StartShiftScreen({ navigation }: { navigation: any }) {
                     <Button
                         bg="$accent"
                         borderRadius="$10"
+                        borderColor="$accent_focus"
                         width={(screenWidth * 50) / 100}
                         height="$6"
                         pressStyle={{ bg: '$accent_focus' }}
