@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Animated, Easing } from 'react-native';
 
 // Import your screens
 import ActivateScreen from '../screens/activate_screen';
@@ -29,20 +30,38 @@ type RootStackParamList = {
     MapScreen: undefined;
 };
 
-// Create a Stack Navigator
-const Stack = createStackNavigator<RootStackParamList>();  // Type the navigator
+const Stack = createStackNavigator<RootStackParamList>();
+
+const FadeTransition = {
+    transitionSpec: {
+        open: { animation: 'timing', config: { duration: 200, easing: Easing.ease } },
+        close: { animation: 'timing', config: { duration: 200, easing: Easing.ease } },
+    },
+    cardStyleInterpolator: ({ current, next, layouts }) => {
+        return {
+            cardStyle: {
+                opacity: current.progress,
+            },
+        };
+    }
+};
+
 
 export default function StackNavigator() {
     return (
         <Stack.Navigator
             initialRouteName="ActivateScreen"
+            screenOptions={{
+                ...FadeTransition,
+                cardStyle: { backgroundColor: 'transparent' },
+
+            }}
         >
             <Stack.Screen
                 name="ActivateScreen"
                 component={ActivateScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -50,7 +69,6 @@ export default function StackNavigator() {
                 component={StartShiftScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -58,7 +76,6 @@ export default function StackNavigator() {
                 component={HomeScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -66,7 +83,6 @@ export default function StackNavigator() {
                 component={PatientListScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -74,7 +90,6 @@ export default function StackNavigator() {
                 component={IntakeOneScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -82,7 +97,6 @@ export default function StackNavigator() {
                 component={IntakeTwoScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -90,7 +104,6 @@ export default function StackNavigator() {
                 component={AgreementPickChildScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -98,7 +111,6 @@ export default function StackNavigator() {
                 component={MedcheckPickChildScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -106,7 +118,6 @@ export default function StackNavigator() {
                 component={ShiftScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -114,7 +125,6 @@ export default function StackNavigator() {
                 component={ChildDetailScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
             <Stack.Screen
@@ -122,7 +132,6 @@ export default function StackNavigator() {
                 component={MapScreen}
                 options={{
                     headerShown: false,
-                    cardStyle: { backgroundColor: 'transparent' },
                 }}
             />
         </Stack.Navigator>

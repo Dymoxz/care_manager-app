@@ -1,10 +1,8 @@
 import {Button, Card, CardProps, Paragraph, ScrollView, SizableText, XStack, YStack} from 'tamagui';
 import React, {useEffect} from 'react';
 import {Dimensions} from 'react-native';
-import {Rocket} from '@tamagui/lucide-icons';
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
 import TitleLayout from "./common/title_layout";
-import ShiftScreen from "./shift/shift_screen";
 import * as SQLite from "expo-sqlite";
 import {Caretaker} from "../caretaker.interface";
 
@@ -154,7 +152,8 @@ const intakeIcon = <Svg style={{marginLeft: 7}} width='40%' height="50%" data-na
     fill="#9fa5aa" d="M48.36 92H46v2h3.55a6.171 6.171 0 0 1-1.19-2Z" opacity=".5"/><Path fill="#fff"
                                                                                          d="M48.921 86H46v2h2.333l.588-2z"
                                                                                          opacity=".5"/></Svg>
-const agreementIcon = <Svg style={{marginLeft: 8}} width='40%' height="50%" data-name="Layer 4" viewBox="0 0 128 128"><Rect
+const agreementIcon = <Svg style={{marginLeft: 8}} width='40%' height="50%" data-name="Layer 4"
+                           viewBox="0 0 128 128"><Rect
     width="11.129" height="22.942"
     x="74.954" y="52.058"
     fill="#e1ebf4"/><Path
@@ -277,7 +276,7 @@ async function ActivateDevice(): Promise<string> {
             'SELECT * FROM Caretakers LIMIT 1;'
         );
 
-        if (result && result.Big_Number ) {
+        if (result && result.Big_Number) {
             return `${result.Big_Number}`;
         }
 
@@ -326,7 +325,6 @@ export default function HomeScreen({navigation}) {
         {title: 'Patïenten', navLink: 'PatientListScreen', icon: listIcon},
         {title: 'Jouw dienst', navLink: 'ShiftScreen', icon: doctorIcon},
         {title: 'Plattegrond', navLink: 'MapScreen', icon: mapIcon},
-        {title: 'Activate', navLink: 'ActivateScreen', icon: <Rocket/>},
     ];
 
     const handleSave = async () => {

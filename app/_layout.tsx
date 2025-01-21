@@ -45,7 +45,7 @@ export default function RootLayout() {
       <ImageBackground
           source={require('../assets/images/backdrop.png')} // Zorg ervoor dat het pad correct is
           style={{ flex: 1, zIndex: 0}}
-          imageStyle={{ width: screenWidth, height: screenHeight, left: 0, top: 0 }}
+          imageStyle={{ width: screenWidth, height: screenHeight, resizeMode: 'cover' }}
       >
         <View style={{ flex: 1, zIndex: 1 }}>
           <Providers>

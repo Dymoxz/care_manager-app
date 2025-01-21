@@ -155,7 +155,7 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
 
 
     if(loading) return     <TitleLayout
-        titleText='Kinder Overzicht'
+        titleText=''
         topContent={<BackButton navigation={navigation} />}
     >
         <YStack backgroundColor='$background' height={screenWidth *1.2} alignItems="center" justifyContent='center'>

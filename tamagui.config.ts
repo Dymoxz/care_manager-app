@@ -39,8 +39,7 @@ export const config = createTamagui({
     light: {
       ...configBase.themes?.light, // Keep existing properties
       text: '#1f2937',
-      background: 'transparent',
-      // background: '#C3E9ED',
+      background: '#C3E9ED',
       container: '#E1F4F6',
       container_alt: '#ecf8f9',
       primary: '#0891B2',
