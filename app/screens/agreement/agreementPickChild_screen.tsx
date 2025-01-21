@@ -215,7 +215,7 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                             >
                                 {/* Patient Info Section */}
                                 {userSelected && selectedPatient && (
-                                    <YStack ai="center" mb="$6" width="100%">
+                                    <YStack ai="center" mb="$2" width="100%">
                                         {/* Horizontal layout for patient info and button */}
                                         {/* Circle and Name */}
                                         <YStack ai="center" alignItems="center" mb="$4">
@@ -293,8 +293,7 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                                 </YStack>
 
                                 <YStack
-                                    mt="$2"
-                                    mb="$3"
+                                    mb="$5"
                                     width="100%"
                                     borderBottomWidth={1}
                                     borderBottomColor="$gray"
@@ -350,13 +349,15 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                                 <Button
                                     onPress={handleSave}
                                     bg="$accent"
-                                    borderRadius="$8"
+                                    borderRadius="$10"
+                                    borderColor="$accent_focus"
                                     mt="$6"
                                     alignSelf="flex-end"
                                     px="$4"
                                     py="$2"
+                                    pressStyle={{ backgroundColor: "$accent_focus" }}
                                 >
-                                    <SizableText fontSize="$5" color="white">
+                                    <SizableText fontSize="$5" color="$accent_content">
                                         Opslaan
                                     </SizableText>
                                 </Button>

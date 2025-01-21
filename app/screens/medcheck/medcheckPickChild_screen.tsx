@@ -250,7 +250,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                             >
                                 {/* Patient Info Section */}
                                 {userSelected && selectedPatient && (
-                                    <YStack ai="center" mb="$6" width="100%">
+                                    <YStack ai="center" mb="$2" width="100%">
                                         {/* Horizontal layout for patient info and button */}
                                         {/* Circle and Name */}
                                         <YStack ai="center" alignItems="center" mb="$4">
@@ -328,7 +328,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                 </YStack>
 
                                 <YStack
-                                    mb="$3"
+                                    mb="$5"
                                     width="100%"
                                     borderBottomWidth={1}
                                     borderBottomColor="$gray"
@@ -411,7 +411,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                     right="$5"
                                     position="absolute"
                                     pressStyle={{ bg: "$accent_focus" }}
-                                >s
+                                >
                                     <SizableText fontSize="$5" color="$accent_content">
                                         Opslaan
                                     </SizableText>

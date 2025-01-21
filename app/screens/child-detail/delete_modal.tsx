@@ -134,7 +134,7 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                                 borderColor={isConfirmDisabled ? '$gray_focus' : '$danger_focus'}
                                 col='white'
                                 loading={isLoading}
-                                pressStyle={{ background: isConfirmDisabled ? '$gray' : '$danger_focus' }}
+                                pressStyle={{ backgroundColor: isConfirmDisabled ? '$gray' : '$danger_focus' }}
                             >
                                 Ja
                             </Button>
@@ -145,7 +145,7 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                                 borderRadius='$12'
                                 borderColor='$accent_focus'
                                 col='white'
-                                pressStyle={{ background: '$accent_focus' }}
+                                pressStyle={{ backgroundColor: '$accent_focus' }}
                             >
                                 Nee
                             </Button>

@@ -393,7 +393,7 @@ export default function HomeScreen({navigation}) {
                         bg: '$danger_focus',
                     }}
                     elevation='$0.25'
-                    borderColor='$container_alt'
+                    borderColor='$danger_content'
                     onPress={handleSave}
 
                 >
