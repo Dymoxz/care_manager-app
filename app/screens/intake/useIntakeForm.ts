@@ -29,10 +29,12 @@ interface IntakeFormState {
     selectedGender: Gender | null;
     geboortedatumRaw: string;
     bsn: string;
+    patientNumber: string;
     selectedClinicalProfiles: ClinicalProfile[];
     foodAllergies: string;
     selectedMedicines: Medicine[];
     selectedRooms: Room[];
+    isQuarantined: boolean;
 }
 
 interface Errors {
@@ -45,6 +47,8 @@ interface Errors {
     bsn?: string;
     selectedClinicalProfiles?: string;
     selectedRooms?: string;
+    patientNumber?: string;
+    isQuarantined?: boolean;
 }
 
 const initialFormState: IntakeFormState = {
@@ -59,6 +63,7 @@ const initialFormState: IntakeFormState = {
     foodAllergies: "",
     selectedMedicines: [],
     selectedRooms: [],
+    isQuarantined: false,
 };
 
 interface UseIntakeFormResult {
@@ -132,6 +137,9 @@ export const useIntakeForm = (initialValues: Partial<IntakeFormState> = {}): Use
                 break;
             case 'bsn':
                 if (value && !/^\d{9}$/.test(value as string)) error = 'BSN moet 9 cijfers bevatten';
+                break;
+            case 'isQuarantined':
+                if (value === undefined) error = 'Selecteer of het kind in quarantaine is';
                 break;
             case 'selectedClinicalProfiles':
                 if (!(value as ClinicalProfile[]).length) error = 'Selecteer minimaal één ziektebeeld';
