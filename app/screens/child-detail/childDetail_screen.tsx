@@ -121,6 +121,15 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
     const [selectedMedicalCheck, setSelectedMedicalCheck] = useState<MedCheck | null>(null);
     const [isMedicalCheckDetailModalVisible, setMedicalCheckDetailModalVisible] = useState(false);
 
+    const handleMedCheckNav = () => {
+        // Navigate to MedischeCheckScreen and pass the selected patient data
+        navigation.navigate('MedcheckPickChildScreen', { selectedPatient:  patient });
+    };
+
+    const handleAgreementNav = () => {
+        // Navigate to MedischeCheckScreen and pass the selected patient data
+        navigation.navigate('AgreementPickChildScreen', { selectedPatient:  patient });
+    };
 
     const handleCloseMedicineModal = () => {
         setMedicineDetailModalVisible(false);
@@ -733,10 +742,10 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                 handleDischargePress();
                                 break;
                             case "bt_afspraak":
-                                console.log('Afspraak maken');
+                                handleAgreementNav()
                                 break;
                             case "bt_medcheck":
-                                console.log('Medische check');
+                                handleMedCheckNav()
                                 break;
                             case "bt_bewerken":
                                 navigation.navigate("IntakeOneScreen", {formData: {
