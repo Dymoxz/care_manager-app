@@ -61,9 +61,9 @@ async function fetchData(
         const data: Patient[] = await response.json();
 
         setPatients(data);
-        showSuccessToast('Patients loaded successfully');
+        showSuccessToast('Patients successvol ingeladen');
     } catch (error: any) {
-        showErrorToast(error.message || 'An error occurred while fetching patients');
+        showErrorToast(error.message || 'Er is iets fout gegaan');
     }
 }
 
@@ -164,7 +164,7 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
 
     return (
         <TitleLayout
-            titleText='Kinder Overzicht'
+            titleText='Patiënten Overzicht'
             topContent={<BackButton navigation={navigation} />}
         >
             <YStack ai="center" flex={1}>

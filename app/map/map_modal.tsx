@@ -65,12 +65,12 @@ export function RoomDetailModal({
                 const errorText = await response.text();
                 throw new Error(`HTTP error ${response.status}: ${errorText}`);
             }
-            showSuccessToast('Room scaled successfully!');
+            showSuccessToast('Room successvol opgeslagen!');
             onRoomScaled();
             onClose();
         } catch (error) {
             console.error('Error scaling room:', error);
-            showErrorToast(`Error: ${error.message}`);
+            showErrorToast(`Fout: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
@@ -105,17 +105,17 @@ export function RoomDetailModal({
                         !patients.some(currentPatient => currentPatient.patientNumber === patient.patientNumber)
                     );
                     setSimilarPatients(filteredPatients);
-                } else {
-                    showErrorToast("No clinical profile found for the selected patient")
+                } else{
+                    showErrorToast("Geen ziektebeeld gevonden voor de geselecteerde patiënt")
                 }
-            } else {
-                showErrorToast("No patients found in this room")
+            }else{
+                showErrorToast("Geen patiënten gevonden in deze kamer")
             }
 
 
         } catch (error) {
             console.error('Error fetching similar patients:', error);
-            showErrorToast(`Error: ${error.message}`);
+            showErrorToast(`Fout: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
