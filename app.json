@@ -15,10 +15,6 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "simulator": {
-        "device": "iPhone 15 Pro",
-        "osVersion": "18.2"
-      },
       "bundleIdentifier": "com.memmik.caremanager",
       "newArchEnabled": true
     },
