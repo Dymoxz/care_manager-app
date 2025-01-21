@@ -105,20 +105,11 @@ export function CheckboxWithLabel({
                 onCheckedChange={onCheckedChange}
                 {...checkboxProps}
                 backgroundColor={checked ? '$accent' : '$white'}
-                borderColor='$accent_focus'
+                borderColor={checked ? '$accent_focus' : '$gray7'}
                 borderWidth={1}
                 borderRadius="$4"
                 width="$4"
-                height="$4"
-                hoverStyle={{ borderColor: '$borderColorHover' }}
-                focusStyle={{
-                    borderColor: '$borderColorFocus',
-                    shadowColor: '$shadowColorFocus',
-                    shadowOffset: { width: 0, height: 0 },
-                    shadowOpacity: 0.8,
-                    shadowRadius: 2,
-                }}
-            >
+                height="$4">
                 <Checkbox.Indicator>
                     <Check
                         color="white"
@@ -296,11 +287,12 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
         setIsLoading(true);
         const patientData = {
             createPatientDto: {
-                patientNumber: Math.floor(Math.random() * 10000) + Math.floor(Math.random() * 2),
+                patientNumber: formState.patientNumber || Math.floor(Math.random() * 10000) + Math.floor(Math.random() * 2),
                 firstName: formState.voornaam,
                 lastName: formState.achternaam,
                 bsn: bsnEncrypted,
                 dateOfBirth: new Date(formState.geboortedatumRaw.split('-').reverse().join('-')).toISOString(),
+                isQuarantined: formState.isQuarantined,
                 length: parseInt(formState.lengte, 10) || 0,
                 weight: parseFloat(formState.gewicht) || 0,
                 gender: formState.selectedGender?.name || '',
@@ -311,8 +303,6 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
             clinicalProfiles: formState.selectedClinicalProfiles.map(cp => cp.clinicalProfile),
             medicineAtcCodes: formState.selectedMedicines.map(med => med.atcCode),
         };
-        console.log("Patient data to be created:", patientData);
-        console.log("Patient data to be created:", patientData);
 
         try {
             const response = await fetch('https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient', {
@@ -331,7 +321,6 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
             }
 
             const responseData = await response.json();
-            console.log('Patient created successfully:', responseData);
             showSuccessToast('Patient created successfully!');
 
             // Optionally navigate to a success screen or previous screen
@@ -378,7 +367,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                     <YStack
                         bg="$container"
                         width={(screenWidth * 90) / 100}
-                        height={(screenHeight * 65) / 100}
+                        height={(screenHeight * 70) / 100}
                         borderRadius="$10"
                         elevation="$0.25"
                         px="$6"
@@ -401,9 +390,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                                         value={formState.patientNumber}
                                         onChangeText={(text) =>
                                             setFieldValue(
-                                                'patientNumber',
-                                                text.replace(/\D/g, '').slice(0, 9),
-                                            )
+                                                'patientNumber', text)
                                         }
                                         onSubmitEditing={Keyboard.dismiss}
                                     />
@@ -421,14 +408,15 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                                             size="$3"
                                             label="Ja"
                                             checked={formState.isQuarantined}
-                                            onCheckedChange={(checked) => setFieldValue('isQuarantined', checked)}
-                                        />
+                                            onCheckedChange={(checked) => {
+                                                setFieldValue('isQuarantined', checked);
+                                            }}                                        />
                                     </XStack>
                                 </YStack>
                             </XStack>
 
                             <YStack>
-                                <SizableText fontSize="$4" color="$text" mb='$1' mt="$5">
+                                <SizableText fontSize="$4" color="$text" mb='$1'>
                                     Ziektebeeld
                                 </SizableText>
                                 <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)} h='$4'>
