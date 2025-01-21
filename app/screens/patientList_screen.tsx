@@ -38,6 +38,7 @@ interface PatientCardProps {
     hasAlert: boolean;
     patient: Patient;
     onPress: (patient: Patient) => void;
+    onMedCheckPress: (patient: Patient) => void; // Add this line
 }
 
 async function fetchData(
@@ -66,7 +67,7 @@ async function fetchData(
     }
 }
 
-function PatientCard({ name, room, hasAlert, patient, onPress }: PatientCardProps) {
+function PatientCard({ name, room, hasAlert, patient, onPress, onMedCheckPress }: PatientCardProps) {
     return (
         <XStack
             bg='$container_alt'
@@ -106,6 +107,7 @@ function PatientCard({ name, room, hasAlert, patient, onPress }: PatientCardProp
                 animation="bouncy"
                 hoverStyle={{ scale: 0.990, backgroundColor: '$accent_focus' }}
                 pressStyle={{ scale: 0.975, backgroundColor: '$accent_focus' }}
+                onPress={() => onMedCheckPress(patient)} // Call the medCheckPress
                 icon={<FileHeart size='$2' color='$accent_content' />}
             >
             </Button>
@@ -146,6 +148,11 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
         // Navigate to PatientDetailsScreen and pass patient data
         navigation.navigate('ChildDetailScreen', { patient });
     };
+    const handleMedCheckPress = (patient: Patient) => {
+        // Navigate to MedischeCheckScreen and pass the selected patient data
+        navigation.navigate('MedcheckPickChildScreen', { selectedPatient: patient });
+    };
+
 
     if(loading) return     <TitleLayout
         titleText='Kinder Overzicht'
@@ -184,6 +191,7 @@ export default function KinderOverzichtScreen({ navigation }: { navigation: any 
                                 hasAlert={patient.isQuarantined || false}
                                 patient={patient}
                                 onPress={handlePatientPress}
+                                onMedCheckPress={handleMedCheckPress} // Pass the medCheck function
                             />
                         ))}
                     </YStack>

@@ -28,12 +28,13 @@ interface Room {
     patientNumbers?: number[];
 }
 
-interface Patient {
+export interface Patient {
     _id?: string;
     patientNumber: number;
     firstName: string;
     lastName: string;
     isQuarantined: boolean;
+    clinicalProfiles?: any[];
     dateOfBirth?: string;
     createdAt?: string;
     updatedAt?: string;
