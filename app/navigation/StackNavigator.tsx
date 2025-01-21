@@ -54,7 +54,6 @@ export default function StackNavigator() {
             screenOptions={{
                 ...FadeTransition,
                 cardStyle: { backgroundColor: 'transparent' },
-
             }}
         >
             <Stack.Screen

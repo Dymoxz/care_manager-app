@@ -263,7 +263,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                                 jc="center"
                                                 mb="$2"
                                             >
-                                                <Text fontSize="$8" fontWeight="bold" color="$text">
+                                                <Text fontSize="$8" fontWeight="bold" color="$accent_content">
                                                     {selectedPatient.firstName[0]}
                                                     {selectedPatient.lastName[0].charAt(0).toUpperCase()}
                                                 </Text>
@@ -338,7 +338,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
 
                                 {/* Omschrijving field */}
                                 <YStack width="100%" py="$2">
-                                    <SizableText fontSize="$4" color="$text" mb="$2">
+                                    <SizableText col='$text' fontSize="$4" color="$text" mb="$2">
                                         Omschrijving
                                     </SizableText>
                                     <Input
@@ -382,7 +382,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                         )}
                                     </YStack>
                                     <YStack f={1}>
-                                        <SizableText fontSize="$4" color="$text" mb="$2">
+                                        <SizableText col='$text' fontSize="$4" color="$text" mb="$2">
                                             Bloeddruk
                                         </SizableText>
                                         <Input
@@ -411,8 +411,8 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                     right="$5"
                                     position="absolute"
                                     pressStyle={{ bg: "$accent_focus" }}
-                                >
-                                    <SizableText fontSize="$5" color="white">
+                                >s
+                                    <SizableText fontSize="$5" color="$accent_content">
                                         Opslaan
                                     </SizableText>
                                 </Button>
@@ -440,8 +440,8 @@ export default function MedischeCheckScreen({ navigation, route }) {
 
 
                     >
-                        <Text>{`${item.firstName} ${item.lastName}`}</Text>
-                        <Text textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
+                        <Text col='$text'>{`${item.firstName} ${item.lastName}`}</Text>
+                        <Text col='$text' textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
                     </XStack>
                 )}
             />
