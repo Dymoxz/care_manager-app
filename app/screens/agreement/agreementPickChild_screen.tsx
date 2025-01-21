@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
 import {
     Button,
-    Input, ScrollView,
+    Input,
+    ScrollView,
     SizableText,
     styled,
     Text,
     XStack,
     YStack,
 } from "tamagui";
-import {Dimensions, Keyboard, KeyboardAvoidingView, Platform, TouchableWithoutFeedback} from "react-native";
+import {
+    Dimensions,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+} from "react-native";
 import TitleLayout from "../common/title_layout";
 import { ChevronDown, SquarePen } from "@tamagui/lucide-icons";
 import { useAgreementForm } from "./useAgreementForm";
@@ -91,10 +98,12 @@ interface AgreementPickChildScreenProps {
     route: any;
 }
 
-
-export default function AgreementPickChildScreen({ navigation, route }: AgreementPickChildScreenProps) {
+export default function AgreementPickChildScreen({
+                                                     navigation,
+                                                     route,
+                                                 }: AgreementPickChildScreenProps) {
     const [userSelected, setUserSelected] = useState(false);
-    const {formState, setFieldValue, handleAgreementSelect, errors, validateField, validateForm} =
+    const { formState, setFieldValue, handleAgreementSelect, errors, validateField, validateForm } =
         useAgreementForm(route.params?.formData);
     const [isPatientModalVisible, setIsPatientModalVisible] = useState(false);
     const [availablePatients, setAvailablePatients] = useState<Patient[]>([]);
@@ -122,11 +131,25 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
         };
 
         fetchPatients();
-    }, []);
+        // Check if a patient is passed in route.params
+        if (route.params?.selectedPatient) {
+            const patient: Patient = route.params.selectedPatient;
+            setUserSelected(true);
+            setSelectedPatient(patient);
+            setPatientDisplayText(patient.firstName);
+            setFieldValue('selectedPatient', patient.patientNumber.toString());
+            validateField('selectedPatient', patient.patientNumber.toString())
+        }
+
+    }, [route.params]);
 
     const handleSave = async () => {
         if (!validateForm('page1')) {
-            showErrorToast('Alle velden zijn verplicht in te vullen!');
+            showErrorToast("Alle velden zijn verplicht in te vullen!");
+            return;
+        }
+        if (!selectedPatient){
+            showErrorToast("Kies alstublieft een patient.");
             return;
         }
         setIsLoading(true);
@@ -136,21 +159,24 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                 description: formState.omschrijving,
             };
             console.log("Patient data to be created:", data);
-            const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/agreement/${selectedPatient.patientNumber}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data),
-            });
+            const response = await fetch(
+                `https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/agreement/${selectedPatient.patientNumber}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                }
+            );
 
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`HTTP error ${response.status}: ${errorText}`);
             }
 
-            showSuccessToast('Succesvol een afspraak gemaakt!');
-            navigation.navigate('HomeScreen');
+            showSuccessToast("Succesvol een afspraak gemaakt!");
+            navigation.navigate("HomeScreen");
         } catch (error) {
-            console.error('Error bij het maken van een afspraak:', error);
+            console.error("Error bij het maken van een afspraak:", error);
             showErrorToast(`Error: ${error.message}`);
         } finally {
             setIsLoading(false);
@@ -250,47 +276,47 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                                                     </SizableText>
                                                 </YStack>
 
-                                                {/* Update Button */}
-                                                <Button
-                                                    px="$2"
-                                                    onPress={() => setIsPatientModalVisible(true)}
-                                                    pt="$4"
-                                                    bg="$container"
-                                                    pb="$6"
-                                                >
-                                                    <SquarePen size="$1.5" color="$accent_content" />
-                                                </Button>
-                                            </XStack>
-                                        </YStack>
+                                            {/* Update Button */}
+                                            <Button
+                                                px="$2"
+                                                onPress={() => setIsPatientModalVisible(true)}
+                                                pt="$4"
+                                                bg="$container"
+                                                pb="$6"
+                                            >
+                                                <SquarePen size="$1.5" color="$accent_content" />
+                                            </Button>
+                                        </XStack>
                                     </YStack>
-                                )}
-
-                                {/* Patient Selection Section */}
-                                <YStack width="100%">
-                                    {!userSelected && (
-                                        <SizableText fontSize="$4" color="$text" mb="$1">
-                                            Patiënt
-                                        </SizableText>
-                                    )}
-                                    {!userSelected && (
-                                        <InputContainer
-                                            onPress={() => setIsPatientModalVisible(true)}
-                                            h="$4"
-                                            width="100%"
-                                            mb="$6"
-                                        >
-                                            <SelectedItemsText numberOfLines={1} ellipsizeMode="tail">
-                                                {patientDisplayText}
-                                            </SelectedItemsText>
-                                            <DropdownIndicator>
-                                                <ChevronDown size="$1"/>
-                                            </DropdownIndicator>
-                                        </InputContainer>
-                                    )}
-                                    {errors.selectedPatient && (
-                                        <ErrorText>{errors.selectedPatient}</ErrorText>
-                                    )}
                                 </YStack>
+                            )}
+
+                            {/* Patient Selection Section */}
+                            <YStack width="100%">
+                                {!userSelected && (
+                                    <SizableText fontSize="$4" color="$text" mb="$1">
+                                        Patiënt
+                                    </SizableText>
+                                )}
+                                {!userSelected && (
+                                    <InputContainer
+                                        onPress={() => setIsPatientModalVisible(true)}
+                                        h="$4"
+                                        width="100%"
+                                        mb="$6"
+                                    >
+                                        <SelectedItemsText numberOfLines={1} ellipsizeMode="tail">
+                                            {patientDisplayText}
+                                        </SelectedItemsText>
+                                        <DropdownIndicator>
+                                            <ChevronDown size="$1" />
+                                        </DropdownIndicator>
+                                    </InputContainer>
+                                )}
+                                {errors.selectedPatient && (
+                                    <ErrorText>{errors.selectedPatient}</ErrorText>
+                                )}
+                            </YStack>
 
                                 <YStack
                                     mb="$5"
@@ -377,14 +403,9 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                 isMultiSelect={false}
                 getItemKey={(item) => item.patientNumber.toString()}
                 getTextForItem={(item) => (
-                    <XStack
-                        justifyContent="space-between"
-                        width="100%"
-                        pr="$2"
-
-                    >
-                        <Text>{`${item.firstName} ${item.lastName}`}</Text>
-                        <Text textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
+                    <XStack justifyContent="space-between" width="100%" pr="$2">
+                        <Text col='$text'>{`${item.firstName} ${item.lastName}`}</Text>
+                        <Text col='$text' textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
                     </XStack>
                 )}
             />
