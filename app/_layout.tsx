@@ -1,13 +1,15 @@
 import '../tamagui-web.css'
 
 import { useEffect } from 'react'
-import { StatusBar, useColorScheme } from 'react-native'
+import {Dimensions, ImageBackground, StatusBar, useColorScheme} from 'react-native'
 import StackNavigator from './navigation/StackNavigator';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
 import { Provider } from './Provider'
-import { useTheme } from 'tamagui'
+import { useTheme, View } from 'tamagui'
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -40,9 +42,17 @@ export default function RootLayout() {
   }
 
   return (
-    <Providers>
-      <RootLayoutNav />
-    </Providers>
+      <ImageBackground
+          source={require('../assets/images/backdrop.png')} // Zorg ervoor dat het pad correct is
+          style={{ flex: 1, zIndex: 0}}
+          imageStyle={{ width: screenWidth, height: screenHeight, left: 0, top: 0 }}
+      >
+        <View style={{ flex: 1, zIndex: 1 }}>
+          <Providers>
+            <RootLayoutNav />
+          </Providers>
+        </View>
+      </ImageBackground>
   )
 }
 

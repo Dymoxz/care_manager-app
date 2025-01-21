@@ -1,5 +1,5 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 
 // Import your screens
 import ActivateScreen from '../screens/activate_screen';
@@ -29,66 +29,102 @@ type RootStackParamList = {
     MapScreen: undefined;
 };
 
-
 // Create a Stack Navigator
 const Stack = createStackNavigator<RootStackParamList>();  // Type the navigator
 
 export default function StackNavigator() {
     return (
-        <Stack.Navigator initialRouteName="ActivateScreen">
-            <Stack.Screen name="ActivateScreen" component={ActivateScreen}
-                          options={{
-                              headerShown: false, // Keep header hidden
-                          }}/>
-            <Stack.Screen name="StartShiftScreen" component={StartShiftScreen}
-                          options={{
-                              headerShown: false, // Keep header hidden
-                          }}/>
-
-
-
-            {/*Home screen plus all the links that are present in the home screen*/}
-            <Stack.Screen name="HomeScreen" component={HomeScreen}
-                          options={{
-                              headerShown: false, // Keep header hidden
-                          }}/>
-            <Stack.Screen name="PatientListScreen" component={PatientListScreen}
-                            options={{
-                                headerShown: false, // Keep header hidden
-                            }}/>
-            <Stack.Screen name={"IntakeOneScreen"} component={IntakeOneScreen}
-                            options={{
-                                headerShown: false, // Keep header hidden
-                            }}/>
-            <Stack.Screen name={"IntakeTwoScreen"} component={IntakeTwoScreen}
-                            options={{
-                                headerShown: false, // Keep header hidden
-                            }}/>
-            <Stack.Screen name="AgreementPickChildScreen" component={AgreementPickChildScreen}
-                            options={{
-                                headerShown: false, // Keep header hidden
-                            }}/>
-            <Stack.Screen name="MedcheckPickChildScreen" component={MedcheckPickChildScreen}
-                          options={{
-                              headerShown: false, // Keep header hidden
-                          }}/>
-            <Stack.Screen name="ShiftScreen" component={ShiftScreen}
-                          options={{
-                              headerShown: false, // Keep header hidden
-                          }}/>
-
-
-
-            <Stack.Screen name="ChildDetailScreen" component={ChildDetailScreen}
-                            options={{
-                                headerShown: false, // Keep header hidden
-                            }}/>
-            <Stack.Screen name={'MapScreen'} component={MapScreen}
-                            options={{
-                                headerShown: false, // Keep header hidden
-                            }}/>
-
-
+        <Stack.Navigator
+            initialRouteName="ActivateScreen"
+        >
+            <Stack.Screen
+                name="ActivateScreen"
+                component={ActivateScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="StartShiftScreen"
+                component={StartShiftScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="HomeScreen"
+                component={HomeScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="PatientListScreen"
+                component={PatientListScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="IntakeOneScreen"
+                component={IntakeOneScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="IntakeTwoScreen"
+                component={IntakeTwoScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="AgreementPickChildScreen"
+                component={AgreementPickChildScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="MedcheckPickChildScreen"
+                component={MedcheckPickChildScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="ShiftScreen"
+                component={ShiftScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="ChildDetailScreen"
+                component={ChildDetailScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
+            <Stack.Screen
+                name="MapScreen"
+                component={MapScreen}
+                options={{
+                    headerShown: false,
+                    cardStyle: { backgroundColor: 'transparent' },
+                }}
+            />
         </Stack.Navigator>
     );
 }
