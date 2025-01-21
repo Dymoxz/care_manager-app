@@ -156,12 +156,12 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                     <YStack
                         bg="$container"
                         width={(screenWidth * 90) / 100}
-                        height={containerHeight} // Use calculated height
+                        height={containerHeight}
                         borderRadius="$10"
                         elevation="$0.25"
                         px="$6"
+                        pb="$5" // Reduced bottom padding
                         ai="center"
-                        position="relative"
                     >
                         <YStack width="100%" mt="$6" space="$4">
                             <XStack space="$4">
@@ -351,7 +351,6 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                                 {errors.bsn && <ErrorText>{errors.bsn}</ErrorText>}
                             </YStack>
                         </YStack>
-
                         <Button
                             onPress={handleNext}
                             pressStyle={{scale: 0.975, backgroundColor: "$accent_focus"}}
@@ -359,8 +358,10 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                             borderRadius="$10"
                             position="absolute"
                             borderColor="$accent_focus"
+                            py="$3"
                             bottom="$5"
                             right="$5"
+
                         >
                             <SizableText fontSize="$4" color="$accent_content">
                                 Volgende stap

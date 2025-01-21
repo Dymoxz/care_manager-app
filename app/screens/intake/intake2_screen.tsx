@@ -1,8 +1,20 @@
-import {useEffect, useState} from 'react';
-import {Button, SizableText, Spinner, styled, Text, TextArea, XStack, YStack} from 'tamagui';
+import React, {useEffect, useState} from 'react';
+import {
+    Button,
+    Checkbox,
+    CheckboxProps,
+    Input, Label,
+    SizableText,
+    Spinner,
+    styled,
+    Text,
+    TextArea,
+    XStack,
+    YStack
+} from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
-import {ArrowLeft, ChevronDown} from "@tamagui/lucide-icons";
+import {ArrowLeft, ChevronDown, Check as CheckIcon, Check} from "@tamagui/lucide-icons";
 import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
 import {useIntakeForm} from "./useIntakeForm";
 import {useToastController} from '@tamagui/toast';
@@ -73,6 +85,53 @@ const ErrorText = styled(Text, {
 interface IntakeTwoScreenProps {
     navigation: any;
     route: any;
+}
+
+export function CheckboxWithLabel({
+                                      size,
+                                      checked,
+                                      onCheckedChange,
+                                      label,
+                                      ...checkboxProps
+                                  }) {
+    const id = `checkbox-${(size || '').toString().slice(1)}`;
+
+    return (
+        <XStack alignItems="center" gap="$2">
+            <Checkbox
+                id={id}
+                size={size}
+                checked={checked}
+                onCheckedChange={onCheckedChange}
+                {...checkboxProps}
+                backgroundColor={checked ? '$accent' : '$white'}
+                borderColor='$accent_focus'
+                borderWidth={1}
+                borderRadius="$4"
+                width="$4"
+                height="$4"
+                hoverStyle={{ borderColor: '$borderColorHover' }}
+                focusStyle={{
+                    borderColor: '$borderColorFocus',
+                    shadowColor: '$shadowColorFocus',
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.8,
+                    shadowRadius: 2,
+                }}
+            >
+                <Checkbox.Indicator>
+                    <Check
+                        color="white"
+                        size="$1"
+                    />
+                </Checkbox.Indicator>
+            </Checkbox>
+
+            <Label size={size} htmlFor={id}>
+                {label}
+            </Label>
+        </XStack>
+    );
 }
 
 export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProps) {
@@ -161,6 +220,8 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
             setAvailableClinicalProfiles([]);
         }
     };
+
+
 
     const fetchMedicines = async () => {
         try {
@@ -251,6 +312,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
             medicineAtcCodes: formState.selectedMedicines.map(med => med.atcCode),
         };
         console.log("Patient data to be created:", patientData);
+        console.log("Patient data to be created:", patientData);
 
         try {
             const response = await fetch('https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient', {
@@ -288,6 +350,9 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
         navigation.navigate('IntakeOneScreen', {formData: formState});
     };
 
+
+
+
     return (
         <TitleLayout
             titleText="Intake patient"
@@ -321,8 +386,49 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                         position="relative"
                     >
                         <YStack width="100%" mt="$6" space="$4">
+
+                            <XStack width="100%" gap="$4">
+                                <YStack width="50%">
+                                    <SizableText fontSize="$4" color="$text" mb="$1">
+                                        Patientnummer
+                                    </SizableText>
+                                    <Input
+                                        keyboardType="numeric"
+                                        bg="white"
+                                        borderWidth={1}
+                                        borderColor="#d3d3d3"
+                                        borderRadius="$4"
+                                        value={formState.patientNumber}
+                                        onChangeText={(text) =>
+                                            setFieldValue(
+                                                'patientNumber',
+                                                text.replace(/\D/g, '').slice(0, 9),
+                                            )
+                                        }
+                                        onSubmitEditing={Keyboard.dismiss}
+                                    />
+                                    {errors.patientNumber && (
+                                        <ErrorText>{errors.patientNumber}</ErrorText>
+                                    )}
+                                </YStack>
+
+                                <YStack width="50%" f={1} ai="flex-start">
+                                    <SizableText fontSize="$4" color="$text" mb="$1">
+                                        In Quarantaine?
+                                    </SizableText>
+                                    <XStack gap="$2" ai="center">
+                                        <CheckboxWithLabel
+                                            size="$3"
+                                            label="Ja"
+                                            checked={formState.isQuarantined}
+                                            onCheckedChange={(checked) => setFieldValue('isQuarantined', checked)}
+                                        />
+                                    </XStack>
+                                </YStack>
+                            </XStack>
+
                             <YStack>
-                                <SizableText fontSize="$4" color="$text" mb='$1'>
+                                <SizableText fontSize="$4" color="$text" mb='$1' mt="$5">
                                     Ziektebeeld
                                 </SizableText>
                                 <InputContainer onPress={() => setIsClinicalProfileModalVisible(true)} h='$4'>
