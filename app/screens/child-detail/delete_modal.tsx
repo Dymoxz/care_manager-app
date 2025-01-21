@@ -73,7 +73,7 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                 const errorText = await response.text();
                 throw new Error(`Failed to delete patient. Status: ${response.status}, Response: ${errorText}`);
             }
-            showSuccessToast("Patient deleted successfully");
+            showSuccessToast("Patient succesvol verwijderd");
             setTimeout(() => {
                 navigation.navigate('HomeScreen'); //Replace with your actual home screen name
             }, 1000); // delay of 1 second
@@ -128,7 +128,7 @@ const DeleteModal = ({ visible, onDone, onClose, screenWidth, patientName, patie
                             <Button
                                 disabled={isConfirmDisabled || isLoading}
                                 onPress={handleDelete} // Delete the item when the user confirms
-                                bg={isConfirmDisabled ? '$gray' : '$danger'}
+                                bg={isConfirmDisabled ? '$gray7' : '$danger'}
                                 width="$10"
                                 borderRadius='$12'
                                 borderColor={isConfirmDisabled ? '$gray_focus' : '$danger_focus'}

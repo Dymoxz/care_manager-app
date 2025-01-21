@@ -148,9 +148,9 @@ async function ActivateDevice(
         const data: PatientData[] = await response.json();
 
         setPatients(data);
-        showSuccessToast('Patients loaded successfully');
+        showSuccessToast('Patients successvol ingeladen');
     } catch (error: any) {
-        showErrorToast(error.message || 'An error occurred while fetching patients');
+        showErrorToast(error.message || 'Fout bij het laden van patienten');
     }
 }
 function PatientCard({ name, room, hasAlert, patient, isSelected, onSelect }: PatientCardProps) {
@@ -255,7 +255,7 @@ export default function ShiftScreen({ navigation }) {
     const selected = filteredPatients.filter(patient => selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
     const nonSelected = filteredPatients.filter(patient => !selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
     if(loading) return     <TitleLayout
-        titleText="Selecteer kinderen voor je dienst"
+        titleText="Selecteer patiënten voor je dienst"
         topContent={<BackButton navigation={navigation} />}
     >
         <YStack backgroundColor='$background' height={screenWidth *1.2} alignItems="center" justifyContent='center'>
@@ -264,7 +264,7 @@ export default function ShiftScreen({ navigation }) {
 
     return (
         <TitleLayout
-            titleText="Selecteer kinderen voor je dienst"
+            titleText="Selecteer patiënten voor je dienst"
             topContent={<BackButton navigation={navigation} />}
         >
             <YStack ai="center" flex={1}>
@@ -334,7 +334,7 @@ export default function ShiftScreen({ navigation }) {
                         }}
                     >
                         <Button.Text color="white" fontSize="$5">
-                            Cancel
+                            Annuleer
                         </Button.Text>
                     </Button>
                     <Button

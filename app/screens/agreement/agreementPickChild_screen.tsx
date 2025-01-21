@@ -125,11 +125,10 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
     }, []);
 
     const handleSave = async () => {
-        if (!selectedPatient){
-            showErrorToast("Selecteer een patiënt");
+        if (!validateForm('page1')) {
+            showErrorToast('Alle velden zijn verplicht in te vullen!');
             return;
         }
-
         setIsLoading(true);
         try {
             const data = {
@@ -198,8 +197,6 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
             titleText="Afspraak maken"
             topContent={<BackButton navigation={navigation} />}
         >
-            <KeyboardAvoidingView
-                behavior={Platform.OS==='ios' ? 'padding' : 'height'}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <ScrollView
                         contentContainerStyle={{ flexGrow: 1 }}
@@ -327,27 +324,27 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                                             <ErrorText>{errors.actie}</ErrorText>
                                         )}
                                     </YStack>
-                                {/* Omschrijving field */}
-                                <YStack >
-                                    <SizableText fontSize="$4" color="$text" mb="$2">
-                                        Omschrijving
-                                    </SizableText>
-                                    <Input
-                                        value={formState.omschrijving}
-                                        onChangeText={(value) => setFieldValue("omschrijving", value)}
-                                        multiline
-                                        numberOfLines={4}
-                                        textAlignVertical="top"
-                                        bg="white"
-                                        borderWidth={1}
-                                        borderColor="#d3d3d3"
-                                        borderRadius="$4"
-                                        width="100%"
-                                    />
-                                    {errors.omschrijving && (
-                                        <ErrorText>{errors.omschrijving}</ErrorText>
-                                    )}
-                                </YStack>
+                                    {/* Omschrijving field */}
+                                    <YStack >
+                                        <SizableText fontSize="$4" color="$text" mb="$2">
+                                            Omschrijving
+                                        </SizableText>
+                                        <Input
+                                            value={formState.omschrijving}
+                                            onChangeText={(value) => setFieldValue("omschrijving", value)}
+                                            multiline
+                                            numberOfLines={4}
+                                            textAlignVertical="top"
+                                            bg="white"
+                                            borderWidth={1}
+                                            borderColor="#d3d3d3"
+                                            borderRadius="$4"
+                                            width="100%"
+                                        />
+                                        {errors.omschrijving && (
+                                            <ErrorText>{errors.omschrijving}</ErrorText>
+                                        )}
+                                    </YStack>
                                 </YStack>
                                 {/* Save Button */}
                                 <Button
@@ -367,7 +364,6 @@ export default function AgreementPickChildScreen({ navigation, route }: Agreemen
                         </YStack>
                     </ScrollView>
                 </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
 
             <DropdownModal<Patient>
                 visible={isPatientModalVisible}

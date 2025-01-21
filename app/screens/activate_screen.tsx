@@ -10,7 +10,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 async function ActivateDevice(bigNumber: string, showErrorToast: (message: string) => void, showSuccessToast: (message: string) => void, navigation: any) {
     const db = await SQLite.openDatabaseAsync('localdb');
     if (!bigNumber.trim()) {
-        showErrorToast('Please enter a BIG number');
+        showErrorToast('Vul een BIG nummer in.');
         return;
     }
 
@@ -52,7 +52,7 @@ async function ActivateDevice(bigNumber: string, showErrorToast: (message: strin
 
         // Handle empty response
         if (!responseText || responseText === '{}') {
-            showErrorToast('No records found for the provided BIG number.');
+            showErrorToast('Geen BIG nummer gevonden of deze wordt al gebruikt.');
             return;
         }
 
@@ -71,7 +71,7 @@ async function ActivateDevice(bigNumber: string, showErrorToast: (message: strin
             );
         });
 
-        const successMessage = `Device activated successfully!\nName: ${data.Initial} ${data.BirthSurname}\nBIG Number: ${data.Big_Number}`;
+        const successMessage = `Apparaat succesvol geactiveerd!\nNaam: ${data.Initial} ${data.BirthSurname}\nBIG Nummer: ${data.Big_Number}`;
         showSuccessToast(successMessage);
 
         // Brief delay to allow toast to be visible
@@ -111,7 +111,7 @@ export default function ActivateScreen({ navigation }: { navigation: any }) {
             } catch (error: any) {
                 console.error('Database initialization error:', error);
                 toast.show('Error', {
-                    message: 'Failed to initialize database',
+                    message: 'Fout met database initialisatie',
                     native: false,
                 });
             }
@@ -125,7 +125,7 @@ export default function ActivateScreen({ navigation }: { navigation: any }) {
         try {
             await ActivateDevice(
                 bigNumber,
-                (msg) => toast.show('Error', { message: msg, native: false }),
+                (msg) => toast.show('Fout', { message: msg, native: false }),
                 (msg) => toast.show('Success', { message: msg, native: false }),
                 navigation
             );
@@ -179,7 +179,7 @@ export default function ActivateScreen({ navigation }: { navigation: any }) {
                         jc="space-between"
                     >
                         <Input
-                            placeholder="Enter BIG Number"
+                            placeholder="Voer BIG nummer in"
                             fontSize={16}
                             f={1}
                             bg="transparent"
@@ -204,7 +204,7 @@ export default function ActivateScreen({ navigation }: { navigation: any }) {
                         disabled={isLoading}
                     >
                         <SizableText col="$accent_content" size="$5" textAlign="center">
-                            {isLoading ? 'Activating...' : 'Activate Device'}
+                            {isLoading ? 'Activeren...' : 'Activeer apparaat'}
                         </SizableText>
                     </Button>
                 </YStack>
