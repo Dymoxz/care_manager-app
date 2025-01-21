@@ -36,6 +36,7 @@ interface Room {
     id: string;
     roomNumber: string;
     floor: string;
+    displayText?: string;
 }
 
 const InputContainer = styled(XStack, {
@@ -244,8 +245,11 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data: Omit<Room, 'floor'>[] = await response.json(); // Temporarily omit floor from the fetched data
-            const roomsWithFloor: Room[] = data.map(room => ({...room, floor: '1st Floor'}));
+            const rooms: Room[] = await response.json();
+            const roomsWithFloor: Room[] = rooms.map(room => ({
+                ...room,
+                displayText: `Kamer ${room.roomNumber}, ${room.floor}e verdieping`
+            }));
             setAvailableRooms(roomsWithFloor);
         } catch (error) {
             console.error("Failed to fetch rooms:", error);
@@ -550,8 +554,8 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
                 title="Selecteer kamer"
                 hasSearch={true}
                 isMultiSelect={false}
-                getItemKey={(item) => `${item.roomNumber}-${item.floor}`}
-                getTextForItem={(item) => `${item.roomNumber} - ${item.floor}`}
+                getItemKey={(item) => `${item.displayText}`}
+                getTextForItem={(item) => `${item.displayText}`}
             />
         </TitleLayout>
     );

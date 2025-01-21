@@ -1,16 +1,8 @@
 // DropdownModal.tsx
-import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
-import {
-    Button,
-    Dialog,
-    Input,
-    Text,
-    YStack,
-    styled,
-    Unspaced,
-} from 'tamagui';
-import { X } from '@tamagui/lucide-icons';
+import React, {useState} from 'react';
+import {ScrollView} from 'react-native';
+import {Button, Dialog, Input, styled, Text, Unspaced, YStack,} from 'tamagui';
+import {X} from '@tamagui/lucide-icons';
 
 interface DropdownModalProps<T> {
     visible: boolean;
@@ -54,7 +46,18 @@ const ItemButton = styled(Button, {
     },
 });
 
-const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, onClose, screenWidth, title, hasSearch, isMultiSelect, getItemKey, getTextForItem }: DropdownModalProps<T>) => {
+const DropdownModal = <T extends Record<string, any>>({
+                                                          visible,
+                                                          items,
+                                                          onDone,
+                                                          onClose,
+                                                          screenWidth,
+                                                          title,
+                                                          hasSearch,
+                                                          isMultiSelect,
+                                                          getItemKey,
+                                                          getTextForItem
+                                                      }: DropdownModalProps<T>) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedItems, setSelectedItems] = useState<T[]>([]);
 
@@ -83,26 +86,26 @@ const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, 
             <Dialog.Portal>
                 <Dialog.Overlay
                     animation="lazy"
-                    enterStyle={{ opacity: 0 }}
-                    exitStyle={{ opacity: 0 }}
+                    enterStyle={{opacity: 0}}
+                    exitStyle={{opacity: 0}}
                     backgroundColor="rgba(0, 0, 0, 0.5)"
                     pointerEvents="box-none"
                 />
                 <Dialog.Content
                     elevate
-                    animation={['quicker', { opacity: { overshootClamping: true } }]}
-                    enterStyle={{ y: -20, opacity: 0, scale: 0.9 }}
-                    exitStyle={{ y: 10, opacity: 0, scale: 0.95 }}
+                    animation={['quicker', {opacity: {overshootClamping: true}}]}
+                    enterStyle={{y: -20, opacity: 0, scale: 0.9}}
+                    exitStyle={{y: 10, opacity: 0, scale: 0.95}}
                     gap="$4"
                     padding="$4"
                     width={screenWidth * 0.9}
-                    style={{ maxWidth: screenWidth * 0.9 }}
+                    style={{maxWidth: screenWidth * 0.9}}
                 >
                     <Dialog.Title fontSize='$7'>{title}</Dialog.Title>
                     {hasSearch && (
                         <Input placeholder="Zoeken..." value={searchQuery} onChangeText={setSearchQuery} mb="$3"/>
                     )}
-                    <ScrollView style={{ maxHeight: 300, flexGrow: 1 }} nestedScrollEnabled={true}>
+                    <ScrollView style={{maxHeight: 300, flexGrow: 1}} nestedScrollEnabled={true}>
                         {filteredItems.map(item => (
                             <ItemButton
                                 key={getItemKey(item)}
@@ -110,16 +113,37 @@ const DropdownModal = <T extends Record<string, any>>({ visible, items, onDone, 
                                 selected={selectedItems.some(selectedItem => getItemKey(selectedItem) === getItemKey(item))}
                             >
                                 <Text>{getTextForItem ? getTextForItem(item) : Object.values(item).join(' ')}</Text>
-                                {selectedItems.some(selectedItem => getItemKey(selectedItem) === getItemKey(item)) && <Text>✓</Text>}
+                                {selectedItems.some(selectedItem => getItemKey(selectedItem) === getItemKey(item)) &&
+                                    <Text>✓</Text>}
                             </ItemButton>
                         ))}
                     </ScrollView>
-                    <Button mt="$4" mx='$8' onPress={() => { onDone(selectedItems); onClose(); }} bg='$accent' borderRadius='$10' borderColor='$accent_focus' col='$accent_content'>
+                    <Button
+                        mt="$4"
+                        mx='$8'
+                        onPress={() => {
+                            onDone(selectedItems);
+                            onClose();
+                        }}
+                        bg='$accent'
+                        borderRadius='$10'
+                        borderColor='$accent_focus'
+                        color='$accent_content'
+                        pressStyle={{backgroundColor: '$accent_focus'}}
+                    >
                         Bevestigen
                     </Button>
                     <Unspaced>
                         <Dialog.Close asChild>
-                            <Button bg='$secondary' col='white' position="absolute" top="$3" right="$3" size="$2" circular icon={X}/>
+                            <Button
+                                bg='$secondary'
+                                color='white'
+                                position="absolute"
+                                top="$3"
+                                right="$3"
+                                size="$2"
+                                pressStyle={{backgroundColor: '$secondary_focus'}}
+                                    circular icon={X}/>
                         </Dialog.Close>
                     </Unspaced>
                 </Dialog.Content>

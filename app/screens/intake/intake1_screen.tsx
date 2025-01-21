@@ -358,7 +358,6 @@ export default function IntakeOneScreen({navigation, route}: IntakeOneScreenProp
                             borderRadius="$10"
                             position="absolute"
                             borderColor="$accent_focus"
-                            py="$3"
                             bottom="$5"
                             right="$5"
 
