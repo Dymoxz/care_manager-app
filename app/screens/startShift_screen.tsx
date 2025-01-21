@@ -62,14 +62,14 @@ export default function StartShiftScreen({ navigation }: { navigation: any }) {
 
     if (isLoading) {
         return (
-            <YStack f={1} ai="center" jc="center" bg="$background">
+            <YStack f={1} ai="center" jc="center" bg="transparent">
                 <SizableText size="$6">Loading...</SizableText>
             </YStack>
         );
     }
 
     return (
-        <YStack f={1} ai="center" jc="center" px="$10" bg="$background">
+        <YStack f={1} ai="center" jc="center" px="$10" bg="transparent">
             <YStack
                 bg="#E1F4F6"
                 width={(screenWidth * 80) / 100}
@@ -117,6 +117,7 @@ export default function StartShiftScreen({ navigation }: { navigation: any }) {
                     <Button
                         bg="$accent"
                         borderRadius="$10"
+                        borderColor="$accent_focus"
                         width={(screenWidth * 50) / 100}
                         height="$6"
                         pressStyle={{ bg: '$accent_focus' }}

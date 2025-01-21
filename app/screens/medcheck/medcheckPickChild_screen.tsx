@@ -328,7 +328,6 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                 </YStack>
 
                                 <YStack
-                                    mt="$2"
                                     mb="$3"
                                     width="100%"
                                     borderBottomWidth={1}
@@ -406,11 +405,12 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                 <Button
                                     onPress={handleSave}
                                     bg="$accent"
-                                    borderRadius="$8"
-                                    mt="$6"
-                                    alignSelf="flex-end"
-                                    px="$4"
-                                    py="$2"
+                                    borderRadius="$10"
+                                    borderColor="$accent_focus"
+                                    bottom="$5"
+                                    right="$5"
+                                    position="absolute"
+                                    pressStyle={{ bg: "$accent_focus" }}
                                 >
                                     <SizableText fontSize="$5" color="white">
                                         Opslaan

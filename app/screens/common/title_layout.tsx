@@ -16,7 +16,7 @@ type TitleLayoutProps = {
 const TitleLayout: React.FC<TitleLayoutProps> = ({
                                                      titleText,
                                                      children,
-                                                     background = '$background',
+                                                     background = 'transparent',
                                                      paddingTop = '$6',
                                                      topContent,
                                                  }) => {

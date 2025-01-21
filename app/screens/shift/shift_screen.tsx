@@ -255,10 +255,10 @@ export default function ShiftScreen({ navigation }) {
     const selected = filteredPatients.filter(patient => selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
     const nonSelected = filteredPatients.filter(patient => !selectedPatients.some(selected => selected.patientNumber === patient.patientNumber));
     if(loading) return     <TitleLayout
-        titleText="Selecteer patiënten voor je dienst"
+        titleText=""
         topContent={<BackButton navigation={navigation} />}
     >
-        <YStack backgroundColor='$background' height={screenWidth *1.2} alignItems="center" justifyContent='center'>
+        <YStack  height={screenWidth *1.2} alignItems="center" justifyContent='center'>
             <Spinner size="large" color="$primary" />
         </YStack></TitleLayout>
 

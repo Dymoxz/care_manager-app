@@ -140,7 +140,7 @@ export default function ActivateScreen({ navigation }: { navigation: any }) {
             ai="center"
             jc="center"
             px="$10"
-            bg="$background"
+            bg="transparent"
         >
             <YStack
                 bg="#E1F4F6"

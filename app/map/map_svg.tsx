@@ -988,6 +988,8 @@ export default function MapSvg({screenWidth, MAP_SCALE_FACTOR, rooms, patients, 
                 stroke="#374151"
                 strokeWidth="4.17px"
                 strokeMiterlimit={1.5}
+                onPress={() => handleRoomPress(rooms[10])}
+
             />
             <Path
                 d="M1043.74 2958.04v-466.667h416.666v425.062a41.605 41.605 0 01-41.604 41.605H1043.74z"
@@ -995,10 +997,13 @@ export default function MapSvg({screenWidth, MAP_SCALE_FACTOR, rooms, patients, 
                 stroke="#374151"
                 strokeWidth="4.17px"
                 strokeMiterlimit={1.5}
+                onPress={() => handleRoomPress(rooms[10])}
+
             />
             <Path
                 d="M1016.4 2726.81H1072.114V2955.9719999999998H1016.4z"
                 fill={rooms[10].isScaled ? "#cb3e3e" : "#0891B2"}
+                onPress={() => handleRoomPress(rooms[10])}
             />
             {isRoomFull(rooms[10]) && (
                 <Use
@@ -1127,7 +1132,7 @@ export default function MapSvg({screenWidth, MAP_SCALE_FACTOR, rooms, patients, 
                         strokeWidth="4.17px"
                     />
                 </G>
-                {rooms[10].isQuarantined && (
+                {rooms[11].isQuarantined && (
                     <G>
                     <Path
                         d="M708.626 2345.36a34.157 34.157 0 0134.159 34.158v.017a34.158 34.158 0 01-34.159 34.158h-53.628a34.156 34.156 0 01-34.158-34.158v-.017a34.16 34.16 0 0134.158-34.158h53.628z"
@@ -1160,7 +1165,7 @@ export default function MapSvg({screenWidth, MAP_SCALE_FACTOR, rooms, patients, 
                 stroke="#374151"
                 strokeWidth="4.17px"
                 strokeMiterlimit={1.5}
-                onPress={() => handleRoomPress(rooms[9])}
+                onPress={() => handleRoomPress(rooms[11])}
             />
 
 
