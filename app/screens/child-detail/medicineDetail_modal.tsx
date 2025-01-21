@@ -1,6 +1,6 @@
-import { Button, Dialog, SizableText, Unspaced, YStack, View, ScrollView, Accordion, Square } from 'tamagui';
+import {Accordion, Button, Dialog, ScrollView, SizableText, Square, Unspaced, View, YStack} from 'tamagui';
 import React, {useState} from "react";
-import { X, ChevronDown } from "@tamagui/lucide-icons";
+import {ChevronDown, X} from "@tamagui/lucide-icons";
 import Markdown from 'react-native-markdown-display';
 
 interface DosageGoal {
@@ -8,7 +8,7 @@ interface DosageGoal {
     ingestType: {
         ingestType: string;
         issuingType: string[];
-        ageAndWeight: {ageAndWeight: string; description: string;}[];
+        ageAndWeight: { ageAndWeight: string; description: string; }[];
     }[]
 }
 
@@ -53,36 +53,30 @@ export default function MedicineDetailModal({visible, onClose, screenWidth, medi
                 />
                 <Dialog.Content
                     elevate
-                    animation={['quick', {opacity: { overshootClamping: true } }]}
-                    enterStyle={{ y: -20, opacity: 0, scale: 0.9 }}
-                    exitStyle={{ y: 10, opacity: 0, scale: 0.95 }}
+                    animation={['quick', {opacity: {overshootClamping: true}}]}
+                    enterStyle={{y: -20, opacity: 0, scale: 0.9}}
+                    exitStyle={{y: 10, opacity: 0, scale: 0.95}}
                     gap="$4"
                     marginVertical={screenWidth * 0.1}
                     padding="$3"
                     width={screenWidth * 0.9}
                     bg="$container"
                     borderRadius="$8"
-                    style={{ maxWidth: screenWidth * 0.9 }}
+                    style={{maxWidth: screenWidth * 0.9}}
                 >
                     <ScrollView>
-                        <Dialog.Title fontSize='$7' mt="$5" marginHorizontal="$2" textAlign='center'>
+                        <Dialog.Title fontSize='$9' mt="$5" marginHorizontal="$2" textAlign='center'>
                             {medicineToDisplay.name}
                         </Dialog.Title>
-                        <SizableText textAlign='center' col="gray" mb="$2">
-                            Medijn informatie
+                        <SizableText textAlign='center' col="gray" mb="$5">
+                            Medicijn informatie
                         </SizableText>
-                        <YStack width="100%" paddingHorizontal="$2">
-                            <SizableText size="$5" fontWeight="bold" color="$text" mt="$2">
-                                Merknaam:
+                        <YStack width="100%" px="$2">
+                            <SizableText size="$6" color="$text" mb="$2">
+                                <SizableText size="$6" fontWeight="bold">Merknaam:</SizableText> {medicineToDisplay.brandName}
                             </SizableText>
-                            <SizableText size="$5"  color="$text" >
-                                {medicineToDisplay.brandName}
-                            </SizableText>
-                            <SizableText size="$5" fontWeight="bold" color="$text" mt="$2">
-                                ATC Code:
-                            </SizableText>
-                            <SizableText size="$5"  mb='$4' color="$text" >
-                                {medicineToDisplay.atcCode}
+                            <SizableText size="$6" color="$text" mb="$5">
+                                <SizableText size="$6" fontWeight="bold">ATC Code:</SizableText> {medicineToDisplay.atcCode}
                             </SizableText>
                             <Accordion
                                 overflow="hidden"
@@ -104,12 +98,12 @@ export default function MedicineDetailModal({visible, onClose, screenWidth, medi
                                             {({open}: { open: boolean }) => (
                                                 <>
                                                     <YStack>
-                                                    <SizableText size="$5" fontWeight="bold" color="$text">
-                                                        Dosering advies:
-                                                    </SizableText>
-                                                    <SizableText size="$5" color="$text">
-                                                        {dosageGoal.dosageGoal}
-                                                    </SizableText>
+                                                        <SizableText size="$5" fontWeight="bold" color="$text">
+                                                            Dosering advies:
+                                                        </SizableText>
+                                                        <SizableText size="$5" color="$text">
+                                                            {dosageGoal.dosageGoal}
+                                                        </SizableText>
                                                     </YStack>
                                                     <Square animation="bouncy" rotate={open ? "180deg" : "0deg"}>
                                                         <ChevronDown size="$1" color="$text"/>
@@ -129,32 +123,49 @@ export default function MedicineDetailModal({visible, onClose, screenWidth, medi
 
                                             >
                                                 {dosageGoal.ingestType.map((ingestType, typeIndex) => (
-                                                    <YStack key={typeIndex} ml="$2">
-                                                        <SizableText  size="$5" fontWeight="bold" color="$text" mt="$1">
-                                                            Inname type:
+                                                    <YStack key={typeIndex}>
+                                                        <SizableText size="$7" color="$text" mb="$3">
+                                                            <SizableText size="$7" fontWeight="bold">Inname type:</SizableText> {ingestType.ingestType}
                                                         </SizableText>
-                                                        <SizableText  size="$5"  color="$text">
-                                                            {ingestType.ingestType}
-                                                        </SizableText>
-                                                        {ingestType.ageAndWeight && ingestType.ageAndWeight.map((ageWeight, ageIndex) => (
-                                                            <YStack key={ageIndex}  ml="$2">
-                                                                <SizableText  size="$5" fontWeight="bold" color="$text"  mt="$1">
-                                                                    Leeftijd en Gewicht:
-                                                                </SizableText>
-                                                                <SizableText  size="$5" color="$text" >
-                                                                    {ageWeight.ageAndWeight}
-                                                                </SizableText>
-                                                                <View  ml="$2">
-                                                                    <Markdown
-                                                                        style={{fontSize: 16, fontWeight: 'normal'}}
 
-                                                                    >
-                                                                        {ageWeight.description}
-                                                                    </Markdown>
-                                                                </View>
+                                                        {ingestType.ageAndWeight && ingestType.ageAndWeight.map((ageWeight, ageIndex) => (
+
+                                                            <YStack
+                                                                bg={"$container_alt"}
+                                                                mb="$3"
+                                                                p="$3"
+                                                                borderRadius="$6"
+                                                                ml="$2"
+                                                            >
+                                                                <YStack key={ageIndex} ml="$2">
+                                                                    <SizableText size="$5" fontWeight="bold"
+                                                                                 color="$text" mt="$1">
+                                                                        Leeftijd en Gewicht:
+                                                                    </SizableText>
+                                                                    <SizableText size="$5" color="$text">
+                                                                        {ageWeight.ageAndWeight}
+                                                                    </SizableText>
+                                                                    <View ml="$2">
+                                                                        <Markdown
+                                                                            style={{fontSize: 16, fontWeight: 'normal'}}
+
+                                                                        >
+                                                                            {ageWeight.description}
+                                                                        </Markdown>
+                                                                    </View>
+                                                                </YStack>
                                                             </YStack>
 
+
                                                         ))}
+                                                        <YStack
+                                                            my="$5"
+                                                            width="100%"
+                                                            borderBottomWidth={1}
+                                                            borderBottomColor="$gray"
+                                                        >
+                                                            {/* This is the separation line */}
+                                                        </YStack>
                                                     </YStack>
                                                 ))}
                                             </Accordion.Content>
@@ -176,7 +187,7 @@ export default function MedicineDetailModal({visible, onClose, screenWidth, medi
                                 circular
                                 pressStyle={{bg: '$accent_focus'}}
                             >
-                                <X col='$accent_content' size='$1' />
+                                <X col='$accent_content' size='$1'/>
                             </Button>
                         </Dialog.Close>
                     </Unspaced>
