@@ -376,6 +376,15 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                     >
                                         <YStack m='$2' alignItems="flex-start" width="100%">
                                             <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
+                                                Patiëntnummer:
+                                            </SizableText>
+                                            <SizableText size="$5" color="$text" textAlign="left">
+                                                {patient.patientNumber}
+
+                                            </SizableText>
+                                        </YStack>
+                                        <YStack m='$2' alignItems="flex-start" width="100%">
+                                            <SizableText size="$6" fontWeight="700" color="$text" mb='$1' textAlign="left">
                                                 BSN:
                                             </SizableText>
                                             <SizableText size="$5" color="$text" textAlign="left">
