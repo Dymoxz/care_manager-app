@@ -229,8 +229,8 @@ export default function MedischeCheckScreen({ navigation, route }) {
             titleText="Medische Check"
             topContent={<BackButton navigation={navigation}/>}
         >
-            <KeyboardAvoidingView
-                behavior={Platform.OS==='ios' ? 'padding' : 'height'}>
+          {/*  <KeyboardAvoidingView
+                behavior={Platform.OS==='ios' ? 'padding' : 'height'}>*/}
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <ScrollView // Added ScrollView here
                         contentContainerStyle={{flexGrow: 1}} // Important for flexible content height
@@ -240,7 +240,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                             <YStack
                                 bg="$container"
                                 width={(screenWidth * 90) / 100}
-                                minHeight={containerHeight} // Use minHeight instead of height
+                                minHeight={containerHeight}
                                 borderRadius="$10"
                                 elevation="$0.25"
                                 px="$6"
@@ -281,7 +281,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                                         {selectedPatient.firstName} {selectedPatient.lastName}
                                                     </SizableText>
                                                    <XStack alignItems="center" mt='$1'>
-                                                        <BedSingle size="$1" color="$accent_focus" mr='$2'/>
+                                                        <BedSingle size="$1" color="#DF9D4D" mr='$2'/>
                                                         <SizableText size="$5" color="$accent_focus" fontWeight='700'>
                                                             {selectedPatient.room ? `Kamer ${selectedPatient.room.roomNumber}, verdieping ${selectedPatient.room.floor}` : 'Geen kamer'}
                                                         </SizableText>
@@ -423,7 +423,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
                         </YStack>
                     </ScrollView>
                 </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
+       {/*     </KeyboardAvoidingView>*/}
 
             <DropdownModal<Patient>
                 visible={isPatientModalVisible}

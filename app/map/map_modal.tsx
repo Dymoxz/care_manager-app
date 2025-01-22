@@ -171,14 +171,14 @@ export function RoomDetailModal({
                                             </SizableText>
                                             <XStack>
                                                 <XStack alignItems="center" mr='$4'>
-                                                    <BriefcaseMedical size="$1" col="$accent_focus" mr="$1"/>
+                                                    <BriefcaseMedical size="$1" col="#DF9D4D" mr="$1"/>
                                                     <SizableText col='$text'>
                                                         {patient.clinicalProfiles?.map((profile) => profile.clinicalProfile)}
                                                     </SizableText>
                                                 </XStack>
                                                 {patient.isQuarantined && (
                                                     <XStack alignItems="center">
-                                                        <CircleAlert size="$1" col="$danger" mr="$1"/>
+                                                        <CircleAlert size="$1" col="#EF4444" mr="$1"/>
                                                         <SizableText col='$text'>Quarantaine</SizableText>
                                                     </XStack>
                                                 )}
@@ -203,7 +203,7 @@ export function RoomDetailModal({
                                                         {patient.firstName} {patient.lastName}
                                                     </SizableText>
                                                     <XStack>
-                                                        <Bed size='$1' mr='$2'/>
+                                                        <Bed size='$1' mr='$2' col="#DF9D4D"/>
                                                         <SizableText col='$text' mb='$2'>
                                                         {patient.room.roomNumber}-{patient.room.floor}
                                                         </SizableText>
@@ -211,14 +211,14 @@ export function RoomDetailModal({
                                                 </XStack>
                                                 <XStack>
                                                     <XStack alignItems="center" mr='$4'>
-                                                        <BriefcaseMedical size="$1" col="$accent_focus" mr="$1"/>
+                                                        <BriefcaseMedical size="$1" col="#DF9D4D" mr="$1"/>
                                                         <SizableText col='$text'>
                                                             {patient.clinicalProfiles?.map((profile) => profile.clinicalProfile)}
                                                         </SizableText>
                                                     </XStack>
                                                     {patient.isQuarantined && (
                                                         <XStack alignItems="center">
-                                                            <CircleAlert size="$1" col="$danger" mr="$1"/>
+                                                            <CircleAlert size="$1" col="#EF4444" mr="$1"/>
                                                             <SizableText col='$text'>Quarantaine</SizableText>
                                                         </XStack>
                                                     )}

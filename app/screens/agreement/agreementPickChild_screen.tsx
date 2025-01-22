@@ -270,7 +270,7 @@ export default function AgreementPickChildScreen({
                                                         {selectedPatient.firstName} {selectedPatient.lastName}
                                                     </SizableText>
                                                     <XStack alignItems="center" mt='$1'>
-                                                        <BedSingle size="$1" color="$accent_focus" mr='$2'/>
+                                                        <BedSingle size="$1" color="#DF9D4D" mr='$2'/>
                                                         <SizableText size="$5" color="$accent_focus" fontWeight='700'>
                                                             {selectedPatient.room ? `Kamer ${selectedPatient.room.roomNumber}, verdieping ${selectedPatient.room.floor}` : 'Geen kamer'}
                                                         </SizableText>
