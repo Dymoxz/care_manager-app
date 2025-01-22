@@ -12,6 +12,7 @@ import {nl} from 'date-fns/locale';
 import DeleteModal from "./delete_modal";
 import { FloatingAction } from "react-native-floating-action";
 import CryptoJS from 'react-native-crypto-js';
+import { useToastController } from '@tamagui/toast';
 
 const {width: screenWidth} = Dimensions.get('window');
 
@@ -92,6 +93,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
     const [patient, setPatient] = useState<Patient>(initialPatient);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const toast = useToastController();
 
     useEffect(() => {
         setLoading(true)
@@ -157,6 +159,60 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
     const handleCloseModal = () => {
         setDischargeModalVisible(false);
     };
+
+    //handleQuarataineSwitch by posting to the API endpoint with /quaratine/:patientNumber
+    const handleQuarantineSwitch = async () => {
+        try {
+            const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/quarantine/${patient.patientNumber}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP error ${response.status}: ${errorText}`);
+            }
+
+            const data = await response.json();
+            const isNowQuarantined = data.isQuarantined;
+
+            // Show toast message
+            toast.show(isNowQuarantined ? "Patient in quarantaine geplaatst" : "Patient uit quarantaine gehaald", {
+                native: false,
+                duration: 3000
+            });
+
+            // Reload patient data
+            const fetchPatient = async () => {
+                try {
+                    const response = await fetch(`https://care-manager-api-cybccdb6fkffe8hg.westeurope-01.azurewebsites.net/api/patient/${initialPatient.patientNumber}`, {
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    setPatient(data)
+                    setError(null);
+
+                } catch (error: any) {
+                    console.error("Failed to fetch patient data:", error);
+                    setError(error.message)
+                }finally {
+                    setLoading(false)
+                }
+            }
+            fetchPatient();
+
+
+
+        } catch (error: any) {
+            console.error("Failed to update patient quarantine status:", error);
+            toast.show("Fout bij updaten van quarantaine status", { native: false, type: 'error' });
+            setError(error.message)
+        }
+    }
 
     const handleCloseMedicalCheckModal = () => {
         setMedicalCheckDetailModalVisible(false);
@@ -275,14 +331,21 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
             position: 3,
             color: '#F8AE56'
         },
-
+        /*
+                {
+                    text: "Bewerken",
+                    icon: require("../../../assets/images/user-round-pen.png"),
+                    name: "bt_bewerken",
+                    position: 4,
+                    color: '#F8AE56',
+                    iconColor: '#000'
+                },*/
         {
-            text: "Bewerken",
-            icon: require("../../../assets/images/user-round-pen.png"),
-            name: "bt_bewerken",
-            position: 4,
-            color: '#F8AE56',
-            iconColor: '#000'
+            text: "Quarantaine",
+            icon: require("../../../assets/images/circle-alert.png"),
+            name: "bt_quarantaine",
+            position: 5,
+            color: '#EF4444',
         }
     ];
 
@@ -751,16 +814,8 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                             case "bt_medcheck":
                                 handleMedCheckNav()
                                 break;
-                            case "bt_bewerken":
-                                navigation.navigate("IntakeOneScreen", {formData: {
-                                        voornaam: patient.firstName,
-                                        achternaam: patient.lastName,
-                                        geboortedatumRaw: patient.dateOfBirth,
-                                        bsn: decryptBSN(patient.bsn),
-                                        lengte: patient.length,
-                                        gewicht: patient.weight,
-                                        selectedGender: null, // You might need to map the gender somehow if available
-                                    }});
+                            case "bt_quarantaine":
+                                handleQuarantineSwitch()
                                 break;
                             default:
                                 console.log(`Unknown action: ${name}`);
