@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Button,
     Input,
@@ -12,12 +12,10 @@ import {
 import {
     Dimensions,
     Keyboard,
-    KeyboardAvoidingView,
-    Platform,
     TouchableWithoutFeedback,
 } from "react-native";
 import TitleLayout from "../common/title_layout";
-import { ChevronDown, SquarePen } from "@tamagui/lucide-icons";
+import { BedSingle, ChevronDown, SquarePen } from "@tamagui/lucide-icons";
 import { useAgreementForm } from "./useAgreementForm";
 import DropdownModal from "../common/multiselect_dropdown";
 import BackButton from "../common/back_button";
@@ -55,7 +53,7 @@ interface Patient {
 
 interface Room {
     _id: string;
-    roomNumber: number;
+    roomNumber?: number;
     floor: number;
     maxCapacity: number;
     isScaled: boolean;
@@ -103,7 +101,7 @@ export default function AgreementPickChildScreen({
                                                      route,
                                                  }: AgreementPickChildScreenProps) {
     const [userSelected, setUserSelected] = useState(false);
-    const { formState, setFieldValue, handleAgreementSelect, errors, validateField, validateForm } =
+    const { formState, setFieldValue, errors, validateField, validateForm } =
         useAgreementForm(route.params?.formData);
     const [isPatientModalVisible, setIsPatientModalVisible] = useState(false);
     const [availablePatients, setAvailablePatients] = useState<Patient[]>([]);
@@ -271,9 +269,12 @@ export default function AgreementPickChildScreen({
                                                     >
                                                         {selectedPatient.firstName} {selectedPatient.lastName}
                                                     </SizableText>
-                                                    <SizableText mt="$1">
-                                                        {`Kamer ${selectedPatient.room.roomNumber}`}
-                                                    </SizableText>
+                                                    <XStack alignItems="center" mt='$1'>
+                                                        <BedSingle size="$1" color="$accent_focus" mr='$2'/>
+                                                        <SizableText size="$5" color="$accent_focus" fontWeight='700'>
+                                                            {selectedPatient.room ? `Kamer ${selectedPatient.room.roomNumber}, verdieping ${selectedPatient.room.floor}` : 'Geen kamer'}
+                                                        </SizableText>
+                                                    </XStack>
                                                 </YStack>
 
                                             {/* Update Button */}
@@ -335,14 +336,9 @@ export default function AgreementPickChildScreen({
                                             value={formState.actie}
                                             onChangeText={(value) => setFieldValue("actie", value)}
                                             multiline
-                                            numberOfLines={2}
-                                            textAlignVertical="center"
                                             bg="white"
-                                            borderWidth={1}
                                             borderColor="#d3d3d3"
                                             borderRadius="$4"
-                                            px="$4"
-                                            py="$3"
                                             width="100%"
                                         />
                                         {errors.actie && (
@@ -405,7 +401,7 @@ export default function AgreementPickChildScreen({
                 getTextForItem={(item) => (
                     <XStack justifyContent="space-between" width="100%" pr="$2">
                         <Text col='$text'>{`${item.firstName} ${item.lastName}`}</Text>
-                        <Text col='$text' textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
+                        <Text col='$text' textAlign="right">{item.room ? `${item.room.roomNumber}-${item.room.floor}` : 'Geen kamer'}</Text>
                     </XStack>
                 )}
             />

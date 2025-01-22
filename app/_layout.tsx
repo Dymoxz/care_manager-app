@@ -1,9 +1,8 @@
 import '../tamagui-web.css'
 
 import { useEffect } from 'react'
-import {Dimensions, ImageBackground, StatusBar, useColorScheme} from 'react-native'
+import {Dimensions, ImageBackground, useColorScheme} from 'react-native'
 import StackNavigator from './navigation/StackNavigator';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
 import { Provider } from './Provider'

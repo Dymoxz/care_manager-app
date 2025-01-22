@@ -1,6 +1,5 @@
-import { Button, Dialog, SizableText, Unspaced, XStack, YStack, View, ScrollView } from 'tamagui';
-import React from "react";
-import { Calendar, Clock, Heart, HeartPulse, Droplet } from "@tamagui/lucide-icons";
+import { Button, Dialog, SizableText, Unspaced, XStack, ScrollView } from 'tamagui';
+import { Calendar, Clock, HeartPulse, Droplet } from "@tamagui/lucide-icons";
 import { X } from "@tamagui/lucide-icons";
 import { format, parseISO } from "date-fns";
 import { nl } from 'date-fns/locale';

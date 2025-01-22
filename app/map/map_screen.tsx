@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 import { Home } from "@tamagui/lucide-icons";

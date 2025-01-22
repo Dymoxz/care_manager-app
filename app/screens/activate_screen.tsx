@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, SizableText, YStack, Image, Input, XStack } from 'tamagui';
 import { Dimensions } from 'react-native';
 import { useToastController } from '@tamagui/toast';

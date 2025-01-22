@@ -1,5 +1,5 @@
 // DropdownModal.tsx
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {ScrollView} from 'react-native';
 import {Button, Dialog, Input, styled, Text, Unspaced, YStack,} from 'tamagui';
 import {X} from '@tamagui/lucide-icons';

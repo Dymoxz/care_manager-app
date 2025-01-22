@@ -1,5 +1,5 @@
 // SimpleModal.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Dialog,
     Input,
@@ -12,7 +12,7 @@ import {
 } from 'tamagui';
 import { X } from '@tamagui/lucide-icons';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import {useToastController} from "@tamagui/toast";
 
 interface SimpleModalProps {

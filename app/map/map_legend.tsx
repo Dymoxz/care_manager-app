@@ -1,7 +1,5 @@
-import React from 'react';
-import {PopoverProps, SizableText, Circle, Square} from 'tamagui';
-import {Adapt, Button, Input, Label, Popover, XStack, YStack, Theme, useTheme} from 'tamagui';
-import { CircleHelp } from "@tamagui/lucide-icons";
+import {PopoverProps, SizableText, Circle} from 'tamagui';
+import {Adapt, Button, Popover, XStack, YStack, useTheme} from 'tamagui';
 import {Svg, ClipPath, Path, G} from "react-native-svg";
 
 export function Demo({
@@ -48,7 +46,7 @@ export function Demo({
             <Popover.Content
                 backgroundColor={'$container'}
                 borderWidth={1}
-                top={-50}
+                top={-20} // Aangepaste waarde
                 borderColor={'$secondary'}
                 enterStyle={{y: -10, opacity: 0}}
                 exitStyle={{y: -10, opacity: 0}}
@@ -61,6 +59,7 @@ export function Demo({
                         },
                     },
                 ]}
+                style={{ transform: [{ translateY: 20 }] }} // Add CSS style here
             >
                 <Popover.Arrow
                     borderWidth={1}

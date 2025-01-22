@@ -1,6 +1,5 @@
 import {ArrowLeft} from "@tamagui/lucide-icons";
 import {Button} from "tamagui";
-import React from "react";
 import {Dimensions} from "react-native";
 
 export default function BackButton( { navigation } ) {
