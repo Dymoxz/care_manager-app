@@ -1222,7 +1222,7 @@ export default function MapSvg({screenWidth, MAP_SCALE_FACTOR, rooms, patients, 
                 >
                     {`${rooms[12].patientNumbers ? rooms[12].patientNumbers.length : 0}/${rooms[12].isScaled ? rooms[12].maxCapacity : 1} (${rooms[12].maxCapacity.toString()})`}
                 </Text>
-                {rooms[9].isQuarantined && (
+                {rooms[12].isQuarantined && (
                     <G>
                     <Path
                         d="M707.112 2245.36a34.155 34.155 0 0134.158 34.158v.017a34.158 34.158 0 01-34.158 34.158h-53.628a34.158 34.158 0 01-34.159-34.158v-.017a34.16 34.16 0 0134.159-34.158h53.628z"
