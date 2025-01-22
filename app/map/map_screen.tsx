@@ -223,7 +223,7 @@ export default function MapScreen({ navigation }) {
 
 
     return (
-        <YStack f={1} ai="center" jc="center" px="$10" bg="$background">
+        <YStack f={1} ai="center" jc="center" px="$10">
             <YStack
                 bg="#E1F4F6"
                 width={(screenWidth * 80) / 100}

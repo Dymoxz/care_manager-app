@@ -368,7 +368,6 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                 <YStack
                     alignItems="center"
                     padding="$4"
-                    bg="$background"
                     flexGrow={1}
                 >
                     {/* Patient Header */}
