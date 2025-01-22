@@ -186,7 +186,7 @@ export function RoomDetailModal({
                             {showSimilarPatients && (
                                 <YStack marginHorizontal="$2" mb="$8">
                                     <SizableText fontSize="$6" fontWeight="700" mb="$2">
-                                        Similar Patients:
+                                        Vergelijkbare patiënten:
                                     </SizableText>
                                     {similarPatients.length > 0 ? (
                                         similarPatients.map((patient) => (
@@ -199,7 +199,7 @@ export function RoomDetailModal({
                                                     <XStack>
                                                         <Bed size='$1' mr='$2'/>
                                                         <SizableText col='$text' mb='$2'>
-                                                            {patient.room.floor}-{patient.room.roomNumber}
+                                                        {patient.room.roomNumber}-{patient.room.floor}
                                                         </SizableText>
                                                     </XStack>
                                                 </XStack>

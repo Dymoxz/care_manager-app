@@ -1,7 +1,5 @@
-import React from 'react';
-import {PopoverProps, SizableText, Circle, Square} from 'tamagui';
-import {Adapt, Button, Input, Label, Popover, XStack, YStack, Theme, useTheme} from 'tamagui';
-import { CircleHelp } from "@tamagui/lucide-icons";
+import {PopoverProps, SizableText, Circle} from 'tamagui';
+import {Adapt, Button, Popover, XStack, YStack, useTheme} from 'tamagui';
 import {Svg, ClipPath, Path, G} from "react-native-svg";
 
 export function Demo({
