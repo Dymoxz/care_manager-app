@@ -169,7 +169,7 @@ function PatientCard({ name, room, hasAlert, patient, isSelected, onSelect }: Pa
         >
             <XStack ai="center">
                 <YStack mr="$2" ml='$2'>
-                    <AlertCircle size="$2" color={hasAlert ? '$danger' : '$container_alt'} />
+                    <AlertCircle size="$2" color={hasAlert ? '#EF4444' : '#ecf8f9'} />
                 </YStack>
 
                 <YStack ml='$4'>
@@ -177,7 +177,7 @@ function PatientCard({ name, room, hasAlert, patient, isSelected, onSelect }: Pa
                         {name}
                     </SizableText>
                     <XStack ai="center" mt="$1">
-                        <Bed style={{}} mr='$2' />
+                        <Bed mr='$2' col="#DF9D4D" />
                         <SizableText size="$4" col='$text'>
                             Kamer {room}
                         </SizableText>
@@ -330,7 +330,8 @@ export default function ShiftScreen({ navigation }) {
                         borderColor="$danger_focus"
                         elevation="$0.25"
                         pressStyle={{
-                            bg: "$danger",
+                            bg: "$danger_focus",
+                            borderColor: "$danger_content",
                         }}
                     >
                         <Button.Text color="white" fontSize="$5">

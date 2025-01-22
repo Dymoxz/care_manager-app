@@ -13,7 +13,7 @@ import {
 } from 'tamagui';
 import DropdownModal from '../common/multiselect_dropdown';
 import TitleLayout from "../common/title_layout";
-import {ArrowLeft, ChevronDown, Check as CheckIcon, Check} from "@tamagui/lucide-icons";
+import {ArrowLeft, ChevronDown, Check} from "@tamagui/lucide-icons";
 import {Dimensions, Keyboard, TouchableWithoutFeedback} from "react-native";
 import {useIntakeForm} from "./useIntakeForm";
 import {useToastController} from '@tamagui/toast';
@@ -324,7 +324,7 @@ export default function IntakeTwoScreen({navigation, route}: IntakeTwoScreenProp
             }
 
             const responseData = await response.json();
-            showSuccessToast('Patient created successfully!');
+            showSuccessToast('Patiënt succesvol ingeschreven!');
 
             // Optionally navigate to a success screen or previous screen
             setTimeout(() => {
