@@ -46,7 +46,7 @@ export function Demo({
             <Popover.Content
                 backgroundColor={'$container'}
                 borderWidth={1}
-                top={-50}
+                top={-20} // Aangepaste waarde
                 borderColor={'$secondary'}
                 enterStyle={{y: -10, opacity: 0}}
                 exitStyle={{y: -10, opacity: 0}}
@@ -59,6 +59,7 @@ export function Demo({
                         },
                     },
                 ]}
+                style={{ transform: [{ translateY: 20 }] }} // Add CSS style here
             >
                 <Popover.Arrow
                     borderWidth={1}
