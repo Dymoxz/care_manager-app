@@ -1,5 +1,5 @@
 import {Accordion, Button, Dialog, ScrollView, SizableText, Square, Unspaced, View, YStack} from 'tamagui';
-import React, {useState} from "react";
+import {useState} from "react";
 import {ChevronDown, X} from "@tamagui/lucide-icons";
 import Markdown from 'react-native-markdown-display';
 

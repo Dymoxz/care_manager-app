@@ -1,5 +1,4 @@
 import {Circle, ClipPath, Defs, G, Image, Path, Svg, Text, Use} from "react-native-svg";
-import React from "react";
 
 interface Room {
     _id?: string;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Button,
     Input,
@@ -12,8 +12,6 @@ import {
 import {
     Dimensions,
     Keyboard,
-    KeyboardAvoidingView,
-    Platform,
     TouchableWithoutFeedback,
 } from "react-native";
 import TitleLayout from "../common/title_layout";

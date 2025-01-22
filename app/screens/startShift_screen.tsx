@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Image, SizableText, YStack } from 'tamagui';
 import { BackHandler, Dimensions } from 'react-native';
 import * as SQLite from 'expo-sqlite';

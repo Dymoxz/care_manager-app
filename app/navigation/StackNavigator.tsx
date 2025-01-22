@@ -1,6 +1,5 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Animated, Easing } from 'react-native';
+import { Easing } from 'react-native';
 
 // Import your screens
 import ActivateScreen from '../screens/activate_screen';

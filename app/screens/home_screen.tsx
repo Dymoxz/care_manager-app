@@ -1,5 +1,5 @@
 import {Button, Card, CardProps, Paragraph, ScrollView, SizableText, XStack, YStack} from 'tamagui';
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {Dimensions} from 'react-native';
 import Svg, {Circle, Path, Polygon, Rect} from 'react-native-svg';
 import TitleLayout from "./common/title_layout";
