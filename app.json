@@ -33,7 +33,8 @@
         "backgroundColor": "#C3E9ED"
       },
       "newArchEnabled": true,
-      "package": "com.memmik.caremanager"
+      "package": "com.memmik.caremanager",
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",
