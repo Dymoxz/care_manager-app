@@ -83,7 +83,7 @@ function PatientCard({ name, room, hasAlert, patient, onPress, onMedCheckPress }
         >
             <XStack ai="center">
                 <YStack mr="$2" ml='$2'>
-                    <AlertCircle size="$2" color={hasAlert ? '$danger' : '$container_alt'} />
+                    <AlertCircle size="$2" col={hasAlert ? '#EF4444' : '#ecf8f9'} />
                 </YStack>
 
                 <YStack ml='$4'>
@@ -91,7 +91,7 @@ function PatientCard({ name, room, hasAlert, patient, onPress, onMedCheckPress }
                         {name}
                     </SizableText>
                     <XStack ai="center" mt="$1">
-                        <Bed style={{}} mr='$2' />
+                        <Bed mr='$2' col="#DF9D4D" />
                         <SizableText size="$4" col='$text'>
                             Kamer {room}
                         </SizableText>

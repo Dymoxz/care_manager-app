@@ -390,7 +390,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
 
                         {patient.isQuarantined && (
                             <XStack alignItems="center" mt='$3'>
-                                <AlertCircle size="$1" color="$danger" mr='$2'/>
+                                <AlertCircle size="$1" color="#EF4444" mr='$2'/>
                                 <SizableText size="$5" color="$danger" fontWeight='700'>
                                     Quarantaine
                                 </SizableText>
@@ -399,7 +399,7 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
 
 
                         <XStack alignItems="center" mt='$1'>
-                            <BedSingle size="$1" color="$accent_focus" mr='$2'/>
+                            <BedSingle size="$1" color="#DF9D4D" mr='$2'/>
                             <SizableText size="$5" color="$accent_focus" fontWeight='700'>
                                 Kamer {patient.room?.roomNumber || 0}, {patient.room?.floor || 0}e verdieping
                             </SizableText>
