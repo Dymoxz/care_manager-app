@@ -27,10 +27,7 @@
         "backgroundColor": "#C3E9ED"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#C3E9ED"
-      },
+      "icon": "./assets/images/icon.png",
       "newArchEnabled": true,
       "package": "com.memmik.caremanager"
     },
