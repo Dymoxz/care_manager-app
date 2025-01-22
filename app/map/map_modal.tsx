@@ -75,6 +75,10 @@ export function RoomDetailModal({
             setIsLoading(false);
         }
     };
+    const handlePatientPress = (patient: Patient) => {
+        // Navigate to PatientDetailsScreen and pass patient data
+        navigation.navigate('ChildDetailScreen', { patient });
+    };
 
     const handleComparePatients = async () => {
         setIsLoading(true);
@@ -160,7 +164,8 @@ export function RoomDetailModal({
                             <YStack mb="$8" marginHorizontal="$2">
                                 {patients && patients.map((patient) => (
                                         <YStack backgroundColor="#E0E7EC" borderRadius="$5" padding="$5"
-                                                key={patient.patientNumber} mb='$5'>
+                                                key={patient.patientNumber} mb='$5' onPress={() => handlePatientPress(patient)}
+                                        >
                                             <SizableText col='$text' fontWeight="700" fontSize="$7" mb='$2'>
                                                 {patient.firstName} {patient.lastName}
                                             </SizableText>
@@ -168,7 +173,7 @@ export function RoomDetailModal({
                                                 <XStack alignItems="center" mr='$4'>
                                                     <BriefcaseMedical size="$1" col="$accent_focus" mr="$1"/>
                                                     <SizableText col='$text'>
-                                                        {patient.clinicalProfiles.map((profile) => profile.clinicalProfile)}
+                                                        {patient.clinicalProfiles?.map((profile) => profile.clinicalProfile)}
                                                     </SizableText>
                                                 </XStack>
                                                 {patient.isQuarantined && (
@@ -191,7 +196,8 @@ export function RoomDetailModal({
                                     {similarPatients.length > 0 ? (
                                         similarPatients.map((patient) => (
                                             <YStack key={patient.patientNumber} backgroundColor="#E0E7EC"
-                                                    borderRadius="$5" padding="$5" mb='$5'>
+                                                    borderRadius="$5" padding="$5" mb='$5' onPress={() => handlePatientPress(patient)}
+                                            >
                                                 <XStack ai='center' jc='space-between'>
                                                     <SizableText col='$text' fontWeight="700" fontSize="$7" mb='$2'>
                                                         {patient.firstName} {patient.lastName}
