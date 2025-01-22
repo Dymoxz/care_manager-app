@@ -11,7 +11,7 @@ import {
 } from "tamagui";
 import {Dimensions, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView, Platform} from "react-native";
 import TitleLayout from "../common/title_layout";
-import { ChevronDown, SquarePen } from "@tamagui/lucide-icons";
+import { BedSingle, ChevronDown, SquarePen } from "@tamagui/lucide-icons";
 import { useMedCheckForm } from "./useMedCheckForm";
 import DropdownModal from "../common/multiselect_dropdown";
 import BackButton from "../common/back_button";
@@ -280,9 +280,12 @@ export default function MedischeCheckScreen({ navigation, route }) {
                                                     >
                                                         {selectedPatient.firstName} {selectedPatient.lastName}
                                                     </SizableText>
-                                                    <SizableText mt="$1">
-                                                        {`Kamer ${selectedPatient.room.roomNumber}`}
-                                                    </SizableText>
+                                                   <XStack alignItems="center" mt='$1'>
+                                                        <BedSingle size="$1" color="$accent_focus" mr='$2'/>
+                                                        <SizableText size="$5" color="$accent_focus" fontWeight='700'>
+                                                            {selectedPatient.room ? `Kamer ${selectedPatient.room.roomNumber}, verdieping ${selectedPatient.room.floor}` : 'Geen kamer'}
+                                                        </SizableText>
+                                                    </XStack>
                                                 </YStack>
 
                                                 {/* Update Button */}
@@ -441,7 +444,7 @@ export default function MedischeCheckScreen({ navigation, route }) {
 
                     >
                         <Text col='$text'>{`${item.firstName} ${item.lastName}`}</Text>
-                        <Text col='$text' textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
+                        <Text col='$text' textAlign="right">{item.room ? `${item.room.roomNumber}-${item.room.floor}` : 'Geen kamer'}</Text>
                     </XStack>
                 )}
             />

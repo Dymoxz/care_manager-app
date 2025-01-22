@@ -17,7 +17,7 @@ import {
     TouchableWithoutFeedback,
 } from "react-native";
 import TitleLayout from "../common/title_layout";
-import { ChevronDown, SquarePen } from "@tamagui/lucide-icons";
+import { BedSingle, ChevronDown, SquarePen } from "@tamagui/lucide-icons";
 import { useAgreementForm } from "./useAgreementForm";
 import DropdownModal from "../common/multiselect_dropdown";
 import BackButton from "../common/back_button";
@@ -55,7 +55,7 @@ interface Patient {
 
 interface Room {
     _id: string;
-    roomNumber: number;
+    roomNumber?: number;
     floor: number;
     maxCapacity: number;
     isScaled: boolean;
@@ -271,9 +271,12 @@ export default function AgreementPickChildScreen({
                                                     >
                                                         {selectedPatient.firstName} {selectedPatient.lastName}
                                                     </SizableText>
-                                                    <SizableText mt="$1">
-                                                        {`Kamer ${selectedPatient.room.roomNumber}`}
-                                                    </SizableText>
+                                                    <XStack alignItems="center" mt='$1'>
+                                                        <BedSingle size="$1" color="$accent_focus" mr='$2'/>
+                                                        <SizableText size="$5" color="$accent_focus" fontWeight='700'>
+                                                            {selectedPatient.room ? `Kamer ${selectedPatient.room.roomNumber}, verdieping ${selectedPatient.room.floor}` : 'Geen kamer'}
+                                                        </SizableText>
+                                                    </XStack>
                                                 </YStack>
 
                                             {/* Update Button */}
@@ -405,7 +408,7 @@ export default function AgreementPickChildScreen({
                 getTextForItem={(item) => (
                     <XStack justifyContent="space-between" width="100%" pr="$2">
                         <Text col='$text'>{`${item.firstName} ${item.lastName}`}</Text>
-                        <Text col='$text' textAlign="right">{`${item.room.roomNumber}-${item.room.floor}`}</Text>
+                        <Text col='$text' textAlign="right">{item.room ? `${item.room.roomNumber}-${item.room.floor}` : 'Geen kamer'}</Text>
                     </XStack>
                 )}
             />
