@@ -101,7 +101,7 @@ export default function AgreementPickChildScreen({
                                                      route,
                                                  }: AgreementPickChildScreenProps) {
     const [userSelected, setUserSelected] = useState(false);
-    const { formState, setFieldValue, handleAgreementSelect, errors, validateField, validateForm } =
+    const { formState, setFieldValue, errors, validateField, validateForm } =
         useAgreementForm(route.params?.formData);
     const [isPatientModalVisible, setIsPatientModalVisible] = useState(false);
     const [availablePatients, setAvailablePatients] = useState<Patient[]>([]);
@@ -336,14 +336,9 @@ export default function AgreementPickChildScreen({
                                             value={formState.actie}
                                             onChangeText={(value) => setFieldValue("actie", value)}
                                             multiline
-                                            numberOfLines={2}
-                                            textAlignVertical="center"
                                             bg="white"
-                                            borderWidth={1}
                                             borderColor="#d3d3d3"
                                             borderRadius="$4"
-                                            px="$4"
-                                            py="$3"
                                             width="100%"
                                         />
                                         {errors.actie && (
