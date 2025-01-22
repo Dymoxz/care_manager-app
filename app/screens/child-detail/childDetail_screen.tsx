@@ -821,7 +821,6 @@ export default function ChildDetailScreen({route, navigation}: PatientDetailsScr
                                 console.log(`Unknown action: ${name}`);
                         }
                     }}
-                    showBackground = {false}
                 />
             </View>
 
